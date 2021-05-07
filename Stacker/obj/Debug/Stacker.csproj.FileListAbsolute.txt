@@ -1,0 +1,7 @@
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Stacker.addin
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Stacker.dll
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Stacker.pdb
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csprojAssemblyReference.cache
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.CoreCompileInputs.cache
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.dll
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.pdb

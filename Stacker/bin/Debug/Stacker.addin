@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Name>Stacker</Name>
+    <Assembly>Stacker.dll</Assembly>
+    <AddInId>
+      7E858945-B469-40D6-8A11-0AFB4B324E1A
+    </AddInId>
+    <FullClassName>Stacker.GetElementId</FullClassName>
+    <Text>GetElementId</Text>
+    <Description>Get the Id from an element</Description>
+    <VendorId>HD VendorID</VendorId>
+    <VendorDescription>HD Vendor</VendorDescription>
+    <VisibilityMode>NotVisibleWhenNoActiveDocument</VisibilityMode>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>ApplicationPlugin</Name>
+    <Assembly>Stacker.dll</Assembly>
+    <AddInId>
+      B4E1AD7C-2A17-47C6-BFBB-8E130BC09A4D
+    </AddInId>
+    <FullClassName>Stacker.ExternalApplication</FullClassName>
+    <VendorId>HD VendorID</VendorId>
+    <VendorDescription>HD Vendor</VendorDescription>
+  </AddIn>
+  <!--
+  <AddIn Type="DBApplication">
+    <Name>DBApplicationPlugin</Name>
+    <Assembly>MyRevitCommands.dll</Assembly>
+    <AddInId>
+      604B1052-F742-4951-8465-C261D1225407
+    </AddInId>
+    <FullClassName>MyRevitCommands.ExternalDBApplication</FullClassName>
+    <VendorId>Jeremy</VendorId>
+    <VendorDescription>@Learndynamo</VendorDescription>
+  </AddIn>
+  -->
+</RevitAddIns>
