@@ -21,7 +21,7 @@ namespace Stacker
             application.CreateRibbonTab("Mod Labs");
             string path = Assembly.GetExecutingAssembly().Location;
 
-            PushButtonData button = new PushButtonData("LoadDataFile", "Load Data File", path, "Stacker.GetElementId");
+            PushButtonData button = new PushButtonData("LoadDataFile", "Load Data File", path, "Stacker.CreatePrelimLayout");
             
             RibbonPanel panel = application.CreateRibbonPanel("Mod Labs", "Build Model");
 

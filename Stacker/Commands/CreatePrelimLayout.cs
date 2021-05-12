@@ -11,7 +11,7 @@ using Autodesk.Revit.DB.Structure;
 namespace Stacker
 {
     [TransactionAttribute(TransactionMode.Manual)]
-    public class GetElementId : IExternalCommand
+    public class CreatePrelimLayout : IExternalCommand
     {
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
@@ -28,14 +28,9 @@ namespace Stacker
                 double elevation = 20.0;
 
                 // Begin to create a level
-                Level level = Level.Create(_doc, elevation);
-                FilteredElementCollector levels = new FilteredElementCollector(_doc).OfClass(typeof(Level));
+                Level level;
+                List<Level> levels = new FilteredElementCollector(_doc).OfClass(typeof(Level)).Cast<Level>().ToList();
 
-                if (null == level)
-                    throw new Exception("Create a new level failed.");
-
-                // Change the level name
-                level.Name = "New level";
 
                 //Obtain the View Template Architectural - FloorPlan
                 ViewFamilyType structuralvft = new FilteredElementCollector(_doc).OfClass(typeof(ViewFamilyType))
@@ -47,6 +42,15 @@ namespace Stacker
                 using (var transBuildLevels = new Transaction(_doc, "Build Levels"))
                 {
                     transBuildLevels.Start();
+
+                    level = Level.Create(_doc, elevation);
+
+                    if (null == level)
+                        throw new Exception("Create a new level failed.");
+
+                    // Change the level name
+                    level.Name = "New level";
+
 
                     //Create a New View
                     ViewPlan vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
