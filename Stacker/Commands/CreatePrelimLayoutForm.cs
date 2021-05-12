@@ -79,6 +79,8 @@ namespace Stacker.Commands
             double totalSF = FloorOverallSquareFootage;
             double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
 
+
+
         }
 
 
@@ -197,7 +199,7 @@ namespace Stacker.Commands
                 }
 
 
-
+                //TEST
             }
             catch (Exception ex)
             {
