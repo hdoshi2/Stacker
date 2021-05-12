@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB.Structure;
 
 namespace Stacker
 {
@@ -23,128 +24,105 @@ namespace Stacker
             try
             {
 
-                using (var T = new Transaction(_doc, "Build Levels"))
+                // The elevation to apply to the new level
+                double elevation = 20.0;
+
+                // Begin to create a level
+                Level level = Level.Create(_doc, elevation);
+                FilteredElementCollector levels = new FilteredElementCollector(_doc).OfClass(typeof(Level));
+
+                if (null == level)
+                    throw new Exception("Create a new level failed.");
+
+                // Change the level name
+                level.Name = "New level";
+
+                //Obtain the View Template Architectural - FloorPlan
+                ViewFamilyType structuralvft = new FilteredElementCollector(_doc).OfClass(typeof(ViewFamilyType))
+                    .Cast<ViewFamilyType>()
+                    .FirstOrDefault<ViewFamilyType>(x => ViewFamily.FloorPlan == x.ViewFamily);
+
+
+
+                using (var transBuildLevels = new Transaction(_doc, "Build Levels"))
                 {
-                    T.Start();
-
-                    // The elevation to apply to the new level
-                    double elevation = 20.0;
-
-                    // Begin to create a level
-                    Level level = Level.Create(_doc, elevation);
-                    if (null == level)
-                    {
-                        throw new Exception("Create a new level failed.");
-                    }
-
-                    // Change the level name
-                    level.Name = "New level";
-
-                    //Obtain the View Template Architectural - FloorPlan
-                    ViewFamilyType structuralvft = new FilteredElementCollector(_doc).OfClass(typeof(ViewFamilyType))
-                        .Cast<ViewFamilyType>()
-                        .FirstOrDefault<ViewFamilyType>(x => ViewFamily.FloorPlan == x.ViewFamily);
-
+                    transBuildLevels.Start();
 
                     //Create a New View
                     ViewPlan vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
                     vplan.Name = level.Name + " - TEST";
 
-
-                    T.Commit();
-
-
+                    transBuildLevels.Commit();
+                }
 
 
 
+                // Get a floor type for floor creation
+                FilteredElementCollector collector = new FilteredElementCollector(_doc);
+                collector.OfClass(typeof(FloorType));
 
-                    //FilteredElementCollector levels
-                    //  = new FilteredElementCollector(_doc)
-                    //    .OfClass(typeof(Level));
+                FloorType floorType = collector.FirstElement() as FloorType;
 
-                    //FloorType floorType
-                    //  = new FilteredElementCollector(_doc)
-                    //    .OfClass(typeof(FloorType))
-                    //    .First<Element>(
-                    //      e => e.Name.Equals("Generic - 12\""))
-                    //      as FloorType;
-
-                    //Element profileElement
-                    //  = new FilteredElementCollector(_doc)
-                    //    .OfClass(typeof(FamilyInstance))
-                    //    .OfCategory(BuiltInCategory.OST_GenericModel)
-                    //    .First<Element>(
-                    //      e => e.Name.Equals("WP1"));
-
-                    //CurveArray slabCurves = new CurveArray();
-
-                    //GeometryElement geo = profileElement.get_Geometry(new Options());
-
-                    //foreach (GeometryInstance inst in geo.Objects)
-                    //{
-                    //    foreach (GeometryObject obj in inst.SymbolGeometry.Objects)
-                    //    {
-                    //        if (obj is Curve)
-                    //        {
-                    //            slabCurves.Append(obj as Curve);
-                    //        }
-                    //    }
-                    //}
-
-                    //XYZ normal = XYZ.BasisZ;
-
-                    //Transaction trans = new Transaction(_doc);
-                    //trans.Start("Create Floors");
-
-                    //foreach (Level lvl in levels)
-                    //{
-                    //    Floor newFloor = _doc.Create.NewFloor(slabCurves, floorType, lvl, false, normal);
-
-                    //    newFloor.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(0);
-                    //}
-
-                    //trans.Commit();
+                //FloorType floorType = new FilteredElementCollector(_doc)
+                //    .OfClass(typeof(FloorType))
+                //    .First<Element>(
+                //      e => e.Name.Equals("Generic - 12\""))
+                //      as FloorType;
 
 
+                // Build a floor profile for the floor creation
+                XYZ first = new XYZ(0, 0, elevation);
+                XYZ second = new XYZ(200, 0, elevation);
+                XYZ third = new XYZ(200, 150, elevation);
+                XYZ fourth = new XYZ(0, 150, elevation);
 
+                CurveArray profile = new CurveArray();
+                    
+                profile.Append(Line.CreateBound(first, second));
+                profile.Append(Line.CreateBound(second, third));
+                profile.Append(Line.CreateBound(third, fourth));
+                profile.Append(Line.CreateBound(fourth, first));
 
-                    // Get a floor type for floor creation
-                    FilteredElementCollector collector = new FilteredElementCollector(_doc);
-                    collector.OfClass(typeof(FloorType));
+                // The normal vector (0,0,1) that must be perpendicular to the profile.
+                XYZ normal = XYZ.BasisZ;
 
-                    FloorType floorType = collector.FirstElement() as FloorType;
-
-                    //FloorType floorType = new FilteredElementCollector(_doc)
-                    //    .OfClass(typeof(FloorType))
-                    //    .First<Element>(
-                    //      e => e.Name.Equals("Generic - 12\""))
-                    //      as FloorType;
-
-
-                    // Build a floor profile for the floor creation
-                    XYZ first = new XYZ(0, 0, 0);
-                    XYZ second = new XYZ(20, 0, 0);
-                    XYZ third = new XYZ(20, 15, 0);
-                    XYZ fourth = new XYZ(0, 15, 0);
-                    CurveArray profile = new CurveArray();
-                    profile.Append(Line.CreateBound(first, second));
-                    profile.Append(Line.CreateBound(second, third));
-                    profile.Append(Line.CreateBound(third, fourth));
-                    profile.Append(Line.CreateBound(fourth, first));
-
-                    // The normal vector (0,0,1) that must be perpendicular to the profile.
-                    XYZ normal = XYZ.BasisZ;
-
-                    Transaction trans = new Transaction(_doc);
-                    trans.Start("Create Floors");
+                using (var transCreateFloorView = new Transaction(_doc, "Create Floor View"))
+                {
+                    transCreateFloorView.Start();
 
                     Floor newFloor = _doc.Create.NewFloor(profile, floorType, level, true, normal);
 
-
-                    trans.Commit();
-
+                    transCreateFloorView.Commit();
 
                 }
+
+
+
+                WallType wType = new FilteredElementCollector(_doc).OfClass(typeof(WallType))
+                                    .Cast<WallType>().FirstOrDefault();
+
+
+                using (var transCreatewalls = new Transaction(_doc, "Create Walls"))
+                {
+                    transCreatewalls.Start();
+
+                    Line geomLine1 = Line.CreateBound(first, second);
+                    Line geomLine2 = Line.CreateBound(second, third);
+                    Line geomLine3 = Line.CreateBound(third, fourth);
+                    Line geomLine4 = Line.CreateBound(fourth, first);
+
+                    // Create a wall using the location line
+                    var wall = Wall.Create(_doc, geomLine1, level.Id, true);
+                    Wall.Create(_doc, geomLine2, level.Id, true);
+                    Wall.Create(_doc, geomLine3, level.Id, true);
+                    Wall.Create(_doc, geomLine4, level.Id, true);
+
+                    wall.WallType = wType;
+
+                    transCreatewalls.Commit();
+                }
+
+
 
 
 
