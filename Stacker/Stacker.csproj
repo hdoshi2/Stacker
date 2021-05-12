@@ -97,6 +97,18 @@
   <ItemGroup>
     <None Include="Resources\crane_16.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\crane_icon_16.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blocks_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\floorStack_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\floorStack_128.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)"."" "$(AppData)\Autodesk\Revit\Addins\2019\"</PostBuildEvent>
