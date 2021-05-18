@@ -69,19 +69,27 @@ namespace Stacker.Commands
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.btnClose = new System.Windows.Forms.Button();
+            this.gbModLimitations = new System.Windows.Forms.GroupBox();
+            this.tbModLengthMax = new System.Windows.Forms.TextBox();
+            this.tbModLengthMin = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.tbModWidthMax = new System.Windows.Forms.TextBox();
+            this.tbModWidthMin = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.gbModLimitations.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBuildLayout
             // 
-            this.btnBuildLayout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBuildLayout.Location = new System.Drawing.Point(97, 387);
+            this.btnBuildLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBuildLayout.Location = new System.Drawing.Point(79, 535);
             this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnBuildLayout.Name = "btnBuildLayout";
             this.btnBuildLayout.Size = new System.Drawing.Size(134, 30);
@@ -242,7 +250,7 @@ namespace Stacker.Commands
             this.gbUnitConfig.Controls.Add(this.label2);
             this.gbUnitConfig.Location = new System.Drawing.Point(12, 183);
             this.gbUnitConfig.Name = "gbUnitConfig";
-            this.gbUnitConfig.Size = new System.Drawing.Size(145, 178);
+            this.gbUnitConfig.Size = new System.Drawing.Size(147, 178);
             this.gbUnitConfig.TabIndex = 2;
             this.gbUnitConfig.TabStop = false;
             this.gbUnitConfig.Text = "Unit Configuration Priority";
@@ -250,7 +258,7 @@ namespace Stacker.Commands
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(14, 35);
+            this.label15.Location = new System.Drawing.Point(6, 120);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(103, 13);
             this.label15.TabIndex = 11;
@@ -259,7 +267,7 @@ namespace Stacker.Commands
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(14, 18);
+            this.label14.Location = new System.Drawing.Point(6, 103);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(72, 13);
             this.label14.TabIndex = 10;
@@ -285,7 +293,7 @@ namespace Stacker.Commands
             "1",
             "2",
             "3"});
-            this.cb2BedPriority.Location = new System.Drawing.Point(79, 112);
+            this.cb2BedPriority.Location = new System.Drawing.Point(77, 77);
             this.cb2BedPriority.Name = "cb2BedPriority";
             this.cb2BedPriority.Size = new System.Drawing.Size(35, 21);
             this.cb2BedPriority.TabIndex = 8;
@@ -298,7 +306,7 @@ namespace Stacker.Commands
             "1",
             "2",
             "3"});
-            this.cb1BedPriority.Location = new System.Drawing.Point(79, 85);
+            this.cb1BedPriority.Location = new System.Drawing.Point(77, 50);
             this.cb1BedPriority.Name = "cb1BedPriority";
             this.cb1BedPriority.Size = new System.Drawing.Size(35, 21);
             this.cb1BedPriority.TabIndex = 7;
@@ -311,7 +319,7 @@ namespace Stacker.Commands
             "1",
             "2",
             "3"});
-            this.cbStudioPriority.Location = new System.Drawing.Point(79, 58);
+            this.cbStudioPriority.Location = new System.Drawing.Point(77, 23);
             this.cbStudioPriority.Name = "cbStudioPriority";
             this.cbStudioPriority.Size = new System.Drawing.Size(35, 21);
             this.cbStudioPriority.TabIndex = 6;
@@ -321,7 +329,7 @@ namespace Stacker.Commands
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(31, 115);
+            this.label4.Location = new System.Drawing.Point(29, 80);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 5;
@@ -332,7 +340,7 @@ namespace Stacker.Commands
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(31, 89);
+            this.label3.Location = new System.Drawing.Point(29, 54);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(38, 13);
             this.label3.TabIndex = 4;
@@ -343,7 +351,7 @@ namespace Stacker.Commands
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(31, 61);
+            this.label2.Location = new System.Drawing.Point(29, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 13);
             this.label2.TabIndex = 3;
@@ -361,6 +369,7 @@ namespace Stacker.Commands
             this.btnLoadDataFile.TabIndex = 3;
             this.btnLoadDataFile.Text = "Load Data File";
             this.btnLoadDataFile.UseVisualStyleBackColor = true;
+            this.btnLoadDataFile.Click += new System.EventHandler(this.btnLoadDataFile_Click);
             // 
             // groupBox1
             // 
@@ -377,9 +386,9 @@ namespace Stacker.Commands
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Location = new System.Drawing.Point(167, 183);
+            this.groupBox1.Location = new System.Drawing.Point(12, 367);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(238, 178);
+            this.groupBox1.Size = new System.Drawing.Size(380, 154);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Unit Configuration Preview";
@@ -397,8 +406,7 @@ namespace Stacker.Commands
             // 
             // textBox3
             // 
-            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox3.Location = new System.Drawing.Point(120, 94);
+            this.textBox3.Location = new System.Drawing.Point(118, 94);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(39, 20);
@@ -406,8 +414,7 @@ namespace Stacker.Commands
             // 
             // textBox4
             // 
-            this.textBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox4.Location = new System.Drawing.Point(120, 65);
+            this.textBox4.Location = new System.Drawing.Point(118, 65);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(39, 20);
@@ -415,8 +422,7 @@ namespace Stacker.Commands
             // 
             // textBox5
             // 
-            this.textBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox5.Location = new System.Drawing.Point(120, 37);
+            this.textBox5.Location = new System.Drawing.Point(118, 37);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(39, 20);
@@ -436,7 +442,7 @@ namespace Stacker.Commands
             // textBox2
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(185, 152);
+            this.textBox2.Location = new System.Drawing.Point(328, 124);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(39, 20);
@@ -446,7 +452,7 @@ namespace Stacker.Commands
             // 
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(23, 155);
+            this.label11.Location = new System.Drawing.Point(166, 127);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(158, 13);
             this.label11.TabIndex = 11;
@@ -454,8 +460,7 @@ namespace Stacker.Commands
             // 
             // tb2BedCount
             // 
-            this.tb2BedCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tb2BedCount.Location = new System.Drawing.Point(70, 94);
+            this.tb2BedCount.Location = new System.Drawing.Point(68, 94);
             this.tb2BedCount.Name = "tb2BedCount";
             this.tb2BedCount.ReadOnly = true;
             this.tb2BedCount.Size = new System.Drawing.Size(39, 20);
@@ -463,8 +468,7 @@ namespace Stacker.Commands
             // 
             // tb1BedCount
             // 
-            this.tb1BedCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tb1BedCount.Location = new System.Drawing.Point(70, 65);
+            this.tb1BedCount.Location = new System.Drawing.Point(68, 65);
             this.tb1BedCount.Name = "tb1BedCount";
             this.tb1BedCount.ReadOnly = true;
             this.tb1BedCount.Size = new System.Drawing.Size(39, 20);
@@ -472,8 +476,7 @@ namespace Stacker.Commands
             // 
             // tbStudioCount
             // 
-            this.tbStudioCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbStudioCount.Location = new System.Drawing.Point(70, 37);
+            this.tbStudioCount.Location = new System.Drawing.Point(68, 37);
             this.tbStudioCount.Name = "tbStudioCount";
             this.tbStudioCount.ReadOnly = true;
             this.tbStudioCount.Size = new System.Drawing.Size(39, 20);
@@ -514,11 +517,11 @@ namespace Stacker.Commands
             // 
             // btnClose
             // 
-            this.btnClose.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
             this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnClose.Location = new System.Drawing.Point(243, 387);
+            this.btnClose.Location = new System.Drawing.Point(225, 535);
             this.btnClose.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(2);
@@ -529,11 +532,101 @@ namespace Stacker.Commands
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // gbModLimitations
+            // 
+            this.gbModLimitations.Controls.Add(this.tbModWidthMax);
+            this.gbModLimitations.Controls.Add(this.tbModWidthMin);
+            this.gbModLimitations.Controls.Add(this.label19);
+            this.gbModLimitations.Controls.Add(this.label17);
+            this.gbModLimitations.Controls.Add(this.label18);
+            this.gbModLimitations.Controls.Add(this.label16);
+            this.gbModLimitations.Controls.Add(this.tbModLengthMax);
+            this.gbModLimitations.Controls.Add(this.tbModLengthMin);
+            this.gbModLimitations.Location = new System.Drawing.Point(175, 183);
+            this.gbModLimitations.Name = "gbModLimitations";
+            this.gbModLimitations.Size = new System.Drawing.Size(177, 177);
+            this.gbModLimitations.TabIndex = 84;
+            this.gbModLimitations.TabStop = false;
+            this.gbModLimitations.Text = "Modular Limitations";
+            // 
+            // tbModLengthMax
+            // 
+            this.tbModLengthMax.Location = new System.Drawing.Point(123, 39);
+            this.tbModLengthMax.Name = "tbModLengthMax";
+            this.tbModLengthMax.ReadOnly = true;
+            this.tbModLengthMax.Size = new System.Drawing.Size(39, 20);
+            this.tbModLengthMax.TabIndex = 15;
+            // 
+            // tbModLengthMin
+            // 
+            this.tbModLengthMin.Location = new System.Drawing.Point(73, 39);
+            this.tbModLengthMin.Name = "tbModLengthMin";
+            this.tbModLengthMin.ReadOnly = true;
+            this.tbModLengthMin.Size = new System.Drawing.Size(39, 20);
+            this.tbModLengthMin.TabIndex = 14;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(7, 42);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(58, 13);
+            this.label16.TabIndex = 11;
+            this.label16.Text = "Length (ft):";
+            // 
+            // label17
+            // 
+            this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(128, 22);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(30, 13);
+            this.label17.TabIndex = 17;
+            this.label17.Text = "MAX";
+            // 
+            // label18
+            // 
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(78, 22);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(27, 13);
+            this.label18.TabIndex = 16;
+            this.label18.Text = "MIN";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(8, 72);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(53, 13);
+            this.label19.TabIndex = 18;
+            this.label19.Text = "Width (ft):";
+            // 
+            // tbModWidthMax
+            // 
+            this.tbModWidthMax.Location = new System.Drawing.Point(123, 69);
+            this.tbModWidthMax.Name = "tbModWidthMax";
+            this.tbModWidthMax.ReadOnly = true;
+            this.tbModWidthMax.Size = new System.Drawing.Size(39, 20);
+            this.tbModWidthMax.TabIndex = 20;
+            // 
+            // tbModWidthMin
+            // 
+            this.tbModWidthMin.Location = new System.Drawing.Point(73, 69);
+            this.tbModWidthMin.Name = "tbModWidthMin";
+            this.tbModWidthMin.ReadOnly = true;
+            this.tbModWidthMin.Size = new System.Drawing.Size(39, 20);
+            this.tbModWidthMin.TabIndex = 19;
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 430);
+            this.ClientSize = new System.Drawing.Size(417, 574);
+            this.Controls.Add(this.gbModLimitations);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnLoadDataFile);
@@ -550,6 +643,8 @@ namespace Stacker.Commands
             this.gbUnitConfig.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.gbModLimitations.ResumeLayout(false);
+            this.gbModLimitations.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -595,7 +690,15 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.GroupBox gbModLimitations;
+        private System.Windows.Forms.TextBox tbModWidthMax;
+        private System.Windows.Forms.TextBox tbModWidthMin;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox tbModLengthMax;
+        private System.Windows.Forms.TextBox tbModLengthMin;
     }
 }

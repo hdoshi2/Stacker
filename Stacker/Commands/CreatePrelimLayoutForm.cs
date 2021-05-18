@@ -12,6 +12,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB.Structure;
 using Stacker.Commands;
+using System.IO;
 
 namespace Stacker.Commands
 {
@@ -39,11 +40,19 @@ namespace Stacker.Commands
 
             _doc = doc;
 
-            PodLengthMin = 15;
-            PodLengthMax = 25;
+            PodLengthMin = 20;
+            PodLengthMax = 35;
             PodWidthMin = 10;
             PodWidthMax = 16;
+
+            tbModLengthMin.Text = PodLengthMin.ToString();
+            tbModLengthMax.Text = PodLengthMax.ToString();
+            tbModWidthMin.Text = PodWidthMin.ToString();
+            tbModWidthMax.Text = PodWidthMax.ToString();
+
         }
+
+
 
         /// <summary>
         /// Set Initial Geometry Parameters.
@@ -79,8 +88,12 @@ namespace Stacker.Commands
             double totalSF = FloorOverallSquareFootage;
             double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
 
-
-
+            //Determine if 2 Tier or 1 Tier
+                //Place Hallway
+                    //Middle Hallway
+                    //Edge Hallway
+            
+            
         }
 
 
@@ -109,7 +122,7 @@ namespace Stacker.Commands
                     .Cast<ViewFamilyType>()
                     .FirstOrDefault<ViewFamilyType>(x => ViewFamily.FloorPlan == x.ViewFamily);
 
-
+                ViewPlan vplan;
 
                 using (var transBuildLevels = new Transaction(_doc, "Build Levels"))
                 {
@@ -121,11 +134,11 @@ namespace Stacker.Commands
                         throw new Exception("Create a new level failed.");
 
                     // Change the level name
-                    level.Name = "New level";
+                    level.Name = "Mod Level 1";
 
 
                     //Create a New View
-                    ViewPlan vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
+                    vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
                     vplan.Name = level.Name + " - TEST";
 
                     transBuildLevels.Commit();
@@ -198,8 +211,64 @@ namespace Stacker.Commands
                     transCreatewalls.Commit();
                 }
 
+                using (var createRegion = new Transaction(_doc, "Create Region"))
+                {
+                    createRegion.Start();
 
-                //TEST
+                    FilteredElementCollector fillRegionTypes
+                      = new FilteredElementCollector(_doc)
+                        .OfClass(typeof(FilledRegionType));
+
+                    IEnumerable<FilledRegionType> myPatterns =
+                        from pattern in fillRegionTypes.Cast<FilledRegionType>()
+                        where pattern.Name.Equals("Diagonal Crosshatch")
+                        select pattern;
+
+                    foreach (FilledRegionType frt in fillRegionTypes)
+                    {
+                        List<CurveLoop> profileloops
+                          = new List<CurveLoop>();
+
+                        //XYZ[] points = new XYZ[5];
+                        //points[0] = new XYZ(0.0, 0.0, 0.0);
+                        //points[1] = new XYZ(10.0, 0.0, 0.0);
+                        //points[2] = new XYZ(10.0, 10.0, 0.0);
+                        //points[3] = new XYZ(0.0, 10.0, 0.0);
+                        //points[4] = new XYZ(0.0, 0.0, 0.0);
+
+                        CurveLoop profileloop = new CurveLoop();
+
+                        //for (int i = 0; i < 4; i++)
+                        //{
+                        //    Line line = Line.CreateBound(points[i], points[i + 1]);
+
+                        //    profileloop.Append(line);
+                        //}
+                        //profileloops.Add(profileloop);
+
+                        Line geomLine1 = Line.CreateBound(first, second);
+                        Line geomLine2 = Line.CreateBound(second, third);
+                        Line geomLine3 = Line.CreateBound(third, fourth);
+                        Line geomLine4 = Line.CreateBound(fourth, first);
+
+                        profileloop.Append(geomLine1);
+                        profileloop.Append(geomLine2);
+                        profileloop.Append(geomLine3);
+                        profileloop.Append(geomLine4);
+
+                        profileloops.Add(profileloop);
+
+
+                        ElementId activeViewId = _doc.ActiveView.Id;
+                        
+                        FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
+
+                        break;
+                    }
+
+                    createRegion.Commit();
+                }
+
             }
             catch (Exception ex)
             {
@@ -208,9 +277,47 @@ namespace Stacker.Commands
 
         }
 
+
+
+        /// <summary>
+        /// Close active form. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnClose_Click(object sender, EventArgs e)
         {
             CreatePrelimLayoutForm.ActiveForm.Close();
         }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLoadDataFile_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "Excel Files (*.xls; *.xlsx *.xlsm)|*.xls;*.xlsx;*.xlsm" })
+                {
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        if (openFileDialog.FileName != null)
+                        {
+
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("ERROR", ex.Message);
+            }
+        }
+
+
     }
 }
