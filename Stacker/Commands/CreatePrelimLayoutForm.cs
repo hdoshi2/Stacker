@@ -273,6 +273,7 @@ namespace Stacker.Commands
             catch (Exception ex)
             {
                 var message = ex.Message;
+                TaskDialog.Show("Error", message);
             }
 
         }

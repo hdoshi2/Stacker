@@ -7,3 +7,4 @@ C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.G
 C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.CoreCompileInputs.cache
 C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.dll
 C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.pdb
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csprojAssemblyReference.cache
