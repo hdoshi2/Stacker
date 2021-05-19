@@ -21,6 +21,20 @@ namespace Stacker.ModClasses
         }
 
 
+        private string _modOptionName;
+        /// <summary>
+        /// Name of this Mod Option
+        /// </summary>
+        public string ModOptionName
+        {
+            get
+            {
+                return _modOptionName;
+            }
+        }
+
+
+
         private double _unitModWidth;
         /// <summary>
         /// Indivdual Module Width
@@ -102,14 +116,17 @@ namespace Stacker.ModClasses
         /// </summary>
         /// <param name="unitModWidth"></param>
         /// <param name="unitModLength"></param>
-        public ModOption(double unitModWidth, double unitModLength, int totalMods, ModBase modbase)
+        public ModOption(double unitModWidth, double unitModLength, ModBase modbase)
         {
             _modBase = modbase;
             _unitModWidth = unitModWidth;
             _unitModLength = unitModLength;
-            _totalMods = totalMods;
 
-            _geometry = new ModGeometry(unitModWidth, unitModLength, totalMods);
+            _modOptionName = $"{modbase.ModName}-{unitModWidth}Wx{unitModLength}L";
+            _totalMods = modbase.TotalMods;
+            _unitModHeight = modbase.UnitHeight;
+
+            _geometry = new ModGeometry(unitModWidth, unitModLength, _totalMods);
 
 
         }

@@ -99,14 +99,14 @@ namespace Stacker.ModClasses
         /// <param name="unitHeight"></param>
         public ModBase(string modName, int totalMods, double unitWidthMax, double unitWidthMin, double unitLengthMax, double unitLengthMin, double unitHeight)
         {
-            string ModName = modName;
-            int TotalMods = totalMods;
+            ModName = modName;
+            TotalMods = totalMods;
 
-            double _unitWidthMax = unitWidthMax;
-            double _unitWidthMin = unitWidthMin;
-            double _unitLengthMax = unitLengthMax;
-            double _unitLengthMin = unitLengthMin;
-            double _unitHeight = unitHeight;
+            _unitWidthMax = unitWidthMax;
+            _unitWidthMin = unitWidthMin;
+            _unitLengthMax = unitLengthMax;
+            _unitLengthMin = unitLengthMin;
+            _unitHeight = unitHeight;
 
         }
 

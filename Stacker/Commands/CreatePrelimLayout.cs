@@ -26,6 +26,7 @@ namespace Stacker
             {
 
                 CreatePrelimLayoutForm layoutForm = new CreatePrelimLayoutForm(_doc);
+
                 layoutForm.ShowDialog();
 
                 return Result.Succeeded;
