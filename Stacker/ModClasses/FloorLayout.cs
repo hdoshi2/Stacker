@@ -89,7 +89,15 @@ namespace Stacker.ModClasses
         }
 
 
+        List<List<XYPosition>> _internalHallwayPoints;
 
+        public List<List<XYPosition>> InternalHallwayPoints
+        {
+            get
+            {
+                return _internalHallwayPoints;
+            }
+        }
 
 
 
@@ -105,31 +113,98 @@ namespace Stacker.ModClasses
             _overallFloorPoints = new List<XYPosition>();
 
             XYPosition origin = new XYPosition(0, 0);
-            XYPosition topLeft = new XYPosition(0, _overallFloorLength);
-            XYPosition topRight = new XYPosition(_overallFloorWidth, _overallFloorLength);
-            XYPosition bottomRight = new XYPosition(_overallFloorWidth, 0);
+            XYPosition topLeft = new XYPosition(0, _overallFloorWidth);
+            XYPosition topRight = new XYPosition(_overallFloorLength, _overallFloorWidth);
+            XYPosition bottomRight = new XYPosition(_overallFloorLength, 0);
 
             _overallFloorPoints.Add(origin);
             _overallFloorPoints.Add(topLeft);
             _overallFloorPoints.Add(topRight);
             _overallFloorPoints.Add(bottomRight);
 
-            determineModLayoutStacking();
+            _idealModLength = determineModLayoutStacking();
+
+            _internalHallwayPoints = determineHallwayPosition();
+
+        }
+
+
+
+        private List<List<XYPosition>> determineHallwayPosition()
+        {
+            var internalHallwayPoints = new List<List<XYPosition>>();
+
+
+            if (FloorModStackScheme == ModStackType.Single)
+            {
+                //Hallway Wall 1
+                var wallEnds1 = new List<XYPosition>();
+
+                XYPosition bottomPoint1 = new XYPosition(0, 0);
+                XYPosition bottomPoint2 = new XYPosition(OverallFloorLength, 0);
+
+                wallEnds1.Add(bottomPoint1);
+                wallEnds1.Add(bottomPoint2);
+
+                internalHallwayPoints.Add(wallEnds1);
+
+
+                //Hallway Wall 2
+                var wallEnds2 = new List<XYPosition>();
+
+                XYPosition topPoint1 = new XYPosition(0, HallwayWidth);
+                XYPosition topPoint2 = new XYPosition(OverallFloorLength, HallwayWidth);
+
+                wallEnds2.Add(topPoint1);
+                wallEnds2.Add(topPoint2);
+
+                internalHallwayPoints.Add(wallEnds2);
+
+            }
+            else if (FloorModStackScheme == ModStackType.Double)
+            {
+
+                //Hallway Wall 1
+                var wallEnds1 = new List<XYPosition>();
+
+                XYPosition bottomPoint1 = new XYPosition(0, (OverallFloorWidth / 2) + (HallwayWidth / 2));
+                XYPosition bottomPoint2 = new XYPosition(OverallFloorLength, (OverallFloorWidth / 2) + (HallwayWidth / 2));
+
+                wallEnds1.Add(bottomPoint1);
+                wallEnds1.Add(bottomPoint2);
+
+                internalHallwayPoints.Add(wallEnds1);
+
+                //Hallway Wall 2
+                var wallEnds2 = new List<XYPosition>();
+
+                XYPosition topPoint1 = new XYPosition(0, (OverallFloorWidth / 2) - (HallwayWidth / 2));
+                XYPosition topPoint2 = new XYPosition(_overallFloorLength, (OverallFloorWidth / 2) - (HallwayWidth / 2));
+
+                wallEnds2.Add(topPoint1);
+                wallEnds2.Add(topPoint2);
+
+                internalHallwayPoints.Add(wallEnds2);
+            }
+
+            return internalHallwayPoints;
         }
 
 
 
 
+        /// <summary>
+        /// Determine mod stacking type (single or double) and ideal mod length. 
+        /// </summary>
+        /// <returns></returns>
         private double determineModLayoutStacking()
         {
             double idealLength = 0;
 
-
             //Assuming width is always smaller - for now. And hallway goes parallel to length
             double allowableModLength = OverallFloorWidth - HallwayWidth;
 
-
-
+            //Determine stacking type 
             if(allowableModLength >= 20 && allowableModLength <= 35)
             {
                 FloorModStackScheme = ModStackType.Single;
@@ -143,8 +218,7 @@ namespace Stacker.ModClasses
                 FloorModStackScheme = ModStackType.TooSmall;
             }
 
-
-
+            //Determine ideal mod length
             if(FloorModStackScheme == ModStackType.Single)
             {
                 idealLength = allowableModLength;

@@ -13,6 +13,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB.Structure;
 using Stacker.Commands;
 using System.IO;
+using Stacker.ModClasses;
 
 namespace Stacker.Commands
 {
@@ -146,31 +147,36 @@ namespace Stacker.Commands
 
 
 
+
+                FloorLayout floorLayout = new FloorLayout(FloorOverallLength, FloorOverallWidth, FloorHallwayWidth);
+
+                List<XYPosition> floorEdgePoints = floorLayout.OverallFloorPoints;
+                List<List<XYPosition>> floorHallwayPoints = floorLayout.InternalHallwayPoints;
+                double modIdealLength = floorLayout.IdealModLength;
+                FloorLayout.ModStackType floorScheme = floorLayout.FloorModStackScheme;
+
+                List<Line> floorEdgeLines = new List<Line>();
+                CurveArray floorEdgeCurveArray = createCurves(floorEdgePoints, elevation, out floorEdgeLines);
+
+
+                List<Line> hallwayLines = new List<Line>();
+
+                foreach(List<XYPosition> hallway in floorHallwayPoints)
+                {
+                    List<Line> hallwayLine = new List<Line>();
+                    createCurves(hallway, elevation, out hallwayLine);
+                    hallwayLines.AddRange(hallwayLine);
+                }
+
+
+
+
+
                 // Get a floor type for floor creation
                 FilteredElementCollector collector = new FilteredElementCollector(_doc);
                 collector.OfClass(typeof(FloorType));
 
                 FloorType floorType = collector.FirstElement() as FloorType;
-
-                //FloorType floorType = new FilteredElementCollector(_doc)
-                //    .OfClass(typeof(FloorType))
-                //    .First<Element>(
-                //      e => e.Name.Equals("Generic - 12\""))
-                //      as FloorType;
-
-
-                // Build a floor profile for the floor creation
-                XYZ first = new XYZ(0, 0, elevation);
-                XYZ second = new XYZ(FloorOverallLength, 0, elevation);
-                XYZ third = new XYZ(FloorOverallLength, FloorOverallWidth, elevation);
-                XYZ fourth = new XYZ(0, FloorOverallWidth, elevation);
-
-                CurveArray profile = new CurveArray();
-
-                profile.Append(Line.CreateBound(first, second));
-                profile.Append(Line.CreateBound(second, third));
-                profile.Append(Line.CreateBound(third, fourth));
-                profile.Append(Line.CreateBound(fourth, first));
 
                 // The normal vector (0,0,1) that must be perpendicular to the profile.
                 XYZ normal = XYZ.BasisZ;
@@ -179,11 +185,14 @@ namespace Stacker.Commands
                 {
                     transCreateFloorView.Start();
 
-                    Floor newFloor = _doc.Create.NewFloor(profile, floorType, level, true, normal);
+                    Floor newFloor = _doc.Create.NewFloor(floorEdgeCurveArray, floorType, level, true, normal);
 
                     transCreateFloorView.Commit();
-
                 }
+
+
+
+
 
 
 
@@ -195,79 +204,102 @@ namespace Stacker.Commands
                 {
                     transCreatewalls.Start();
 
-                    Line geomLine1 = Line.CreateBound(first, second);
-                    Line geomLine2 = Line.CreateBound(second, third);
-                    Line geomLine3 = Line.CreateBound(third, fourth);
-                    Line geomLine4 = Line.CreateBound(fourth, first);
+                    foreach(var line in hallwayLines)
+                    {
+                        var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                        wall.WallType = wType;
+                    }
 
-                    // Create a wall using the location line
-                    var wall = Wall.Create(_doc, geomLine1, level.Id, true);
-                    Wall.Create(_doc, geomLine2, level.Id, true);
-                    Wall.Create(_doc, geomLine3, level.Id, true);
-                    Wall.Create(_doc, geomLine4, level.Id, true);
+                    foreach (var line in floorEdgeLines)
+                    {
+                        var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                    }
 
-                    wall.WallType = wType;
 
                     transCreatewalls.Commit();
                 }
 
-                using (var createRegion = new Transaction(_doc, "Create Region"))
+
+
+                ModBase modBaseStudio = new ModBase("Studio", 1, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
+                ModBase modBaseOneBed = new ModBase("OneBed", 2, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
+                ModBase modBaseTwoBed = new ModBase("TwoBed", 3, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
+
+                Dictionary<double, ModOption> optionsStudio = new Dictionary<double, ModOption>();
+                Dictionary<double, ModOption> optionsOneBed = new Dictionary<double, ModOption>();
+                Dictionary<double, ModOption> optionsTwoBed = new Dictionary<double, ModOption>();
+
+
+                for (double i = PodWidthMin; i <= PodWidthMax; i++)
                 {
-                    createRegion.Start();
+                    ModOption studio = new ModOption(i, modIdealLength, modBaseStudio);
+                    ModOption oneBed = new ModOption(i, modIdealLength, modBaseOneBed);
+                    ModOption twoBed = new ModOption(i, modIdealLength, modBaseTwoBed);
 
-                    FilteredElementCollector fillRegionTypes
-                      = new FilteredElementCollector(_doc)
-                        .OfClass(typeof(FilledRegionType));
-
-                    IEnumerable<FilledRegionType> myPatterns =
-                        from pattern in fillRegionTypes.Cast<FilledRegionType>()
-                        where pattern.Name.Equals("Diagonal Crosshatch")
-                        select pattern;
-
-                    foreach (FilledRegionType frt in fillRegionTypes)
-                    {
-                        List<CurveLoop> profileloops
-                          = new List<CurveLoop>();
-
-                        //XYZ[] points = new XYZ[5];
-                        //points[0] = new XYZ(0.0, 0.0, 0.0);
-                        //points[1] = new XYZ(10.0, 0.0, 0.0);
-                        //points[2] = new XYZ(10.0, 10.0, 0.0);
-                        //points[3] = new XYZ(0.0, 10.0, 0.0);
-                        //points[4] = new XYZ(0.0, 0.0, 0.0);
-
-                        CurveLoop profileloop = new CurveLoop();
-
-                        //for (int i = 0; i < 4; i++)
-                        //{
-                        //    Line line = Line.CreateBound(points[i], points[i + 1]);
-
-                        //    profileloop.Append(line);
-                        //}
-                        //profileloops.Add(profileloop);
-
-                        Line geomLine1 = Line.CreateBound(first, second);
-                        Line geomLine2 = Line.CreateBound(second, third);
-                        Line geomLine3 = Line.CreateBound(third, fourth);
-                        Line geomLine4 = Line.CreateBound(fourth, first);
-
-                        profileloop.Append(geomLine1);
-                        profileloop.Append(geomLine2);
-                        profileloop.Append(geomLine3);
-                        profileloop.Append(geomLine4);
-
-                        profileloops.Add(profileloop);
-
-
-                        ElementId activeViewId = _doc.ActiveView.Id;
-                        
-                        FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
-
-                        break;
-                    }
-
-                    createRegion.Commit();
+                    optionsStudio[i] = studio;
+                    optionsOneBed[i] = oneBed;
+                    optionsTwoBed[i] = twoBed;
                 }
+
+
+
+
+
+
+                //using (var createRegion = new Transaction(_doc, "Create Region"))
+                //{
+                //    createRegion.Start();
+
+                //    FilteredElementCollector fillRegionTypes = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
+
+                //    IEnumerable<FilledRegionType> myPatterns = from pattern in fillRegionTypes.Cast<FilledRegionType>()
+                //                                               where pattern.Name.Equals("Diagonal Crosshatch")
+                //                                               select pattern;
+
+                //    int count = fillRegionTypes.Count();
+                //    foreach (FilledRegionType frt in fillRegionTypes)
+                //    {
+                //        List<CurveLoop> profileloops = new List<CurveLoop>();
+
+                //        //XYZ[] points = new XYZ[5];
+                //        //points[0] = new XYZ(0.0, 0.0, 0.0);
+                //        //points[1] = new XYZ(10.0, 0.0, 0.0);
+                //        //points[2] = new XYZ(10.0, 10.0, 0.0);
+                //        //points[3] = new XYZ(0.0, 10.0, 0.0);
+                //        //points[4] = new XYZ(0.0, 0.0, 0.0);
+
+                //        CurveLoop profileloop = new CurveLoop();
+
+                //        //for (int i = 0; i < 4; i++)
+                //        //{
+                //        //    Line line = Line.CreateBound(points[i], points[i + 1]);
+
+                //        //    profileloop.Append(line);
+                //        //}
+                //        //profileloops.Add(profileloop);
+
+                //        Line geomLine1 = Line.CreateBound(first, second);
+                //        Line geomLine2 = Line.CreateBound(second, third);
+                //        Line geomLine3 = Line.CreateBound(third, fourth);
+                //        Line geomLine4 = Line.CreateBound(fourth, first);
+
+                //        profileloop.Append(geomLine1);
+                //        profileloop.Append(geomLine2);
+                //        profileloop.Append(geomLine3);
+                //        profileloop.Append(geomLine4);
+
+                //        profileloops.Add(profileloop);
+
+
+                //        ElementId activeViewId = _doc.ActiveView.Id;
+
+                //        FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
+
+                //        break;
+                //    }
+
+                //    createRegion.Commit();
+                //}
 
             }
             catch (Exception ex)
@@ -276,6 +308,59 @@ namespace Stacker.Commands
                 TaskDialog.Show("Error", message);
             }
 
+        }
+
+
+        private CurveArray createCurves(List<XYPosition> xyPoints, double elevation, out List<Line> lines)
+        {
+            CurveArray overallFloorProfile = new CurveArray();
+            lines = new List<Line>();
+
+            for (var i = 0; i < xyPoints.Count; i++)
+            {
+                XYPosition p1;
+                XYPosition p2;
+                XYZ pt1;
+                XYZ pt2;
+                Line line;
+
+                //If only two points are present, then create single line
+                if (xyPoints.Count == 2)
+                {
+                    p1 = xyPoints[i];
+                    p2 = xyPoints[i + 1];
+
+                    pt1 = new XYZ(p1.X, p1.Y, elevation);
+                    pt2 = new XYZ(p2.X, p2.Y, elevation);
+                    line = Line.CreateBound(pt1, pt2);
+
+                    lines.Add(line);
+                    overallFloorProfile.Append(line);
+
+                    break;
+                }
+
+                //If more than two points exist then create a loop
+                if (i == xyPoints.Count - 1)
+                {
+                    p1 = xyPoints[i];
+                    p2 = xyPoints[0];
+                }
+                else
+                {
+                    p1 = xyPoints[i];
+                    p2 = xyPoints[i + 1];
+                }
+
+                pt1 = new XYZ(p1.X, p1.Y, elevation);
+                pt2 = new XYZ(p2.X, p2.Y, elevation);
+                line = Line.CreateBound(pt1, pt2);
+
+                lines.Add(line);
+                overallFloorProfile.Append(line);
+            }
+
+            return overallFloorProfile;
         }
 
 

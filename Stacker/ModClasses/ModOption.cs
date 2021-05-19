@@ -122,7 +122,7 @@ namespace Stacker.ModClasses
             _unitModWidth = unitModWidth;
             _unitModLength = unitModLength;
 
-            _modOptionName = $"{modbase.ModName}-{unitModWidth}Wx{unitModLength}L";
+            _modOptionName = $"{modbase.ModName}-{unitModWidth}W x {unitModLength}L";
             _totalMods = modbase.TotalMods;
             _unitModHeight = modbase.UnitHeight;
 

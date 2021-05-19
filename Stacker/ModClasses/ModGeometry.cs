@@ -39,6 +39,36 @@ namespace Stacker.ModClasses
 
 
 
+        private double _totalModWidth;
+        /// <summary>
+        /// Total Module Width
+        /// </summary>
+        public double TotalModWidth
+        {
+            get
+            {
+                return _totalModWidth;
+            }
+        }
+
+
+
+
+        private double _totalModLength;
+        /// <summary>
+        /// Total Module Length
+        /// </summary>
+        public double TotalModLength
+        {
+            get
+            {
+                return _totalModLength;
+            }
+        }
+
+
+
+
         private int _totalMods;
         /// <summary>
         /// Total Modules
@@ -99,6 +129,9 @@ namespace Stacker.ModClasses
             _unitModLength = unitModLength;
             _totalMods = totalMods;
 
+            _totalModWidth = _unitModWidth * _totalMods;
+            _totalModLength = _unitModLength;
+
 
             //
             //Create Outer Coordinates of the Block
@@ -106,9 +139,9 @@ namespace Stacker.ModClasses
             _outerBlockPoints = new List<XYPosition>();
 
             XYPosition origin = new XYPosition(0, 0);
-            XYPosition topLeft = new XYPosition(0, _unitModLength);
-            XYPosition topRight = new XYPosition(_unitModWidth * _totalMods, _unitModLength);
-            XYPosition bottomRight = new XYPosition(_unitModWidth * _totalMods, 0);
+            XYPosition topLeft = new XYPosition(0, _totalModLength);
+            XYPosition topRight = new XYPosition(_totalModWidth, _totalModLength);
+            XYPosition bottomRight = new XYPosition(_totalModWidth, 0);
 
             _outerBlockPoints.Add(origin);
             _outerBlockPoints.Add(topLeft);
