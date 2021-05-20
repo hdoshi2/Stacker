@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="ExternalApplication.cs" />
     <Compile Include="ModClasses\FloorLayout.cs" />
+    <Compile Include="ModClasses\FloorModBlock.cs" />
     <Compile Include="ModClasses\ModBase.cs" />
     <Compile Include="ModClasses\ModGeometry.cs" />
     <Compile Include="ModClasses\ModOption.cs" />

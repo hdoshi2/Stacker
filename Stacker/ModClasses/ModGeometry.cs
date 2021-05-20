@@ -67,6 +67,19 @@ namespace Stacker.ModClasses
         }
 
 
+        private double _totalModArea;
+        /// <summary>
+        /// Total Module Area
+        /// </summary>
+        public double TotalModArea
+        {
+            get
+            {
+                return _totalModArea;
+            }
+        }
+
+
 
 
         private int _totalMods;
@@ -131,7 +144,7 @@ namespace Stacker.ModClasses
 
             _totalModWidth = _unitModWidth * _totalMods;
             _totalModLength = _unitModLength;
-
+            _totalModArea = _totalModWidth * _totalModLength;
 
             //
             //Create Outer Coordinates of the Block
