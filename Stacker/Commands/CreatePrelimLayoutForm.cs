@@ -84,12 +84,6 @@ namespace Stacker.Commands
         /// <param name="e"></param>
         private void btnApplyUnitPriority_Click(object sender, EventArgs e)
         {
-            PriorityStudio = cbStudioPriority.SelectedIndex;
-            Priority1Bed = cb1BedPriority.SelectedIndex;
-            Priority2Bed = cb2BedPriority.SelectedIndex;
-
-            double totalSF = FloorOverallSquareFootage;
-            double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
 
         }
 
@@ -137,6 +131,14 @@ namespace Stacker.Commands
                 FloorOverallLength = Convert.ToDouble(tbLength.Text);
                 FloorOverallWidth = Convert.ToDouble(tbWidth.Text);
                 FloorHallwayWidth = Convert.ToDouble(tbHallwayWidth.Text);
+
+                PriorityStudio = cbStudioPriority.SelectedIndex;
+                Priority1Bed = cb1BedPriority.SelectedIndex;
+                Priority2Bed = cb2BedPriority.SelectedIndex;
+
+                double totalSF = FloorOverallSquareFootage;
+                double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
+
 
                 double fixedModWidth = Convert.ToDouble(btnFixedWidth.Text);
 
@@ -326,21 +328,26 @@ namespace Stacker.Commands
 
                     FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {count.ToString()}", currentBlockBasePt, floorLayout.OverallFloorWidth, floorLayout.OverallFloorLength);
 
-                    while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[fixedModWidth]))
+                    decimal roomRatio = 1;
+
+                    while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[fixedModWidth]) && (roomRatio > Convert.ToDecimal(0.6)))
                     {
                         currentBlockOption.AddBlock(optionsTwoBed[fixedModWidth]);
+                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFAvailable), Convert.ToDecimal(currentBlockOption.SFTotal));
                         count++;
                     }
 
-                    while (currentBlockOption.ValidateBlockAdd(optionsOneBed[fixedModWidth]))
+                    while (currentBlockOption.ValidateBlockAdd(optionsOneBed[fixedModWidth]) && (roomRatio > Convert.ToDecimal(0.3)))
                     {
                         currentBlockOption.AddBlock(optionsOneBed[fixedModWidth]);
+                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFAvailable), Convert.ToDecimal(currentBlockOption.SFTotal));
                         count++;
                     }
 
                     while (currentBlockOption.ValidateBlockAdd(optionsStudio[fixedModWidth]))
                     {
                         currentBlockOption.AddBlock(optionsStudio[fixedModWidth]);
+                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFAvailable), Convert.ToDecimal(currentBlockOption.SFTotal));
                         count++;
                     }
 
@@ -364,34 +371,54 @@ namespace Stacker.Commands
                                                                where pattern.Name.Equals("Diagonal Crosshatch")
                                                                select pattern;
 
-                    FilledRegionType diagonalPattern = (from pattern in fillRegionTypes.Cast<FilledRegionType>()
-                                                        where pattern.Name.Equals("Diagonal Crosshatch")
-                                                        select pattern).First();
-
                     FilledRegionType solidPattern = (from pattern in fillRegionTypes.Cast<FilledRegionType>()
-                                                        where pattern.Name.Equals("Diagonal Crosshatch")
+                                                        where pattern.Name.Equals("Solid Black")
                                                         select pattern).First();
 
-                    //FillPatternElement diagonalPattern = (from pattern in fillRegionTypes.Cast<FillPatternElement>()
-                    //                                   where pattern.Name.Equals("Diagonal Crosshatch")
-                    //                                   select pattern).First();
+                    var colorStudio = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
+                    var colorOneBed = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
+                    var colorTwoBed = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
 
-                    //FillPatternElement solidPattern = (from pattern in fillRegionTypes.Cast<FillPatternElement>()
-                    //                                      where pattern.Name.Equals("Solid")
-                    //                                      select pattern).First();
+                    FilledRegionType newPattern0 = findOrCreateSolidFieldRegions("BedStudio", colorStudio);
+                    FilledRegionType newPattern1 = findOrCreateSolidFieldRegions("BedOne", colorOneBed);
+                    FilledRegionType newPattern2 = findOrCreateSolidFieldRegions("BedTwo", colorTwoBed);
 
 
-                    FilledRegionType newPattern0 = solidPattern.Duplicate("BedStudio") as FilledRegionType;
-                    FilledRegionType newPattern1 = solidPattern.Duplicate("BedOne") as FilledRegionType;
-                    FilledRegionType newPattern2 = solidPattern.Duplicate("BedTwo") as FilledRegionType;
 
-                    newPattern0.BackgroundPatternColor = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
-                    newPattern1.BackgroundPatternColor = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
-                    newPattern2.BackgroundPatternColor = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
+                    //List<string> filledRegionPatters = new List<string>() { "BedStudio", "BedOne", "BedTwo" }
 
-                    newPattern0.BackgroundPatternId = solidPattern.Id;
-                    newPattern1.BackgroundPatternId = solidPattern.Id;
-                    newPattern2.BackgroundPatternId = solidPattern.Id;
+
+                    //newPattern0 = new FilteredElementCollector(_doc)
+                    //                .OfClass(typeof(FilledRegionType))
+                    //                .Cast<FilledRegionType>()
+                    //                .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
+
+                    //newPattern1 = new FilteredElementCollector(_doc)
+                    //                .OfClass(typeof(FilledRegionType))
+                    //                .Cast<FilledRegionType>()
+                    //                .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
+
+                    //newPattern1 = new FilteredElementCollector(_doc)
+                    //                .OfClass(typeof(FilledRegionType))
+                    //                .Cast<FilledRegionType>()
+                    //                .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
+
+
+                    //if (!levelBuilt)
+                    //{
+                    //    newPattern0 = solidPattern.Duplicate("BedStudio") as FilledRegionType;
+                    //    newPattern1 = solidPattern.Duplicate("BedOne") as FilledRegionType;
+                    //    newPattern2 = solidPattern.Duplicate("BedTwo") as FilledRegionType;
+
+                    //    newPattern0.BackgroundPatternColor = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
+                    //    newPattern1.BackgroundPatternColor = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
+                    //    newPattern2.BackgroundPatternColor = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
+
+                    //    newPattern0.ForegroundPatternColor = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
+                    //    newPattern1.ForegroundPatternColor = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
+                    //    newPattern2.ForegroundPatternColor = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
+                    //}
+
 
 
                     int count = fillRegionTypes.Count();
@@ -419,7 +446,20 @@ namespace Stacker.Commands
 
                             profilelps.Add(profilelp);
 
-                            FilledRegion filledRegion = FilledRegion.Create(_doc, fillRegionTypes.FirstElementId(), vplan.Id, profilelps);
+                            FilledRegion filledRegion = null;
+
+                            if (currentMod.TotalMods == 3)
+                            {
+                                filledRegion = FilledRegion.Create(_doc, newPattern2.Id, vplan.Id, profilelps);
+                            }
+                            else if (currentMod.TotalMods == 2)
+                            {
+                                filledRegion = FilledRegion.Create(_doc, newPattern1.Id, vplan.Id, profilelps);
+                            }
+                            else
+                            {
+                                filledRegion = FilledRegion.Create(_doc, newPattern0.Id, vplan.Id, profilelps);
+                            }
 
                             regionsBuilt.Add(filledRegion.Id);
                         }
@@ -506,6 +546,10 @@ namespace Stacker.Commands
 
         }
 
+
+
+
+
         private CurveArray createCurves(List<XYPosition> xyPoints, double elevation, out List<Line> lines)
         {
             CurveArray overallFloorProfile = new CurveArray();
@@ -558,6 +602,34 @@ namespace Stacker.Commands
             return overallFloorProfile;
         }
 
+
+
+
+        private FilledRegionType findOrCreateSolidFieldRegions(string filledRegionsToCreate, Autodesk.Revit.DB.Color color)
+        {
+            var newPattern = new FilteredElementCollector(_doc)
+                    .OfClass(typeof(FilledRegionType))
+                    .Cast<FilledRegionType>()
+                    .FirstOrDefault(q => q.Name == filledRegionsToCreate) as FilledRegionType;
+
+            var solidPattern = new FilteredElementCollector(_doc)
+                    .OfClass(typeof(FilledRegionType))
+                    .Cast<FilledRegionType>()
+                    .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
+
+
+            if (newPattern == null)
+            {
+                newPattern = solidPattern.Duplicate(filledRegionsToCreate) as FilledRegionType;
+
+                newPattern.BackgroundPatternColor = color;
+
+                newPattern.ForegroundPatternColor = color;
+            }
+
+            return newPattern;
+
+        }
 
 
         /// <summary>
