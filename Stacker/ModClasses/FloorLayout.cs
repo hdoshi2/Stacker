@@ -101,6 +101,10 @@ namespace Stacker.ModClasses
 
 
 
+        public int TotalModBlocks;
+        public Dictionary<int, XYPosition> ModBlockBasePt = new Dictionary<int, XYPosition>();
+
+
         public FloorLayout(double overallFloorLength, double overallFloorWidth, double hallwayWidth)
         {
             _overallFloorLength = overallFloorLength;
@@ -129,7 +133,6 @@ namespace Stacker.ModClasses
         }
 
 
-
         private List<List<XYPosition>> determineHallwayPosition()
         {
             var internalHallwayPoints = new List<List<XYPosition>>();
@@ -137,17 +140,18 @@ namespace Stacker.ModClasses
 
             if (FloorModStackScheme == ModStackType.Single)
             {
-                //Hallway Wall 1
-                var wallEnds1 = new List<XYPosition>();
+                ////Hallway Wall 1
+                //var wallEnds1 = new List<XYPosition>();
 
-                XYPosition bottomPoint1 = new XYPosition(0, 0);
-                XYPosition bottomPoint2 = new XYPosition(OverallFloorLength, 0);
+                //XYPosition bottomPoint1 = new XYPosition(0, 0);
+                //XYPosition bottomPoint2 = new XYPosition(OverallFloorLength, 0);
 
-                wallEnds1.Add(bottomPoint1);
-                wallEnds1.Add(bottomPoint2);
+                //wallEnds1.Add(bottomPoint1);
+                //wallEnds1.Add(bottomPoint2);
 
-                internalHallwayPoints.Add(wallEnds1);
+                //internalHallwayPoints.Add(wallEnds1);
 
+                TotalModBlocks = 1;
 
                 //Hallway Wall 2
                 var wallEnds2 = new List<XYPosition>();
@@ -159,10 +163,13 @@ namespace Stacker.ModClasses
                 wallEnds2.Add(topPoint2);
 
                 internalHallwayPoints.Add(wallEnds2);
+                
+                ModBlockBasePt[1] = topPoint1;
 
             }
             else if (FloorModStackScheme == ModStackType.Double)
             {
+                TotalModBlocks = 2;
 
                 //Hallway Wall 1
                 var wallEnds1 = new List<XYPosition>();
@@ -185,6 +192,11 @@ namespace Stacker.ModClasses
                 wallEnds2.Add(topPoint2);
 
                 internalHallwayPoints.Add(wallEnds2);
+
+
+                ModBlockBasePt[1] = new XYPosition(0,0);
+                ModBlockBasePt[2] = bottomPoint1;
+
             }
 
             return internalHallwayPoints;

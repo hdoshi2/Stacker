@@ -244,62 +244,146 @@ namespace Stacker.Commands
 
 
 
+                List<FloorModBlock> floorBlockOptions = new List<FloorModBlock>();
+                int floorBlockCount = 0;
+
+                foreach(var block in floorLayout.ModBlockBasePt)
+                {
+                    XYPosition currentBlockBasePt = block.Value;
+                    int count = 0;
+
+                    FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {count.ToString()}", currentBlockBasePt, floorLayout.OverallFloorWidth, floorLayout.OverallFloorLength);
+
+                    while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[15]))
+                    {
+                        currentBlockOption.AddBlock(optionsTwoBed[15]);
+                        count++;
+                    }
+
+                    while (currentBlockOption.ValidateBlockAdd(optionsOneBed[15]))
+                    {
+                        currentBlockOption.AddBlock(optionsOneBed[15]);
+                        count++;
+                    }
+
+                    while (currentBlockOption.ValidateBlockAdd(optionsStudio[15]))
+                    {
+                        currentBlockOption.AddBlock(optionsStudio[15]);
+                        count++;
+                    }
 
 
-                //using (var createRegion = new Transaction(_doc, "Create Region"))
-                //{
-                //    createRegion.Start();
-
-                //    FilteredElementCollector fillRegionTypes = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
-
-                //    IEnumerable<FilledRegionType> myPatterns = from pattern in fillRegionTypes.Cast<FilledRegionType>()
-                //                                               where pattern.Name.Equals("Diagonal Crosshatch")
-                //                                               select pattern;
-
-                //    int count = fillRegionTypes.Count();
-                //    foreach (FilledRegionType frt in fillRegionTypes)
-                //    {
-                //        List<CurveLoop> profileloops = new List<CurveLoop>();
-
-                //        //XYZ[] points = new XYZ[5];
-                //        //points[0] = new XYZ(0.0, 0.0, 0.0);
-                //        //points[1] = new XYZ(10.0, 0.0, 0.0);
-                //        //points[2] = new XYZ(10.0, 10.0, 0.0);
-                //        //points[3] = new XYZ(0.0, 10.0, 0.0);
-                //        //points[4] = new XYZ(0.0, 0.0, 0.0);
-
-                //        CurveLoop profileloop = new CurveLoop();
-
-                //        //for (int i = 0; i < 4; i++)
-                //        //{
-                //        //    Line line = Line.CreateBound(points[i], points[i + 1]);
-
-                //        //    profileloop.Append(line);
-                //        //}
-                //        //profileloops.Add(profileloop);
-
-                //        Line geomLine1 = Line.CreateBound(first, second);
-                //        Line geomLine2 = Line.CreateBound(second, third);
-                //        Line geomLine3 = Line.CreateBound(third, fourth);
-                //        Line geomLine4 = Line.CreateBound(fourth, first);
-
-                //        profileloop.Append(geomLine1);
-                //        profileloop.Append(geomLine2);
-                //        profileloop.Append(geomLine3);
-                //        profileloop.Append(geomLine4);
-
-                //        profileloops.Add(profileloop);
+                    floorBlockOptions.Add(currentBlockOption);
+                    floorBlockCount++;
+                }
 
 
-                //        ElementId activeViewId = _doc.ActiveView.Id;
 
-                //        FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
 
-                //        break;
-                //    }
 
-                //    createRegion.Commit();
-                //}
+
+                using (var createRegion = new Transaction(_doc, "Create Region"))
+                {
+                    createRegion.Start();
+
+                    FilteredElementCollector fillRegionTypes = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
+
+                    IEnumerable<FilledRegionType> myPatterns = from pattern in fillRegionTypes.Cast<FilledRegionType>()
+                                                               where pattern.Name.Equals("Diagonal Crosshatch")
+                                                               select pattern;
+
+                    int count = fillRegionTypes.Count();
+
+                    foreach (FloorModBlock blk in floorBlockOptions)
+                    {
+                        for (var i = 0; i < blk.PlacedMods.Count; i++)
+                        {
+                            List<CurveLoop> profilelps = new List<CurveLoop>();
+
+                            ModOption currentMod = blk.PlacedMods[i];
+                            XYPosition currentModBasePos = blk.PlacedModsBasePosition[i];
+
+                            List<XYPosition> currentModGlobalPoints = blk.PlacedModsOuterPosition[i];
+
+                            List<Line> lines;
+
+                            XYPosition pt1 = currentModGlobalPoints[0];
+                            XYPosition pt2 = currentModGlobalPoints[1];
+                            XYPosition pt3 = currentModGlobalPoints[2];
+                            XYPosition pt4 = currentModGlobalPoints[3];
+
+                            CurveLoop profilelp = createCurveLoop(currentModGlobalPoints, elevation, out lines);
+
+                            profilelps.Add(profilelp);
+
+                            FilledRegion filledRegion = FilledRegion.Create(_doc, fillRegionTypes.FirstElementId(), vplan.Id, profilelps);
+                        }
+                    }
+
+
+                    //foreach (FilledRegionType frt in fillRegionTypes)
+                    //{
+                    //    List<CurveLoop> profileloops = new List<CurveLoop>();
+
+                    //    //XYZ[] points = new XYZ[5];
+                    //    //points[0] = new XYZ(0.0, 0.0, 0.0);
+                    //    //points[1] = new XYZ(10.0, 0.0, 0.0);
+                    //    //points[2] = new XYZ(10.0, 10.0, 0.0);
+                    //    //points[3] = new XYZ(0.0, 10.0, 0.0);
+                    //    //points[4] = new XYZ(0.0, 0.0, 0.0);
+
+                    //    foreach(FloorModBlock blk in floorBlockOptions)
+                    //    {
+                    //        for (var i = 0; i < blk.PlacedMods.Count; i++)
+                    //        {
+                    //            List<CurveLoop> profilelps = new List<CurveLoop>();
+
+                    //            ModOption currentMod = blk.PlacedMods[i];
+                    //            XYPosition currentModBasePos = blk.PlacedModsBasePosition[i];
+                    //            List<XYPosition> currentModGlobalPoints = blk.PlacedModsOuterPosition[i];
+
+                    //            List<Line> lines;
+                    //            CurveLoop profilelp = createCurveLoop(currentModGlobalPoints, elevation, out lines);
+
+                    //            profilelps.Add(profilelp);
+
+                    //            FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
+                    //        }
+                    //    }
+
+
+                        //CurveLoop profileloop = new CurveLoop();
+
+                        //for (int i = 0; i < 4; i++)
+                        //{
+                        //    Line line = Line.CreateBound(points[i], points[i + 1]);
+
+                        //    profileloop.Append(line);
+                        //}
+                        //profileloops.Add(profileloop);
+
+                        //Line geomLine1 = Line.CreateBound(first, second);
+                        //Line geomLine2 = Line.CreateBound(second, third);
+                        //Line geomLine3 = Line.CreateBound(third, fourth);
+                        //Line geomLine4 = Line.CreateBound(fourth, first);
+
+                        //profileloop.Append(geomLine1);
+                        //profileloop.Append(geomLine2);
+                        //profileloop.Append(geomLine3);
+                        //profileloop.Append(geomLine4);
+
+                        //profileloops.Add(profileloop);
+
+
+                        //ElementId activeViewId = _doc.ActiveView.Id;
+
+                        //FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
+
+                        //break;
+                    //}
+
+                    createRegion.Commit();
+                }
 
             }
             catch (Exception ex)
@@ -310,6 +394,63 @@ namespace Stacker.Commands
 
         }
 
+
+
+
+
+        private CurveLoop createCurveLoop(List<XYPosition> xyPoints, double elevation, out List<Line> lines)
+        {
+            CurveLoop curveLoop = new CurveLoop();
+            lines = new List<Line>();
+
+            for (var i = 0; i < xyPoints.Count; i++)
+            {
+                XYPosition p1;
+                XYPosition p2;
+                XYZ pt1;
+                XYZ pt2;
+                Line line;
+
+                //If only two points are present, then create single line
+                if (xyPoints.Count == 2)
+                {
+                    p1 = xyPoints[i];
+                    p2 = xyPoints[i + 1];
+
+                    pt1 = new XYZ(p1.X, p1.Y, elevation);
+                    pt2 = new XYZ(p2.X, p2.Y, elevation);
+                    line = Line.CreateBound(pt1, pt2);
+
+                    lines.Add(line);
+                    curveLoop.Append(line);
+
+                    break;
+                }
+
+                //If more than two points exist then create a loop
+                if (i == xyPoints.Count - 1)
+                {
+                    p1 = xyPoints[i];
+                    p2 = xyPoints[0];
+                }
+                else
+                {
+                    p1 = xyPoints[i];
+                    p2 = xyPoints[i + 1];
+                }
+
+                pt1 = new XYZ(p1.X, p1.Y, elevation);
+                pt2 = new XYZ(p2.X, p2.Y, elevation);
+                line = Line.CreateBound(pt1, pt2);
+
+                lines.Add(line);
+                curveLoop.Append(line);
+            }
+
+
+            return curveLoop;
+
+        }
 
         private CurveArray createCurves(List<XYPosition> xyPoints, double elevation, out List<Line> lines)
         {

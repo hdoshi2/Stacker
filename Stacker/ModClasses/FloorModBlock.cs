@@ -10,30 +10,31 @@ namespace Stacker.ModClasses
     {
         public string Name;
 
-        XYPosition GlobalBasePt;
+        public XYPosition GlobalBasePt;
 
-        XYPosition NextAvailableBasePt;
+        public XYPosition NextAvailableBasePt;
 
-        List<XYPosition> OuterModBlockPts;
+        public List<XYPosition> OuterModBlockPts;
 
-        double TotalBlockWidth;
+        public double TotalBlockWidth;
 
-        double TotalBlockLength;
+        public double TotalBlockLength;
 
-        double SFTotal;
+        public double SFTotal;
 
-        double SFAvailable;
+        public double SFAvailable;
 
-        double AvailableBlockLength;
+        public double AvailableBlockLength;
 
 
 
-        int PlacedModCount;
+        public int PlacedModCount;
 
-        Dictionary<int, ModOption> PlacedMods;
+        public Dictionary<int, ModOption> PlacedMods;
 
-        Dictionary<int, XYPosition> PlacedModsBasePosition;
+        public Dictionary<int, XYPosition> PlacedModsBasePosition;
 
+        public Dictionary<int, List<XYPosition>> PlacedModsOuterPosition;
 
 
         public FloorModBlock(string name, XYPosition globalBasePt, double totalBlockWidth, double totalBlockLength)
@@ -53,7 +54,7 @@ namespace Stacker.ModClasses
             PlacedModCount = 0;
             PlacedMods = new Dictionary<int, ModOption>();
             PlacedModsBasePosition = new Dictionary<int, XYPosition>();
-
+            PlacedModsOuterPosition = new Dictionary<int, List<XYPosition>>();
 
             //
             //Create Outer Coordinates of the Block
@@ -74,22 +75,35 @@ namespace Stacker.ModClasses
 
 
 
+        public bool ValidateBlockAdd(ModOption modToAdd)
+        {
+            ModGeometry modGeometry = modToAdd.Geometry;
+
+            if (AvailableBlockLength < modGeometry.TotalModWidth)
+            {
+                return false;
+            }
+
+            if (TotalBlockWidth < modGeometry.TotalModLength)
+            {
+                return false;
+            }
+
+            if (SFTotal < modGeometry.TotalModArea)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
 
         public int AddBlock(ModOption modToAdd)
         {
             var modGeometry = modToAdd.Geometry;
 
-            if(AvailableBlockLength < modGeometry.TotalModWidth)
-            {
-                return 0;
-            }
-
-            if(TotalBlockWidth < modGeometry.TotalModLength)
-            {
-                return 0;
-            }
-
-            if (SFTotal < modGeometry.TotalModArea)
+            if(ValidateBlockAdd(modToAdd) == false)
             {
                 return 0;
             }
@@ -97,8 +111,24 @@ namespace Stacker.ModClasses
             PlacedMods[PlacedModCount] = modToAdd;
             PlacedModsBasePosition[PlacedModCount] = NextAvailableBasePt;
 
-            NextAvailableBasePt.X = modGeometry.TotalModWidth;
-            AvailableBlockLength = AvailableBlockLength - modGeometry.TotalModLength;
+            List<XYPosition> modGlobalPts = new List<XYPosition>();
+
+            XYPosition origin = new XYPosition(NextAvailableBasePt.X, NextAvailableBasePt.Y);
+            XYPosition topLeft = new XYPosition(NextAvailableBasePt.X, NextAvailableBasePt.Y + modToAdd.UnitModLength);
+            XYPosition topRight = new XYPosition(NextAvailableBasePt.X + modToAdd.Geometry.TotalModWidth, NextAvailableBasePt.Y + modToAdd.Geometry.TotalModLength);
+            XYPosition bottomRight = new XYPosition(NextAvailableBasePt.X + modToAdd.Geometry.TotalModWidth, NextAvailableBasePt.Y);
+
+            modGlobalPts.Add(origin);
+            modGlobalPts.Add(topLeft);
+            modGlobalPts.Add(topRight);
+            modGlobalPts.Add(bottomRight);
+
+            PlacedModsOuterPosition[PlacedModCount] = modGlobalPts;
+
+
+
+            NextAvailableBasePt.X = NextAvailableBasePt.X + modGeometry.TotalModWidth;
+            AvailableBlockLength = AvailableBlockLength - modGeometry.TotalModWidth;
             SFAvailable = SFAvailable - modGeometry.TotalModArea;
 
             PlacedModCount++;
