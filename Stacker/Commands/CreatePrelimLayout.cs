@@ -18,14 +18,14 @@ namespace Stacker
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             //Get UIDocument
-            UIDocument uidoc = commandData.Application.ActiveUIDocument;
-            Document _doc = uidoc.Document;
+            UIDocument _uidoc = commandData.Application.ActiveUIDocument;
+            Document _doc = _uidoc.Document;
 
 
             try
             {
 
-                CreatePrelimLayoutForm layoutForm = new CreatePrelimLayoutForm(_doc);
+                CreatePrelimLayoutForm layoutForm = new CreatePrelimLayoutForm(_doc, _uidoc);
 
                 layoutForm.ShowDialog();
 

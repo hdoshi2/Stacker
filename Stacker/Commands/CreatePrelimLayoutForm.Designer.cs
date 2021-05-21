@@ -71,14 +71,17 @@ namespace Stacker.Commands
             this.label8 = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
             this.gbModLimitations = new System.Windows.Forms.GroupBox();
-            this.tbModLengthMax = new System.Windows.Forms.TextBox();
-            this.tbModLengthMin = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
             this.tbModWidthMax = new System.Windows.Forms.TextBox();
             this.tbModWidthMin = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.tbModLengthMax = new System.Windows.Forms.TextBox();
+            this.tbModLengthMin = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.btnFixedWidth = new System.Windows.Forms.TextBox();
+            this.btnDeleteGeom = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -117,6 +120,7 @@ namespace Stacker.Commands
             this.tbLength.Name = "tbLength";
             this.tbLength.Size = new System.Drawing.Size(39, 20);
             this.tbLength.TabIndex = 1;
+            this.tbLength.Text = "120";
             // 
             // lblLength
             // 
@@ -133,6 +137,7 @@ namespace Stacker.Commands
             this.tbWidth.Name = "tbWidth";
             this.tbWidth.Size = new System.Drawing.Size(39, 20);
             this.tbWidth.TabIndex = 3;
+            this.tbWidth.Text = "60";
             // 
             // label1
             // 
@@ -373,6 +378,7 @@ namespace Stacker.Commands
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnDeleteGeom);
             this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.textBox3);
             this.groupBox1.Controls.Add(this.textBox4);
@@ -534,6 +540,8 @@ namespace Stacker.Commands
             // 
             // gbModLimitations
             // 
+            this.gbModLimitations.Controls.Add(this.label20);
+            this.gbModLimitations.Controls.Add(this.btnFixedWidth);
             this.gbModLimitations.Controls.Add(this.tbModWidthMax);
             this.gbModLimitations.Controls.Add(this.tbModWidthMin);
             this.gbModLimitations.Controls.Add(this.label19);
@@ -549,30 +557,30 @@ namespace Stacker.Commands
             this.gbModLimitations.TabStop = false;
             this.gbModLimitations.Text = "Modular Limitations";
             // 
-            // tbModLengthMax
+            // tbModWidthMax
             // 
-            this.tbModLengthMax.Location = new System.Drawing.Point(123, 39);
-            this.tbModLengthMax.Name = "tbModLengthMax";
-            this.tbModLengthMax.ReadOnly = true;
-            this.tbModLengthMax.Size = new System.Drawing.Size(39, 20);
-            this.tbModLengthMax.TabIndex = 15;
+            this.tbModWidthMax.Location = new System.Drawing.Point(123, 69);
+            this.tbModWidthMax.Name = "tbModWidthMax";
+            this.tbModWidthMax.ReadOnly = true;
+            this.tbModWidthMax.Size = new System.Drawing.Size(39, 20);
+            this.tbModWidthMax.TabIndex = 20;
             // 
-            // tbModLengthMin
+            // tbModWidthMin
             // 
-            this.tbModLengthMin.Location = new System.Drawing.Point(73, 39);
-            this.tbModLengthMin.Name = "tbModLengthMin";
-            this.tbModLengthMin.ReadOnly = true;
-            this.tbModLengthMin.Size = new System.Drawing.Size(39, 20);
-            this.tbModLengthMin.TabIndex = 14;
+            this.tbModWidthMin.Location = new System.Drawing.Point(73, 69);
+            this.tbModWidthMin.Name = "tbModWidthMin";
+            this.tbModWidthMin.ReadOnly = true;
+            this.tbModWidthMin.Size = new System.Drawing.Size(39, 20);
+            this.tbModWidthMin.TabIndex = 19;
             // 
-            // label16
+            // label19
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(7, 42);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(58, 13);
-            this.label16.TabIndex = 11;
-            this.label16.Text = "Length (ft):";
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(8, 72);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(53, 13);
+            this.label19.TabIndex = 18;
+            this.label19.Text = "Width (ft):";
             // 
             // label17
             // 
@@ -596,30 +604,58 @@ namespace Stacker.Commands
             this.label18.TabIndex = 16;
             this.label18.Text = "MIN";
             // 
-            // label19
+            // label16
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(8, 72);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(53, 13);
-            this.label19.TabIndex = 18;
-            this.label19.Text = "Width (ft):";
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(7, 42);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(58, 13);
+            this.label16.TabIndex = 11;
+            this.label16.Text = "Length (ft):";
             // 
-            // tbModWidthMax
+            // tbModLengthMax
             // 
-            this.tbModWidthMax.Location = new System.Drawing.Point(123, 69);
-            this.tbModWidthMax.Name = "tbModWidthMax";
-            this.tbModWidthMax.ReadOnly = true;
-            this.tbModWidthMax.Size = new System.Drawing.Size(39, 20);
-            this.tbModWidthMax.TabIndex = 20;
+            this.tbModLengthMax.Location = new System.Drawing.Point(123, 39);
+            this.tbModLengthMax.Name = "tbModLengthMax";
+            this.tbModLengthMax.ReadOnly = true;
+            this.tbModLengthMax.Size = new System.Drawing.Size(39, 20);
+            this.tbModLengthMax.TabIndex = 15;
             // 
-            // tbModWidthMin
+            // tbModLengthMin
             // 
-            this.tbModWidthMin.Location = new System.Drawing.Point(73, 69);
-            this.tbModWidthMin.Name = "tbModWidthMin";
-            this.tbModWidthMin.ReadOnly = true;
-            this.tbModWidthMin.Size = new System.Drawing.Size(39, 20);
-            this.tbModWidthMin.TabIndex = 19;
+            this.tbModLengthMin.Location = new System.Drawing.Point(73, 39);
+            this.tbModLengthMin.Name = "tbModLengthMin";
+            this.tbModLengthMin.ReadOnly = true;
+            this.tbModLengthMin.Size = new System.Drawing.Size(39, 20);
+            this.tbModLengthMin.TabIndex = 14;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(8, 103);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(72, 13);
+            this.label20.TabIndex = 12;
+            this.label20.Text = "Set Width (ft):";
+            // 
+            // btnFixedWidth
+            // 
+            this.btnFixedWidth.Location = new System.Drawing.Point(123, 100);
+            this.btnFixedWidth.Name = "btnFixedWidth";
+            this.btnFixedWidth.Size = new System.Drawing.Size(39, 20);
+            this.btnFixedWidth.TabIndex = 11;
+            this.btnFixedWidth.Text = "12";
+            // 
+            // btnDeleteGeom
+            // 
+            this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteGeom.Location = new System.Drawing.Point(312, 16);
+            this.btnDeleteGeom.Name = "btnDeleteGeom";
+            this.btnDeleteGeom.Size = new System.Drawing.Size(57, 30);
+            this.btnDeleteGeom.TabIndex = 17;
+            this.btnDeleteGeom.Text = "Delete";
+            this.btnDeleteGeom.UseVisualStyleBackColor = true;
+            this.btnDeleteGeom.Click += new System.EventHandler(this.btnDeleteGeom_Click);
             // 
             // CreatePrelimLayoutForm
             // 
@@ -700,5 +736,8 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox tbModLengthMax;
         private System.Windows.Forms.TextBox tbModLengthMin;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox btnFixedWidth;
+        private System.Windows.Forms.Button btnDeleteGeom;
     }
 }

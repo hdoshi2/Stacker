@@ -34,12 +34,14 @@ namespace Stacker.Commands
         public int Priority2Bed;
 
         private Document _doc;
+        private UIDocument _uidoc;
 
-        public CreatePrelimLayoutForm(Document doc)
+        public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
 
             _doc = doc;
+            _uidoc = uidoc;
 
             PodLengthMin = 20;
             PodLengthMax = 35;
@@ -89,15 +91,38 @@ namespace Stacker.Commands
             double totalSF = FloorOverallSquareFootage;
             double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
 
-            //Determine if 2 Tier or 1 Tier
-                //Place Hallway
-                    //Middle Hallway
-                    //Edge Hallway
-            
-            
         }
 
 
+
+        bool levelBuilt = false;
+        Dictionary<string, List<ElementId>> elementsBuilt = new Dictionary<string, List<ElementId>>();
+        Level level = null;
+        ViewPlan vplan = null;
+
+        private void btnDeleteGeom_Click(object sender, EventArgs e)
+        {
+
+            if (elementsBuilt.Count > 0)
+            {
+                using (var transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
+                {
+                    transDeleteOldMods.Start();
+
+                    foreach (var elemCat in elementsBuilt)
+                    {
+                        foreach (var elem in elemCat.Value)
+                        {
+                            _doc.Delete(elem);
+                        }
+                    }
+
+                    elementsBuilt = new Dictionary<string, List<ElementId>>();
+
+                    transDeleteOldMods.Commit();
+                }
+            }
+        }
 
 
         /// <summary>
@@ -109,12 +134,16 @@ namespace Stacker.Commands
         {
             try
             {
+                FloorOverallLength = Convert.ToDouble(tbLength.Text);
+                FloorOverallWidth = Convert.ToDouble(tbWidth.Text);
+                FloorHallwayWidth = Convert.ToDouble(tbHallwayWidth.Text);
+
+                double fixedModWidth = Convert.ToDouble(btnFixedWidth.Text);
 
                 // The elevation to apply to the new level
                 double elevation = 20.0;
 
                 // Begin to create a level
-                Level level;
                 List<Level> levels = new FilteredElementCollector(_doc).OfClass(typeof(Level)).Cast<Level>().ToList();
 
 
@@ -123,28 +152,62 @@ namespace Stacker.Commands
                     .Cast<ViewFamilyType>()
                     .FirstOrDefault<ViewFamilyType>(x => ViewFamily.FloorPlan == x.ViewFamily);
 
-                ViewPlan vplan;
+                
 
-                using (var transBuildLevels = new Transaction(_doc, "Build Levels"))
+                if (!levelBuilt)
                 {
-                    transBuildLevels.Start();
+                    using (var transBuildLevels = new Transaction(_doc, "Mod: Build Levels"))
+                    {
+                        transBuildLevels.Start();
 
-                    level = Level.Create(_doc, elevation);
+                        level = Level.Create(_doc, elevation);
 
-                    if (null == level)
-                        throw new Exception("Create a new level failed.");
+                        if (null == level)
+                            throw new Exception("Create a new level failed.");
 
-                    // Change the level name
-                    level.Name = "Mod Level 1";
+                        // Change the level name
+                        level.Name = "Mod Level 1";
 
+                        //Create a New View
+                        vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
+                        vplan.Name = level.Name + " - TEST";
 
-                    //Create a New View
-                    vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
-                    vplan.Name = level.Name + " - TEST";
+                        levelBuilt = true;
 
-                    transBuildLevels.Commit();
+                        
+
+                        transBuildLevels.Commit();
+                    }
                 }
 
+
+                if(_doc.ActiveView != vplan)
+                {
+                    _uidoc.ActiveView = vplan;
+                }
+                
+
+
+
+                if (elementsBuilt.Count > 0)
+                {
+                    using (var transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
+                    {
+                        transDeleteOldMods.Start();
+
+                        foreach(var elemCat in elementsBuilt)
+                        {
+                            foreach(var elem in elemCat.Value)
+                            {
+                                _doc.Delete(elem);
+                            }
+                        }
+
+                        elementsBuilt = new Dictionary<string, List<ElementId>>();
+
+                        transDeleteOldMods.Commit();
+                    }
+                }
 
 
 
@@ -181,11 +244,12 @@ namespace Stacker.Commands
                 // The normal vector (0,0,1) that must be perpendicular to the profile.
                 XYZ normal = XYZ.BasisZ;
 
-                using (var transCreateFloorView = new Transaction(_doc, "Create Floor View"))
+                using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor View"))
                 {
                     transCreateFloorView.Start();
 
                     Floor newFloor = _doc.Create.NewFloor(floorEdgeCurveArray, floorType, level, true, normal);
+                    elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
 
                     transCreateFloorView.Commit();
                 }
@@ -200,20 +264,28 @@ namespace Stacker.Commands
                                     .Cast<WallType>().FirstOrDefault();
 
 
-                using (var transCreatewalls = new Transaction(_doc, "Create Walls"))
+                using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
                 {
                     transCreatewalls.Start();
 
-                    foreach(var line in hallwayLines)
+                    var wallsBuilt = new List<ElementId>();
+
+                    foreach (var line in hallwayLines)
                     {
                         var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
                         wall.WallType = wType;
+
+                        wallsBuilt.Add(wall.Id);
                     }
 
                     foreach (var line in floorEdgeLines)
                     {
                         var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+
+                        wallsBuilt.Add(wall.Id);
                     }
+
+                    elementsBuilt["Walls - Primary"] = wallsBuilt;
 
 
                     transCreatewalls.Commit();
@@ -254,21 +326,21 @@ namespace Stacker.Commands
 
                     FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {count.ToString()}", currentBlockBasePt, floorLayout.OverallFloorWidth, floorLayout.OverallFloorLength);
 
-                    while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[15]))
+                    while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[fixedModWidth]))
                     {
-                        currentBlockOption.AddBlock(optionsTwoBed[15]);
+                        currentBlockOption.AddBlock(optionsTwoBed[fixedModWidth]);
                         count++;
                     }
 
-                    while (currentBlockOption.ValidateBlockAdd(optionsOneBed[15]))
+                    while (currentBlockOption.ValidateBlockAdd(optionsOneBed[fixedModWidth]))
                     {
-                        currentBlockOption.AddBlock(optionsOneBed[15]);
+                        currentBlockOption.AddBlock(optionsOneBed[fixedModWidth]);
                         count++;
                     }
 
-                    while (currentBlockOption.ValidateBlockAdd(optionsStudio[15]))
+                    while (currentBlockOption.ValidateBlockAdd(optionsStudio[fixedModWidth]))
                     {
-                        currentBlockOption.AddBlock(optionsStudio[15]);
+                        currentBlockOption.AddBlock(optionsStudio[fixedModWidth]);
                         count++;
                     }
 
@@ -282,7 +354,7 @@ namespace Stacker.Commands
 
 
 
-                using (var createRegion = new Transaction(_doc, "Create Region"))
+                using (var createRegion = new Transaction(_doc, "Mod: Create Region"))
                 {
                     createRegion.Start();
 
@@ -292,7 +364,38 @@ namespace Stacker.Commands
                                                                where pattern.Name.Equals("Diagonal Crosshatch")
                                                                select pattern;
 
+                    FilledRegionType diagonalPattern = (from pattern in fillRegionTypes.Cast<FilledRegionType>()
+                                                        where pattern.Name.Equals("Diagonal Crosshatch")
+                                                        select pattern).First();
+
+                    FilledRegionType solidPattern = (from pattern in fillRegionTypes.Cast<FilledRegionType>()
+                                                        where pattern.Name.Equals("Diagonal Crosshatch")
+                                                        select pattern).First();
+
+                    //FillPatternElement diagonalPattern = (from pattern in fillRegionTypes.Cast<FillPatternElement>()
+                    //                                   where pattern.Name.Equals("Diagonal Crosshatch")
+                    //                                   select pattern).First();
+
+                    //FillPatternElement solidPattern = (from pattern in fillRegionTypes.Cast<FillPatternElement>()
+                    //                                      where pattern.Name.Equals("Solid")
+                    //                                      select pattern).First();
+
+
+                    FilledRegionType newPattern0 = solidPattern.Duplicate("BedStudio") as FilledRegionType;
+                    FilledRegionType newPattern1 = solidPattern.Duplicate("BedOne") as FilledRegionType;
+                    FilledRegionType newPattern2 = solidPattern.Duplicate("BedTwo") as FilledRegionType;
+
+                    newPattern0.BackgroundPatternColor = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
+                    newPattern1.BackgroundPatternColor = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
+                    newPattern2.BackgroundPatternColor = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
+
+                    newPattern0.BackgroundPatternId = solidPattern.Id;
+                    newPattern1.BackgroundPatternId = solidPattern.Id;
+                    newPattern2.BackgroundPatternId = solidPattern.Id;
+
+
                     int count = fillRegionTypes.Count();
+                    var regionsBuilt = new List<ElementId>();
 
                     foreach (FloorModBlock blk in floorBlockOptions)
                     {
@@ -317,72 +420,23 @@ namespace Stacker.Commands
                             profilelps.Add(profilelp);
 
                             FilledRegion filledRegion = FilledRegion.Create(_doc, fillRegionTypes.FirstElementId(), vplan.Id, profilelps);
+
+                            regionsBuilt.Add(filledRegion.Id);
                         }
                     }
 
-
-                    //foreach (FilledRegionType frt in fillRegionTypes)
-                    //{
-                    //    List<CurveLoop> profileloops = new List<CurveLoop>();
-
-                    //    //XYZ[] points = new XYZ[5];
-                    //    //points[0] = new XYZ(0.0, 0.0, 0.0);
-                    //    //points[1] = new XYZ(10.0, 0.0, 0.0);
-                    //    //points[2] = new XYZ(10.0, 10.0, 0.0);
-                    //    //points[3] = new XYZ(0.0, 10.0, 0.0);
-                    //    //points[4] = new XYZ(0.0, 0.0, 0.0);
-
-                    //    foreach(FloorModBlock blk in floorBlockOptions)
-                    //    {
-                    //        for (var i = 0; i < blk.PlacedMods.Count; i++)
-                    //        {
-                    //            List<CurveLoop> profilelps = new List<CurveLoop>();
-
-                    //            ModOption currentMod = blk.PlacedMods[i];
-                    //            XYPosition currentModBasePos = blk.PlacedModsBasePosition[i];
-                    //            List<XYPosition> currentModGlobalPoints = blk.PlacedModsOuterPosition[i];
-
-                    //            List<Line> lines;
-                    //            CurveLoop profilelp = createCurveLoop(currentModGlobalPoints, elevation, out lines);
-
-                    //            profilelps.Add(profilelp);
-
-                    //            FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
-                    //        }
-                    //    }
-
-
-                        //CurveLoop profileloop = new CurveLoop();
-
-                        //for (int i = 0; i < 4; i++)
-                        //{
-                        //    Line line = Line.CreateBound(points[i], points[i + 1]);
-
-                        //    profileloop.Append(line);
-                        //}
-                        //profileloops.Add(profileloop);
-
-                        //Line geomLine1 = Line.CreateBound(first, second);
-                        //Line geomLine2 = Line.CreateBound(second, third);
-                        //Line geomLine3 = Line.CreateBound(third, fourth);
-                        //Line geomLine4 = Line.CreateBound(fourth, first);
-
-                        //profileloop.Append(geomLine1);
-                        //profileloop.Append(geomLine2);
-                        //profileloop.Append(geomLine3);
-                        //profileloop.Append(geomLine4);
-
-                        //profileloops.Add(profileloop);
-
-
-                        //ElementId activeViewId = _doc.ActiveView.Id;
-
-                        //FilledRegion filledRegion = FilledRegion.Create(_doc, frt.Id, vplan.Id, profileloops);
-
-                        //break;
-                    //}
+                    elementsBuilt["Mod Regions"] = regionsBuilt;
 
                     createRegion.Commit();
+                }
+
+                List<UIView> openViews = _uidoc.GetOpenUIViews().ToList();
+                foreach (var v in openViews)
+                {
+                    if (v.ViewId == vplan.Id)
+                    {
+                        v.ZoomToFit();
+                    }
                 }
 
             }
