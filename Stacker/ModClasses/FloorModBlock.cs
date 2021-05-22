@@ -14,7 +14,7 @@ namespace Stacker.ModClasses
 
         public XYPosition NextAvailableBasePt;
 
-        public List<XYPosition> OuterModBlockPts;
+        public XYPosition4Corners OuterModBlockPts;
 
         public double TotalBlockWidth;
 
@@ -24,9 +24,9 @@ namespace Stacker.ModClasses
 
         public double SFModAvailable;
 
+        public double BlockLengthAvailable;
 
-        public double AvailableBlockLength;
-
+        public double BlockLengthUsed;
 
 
         public int PlacedModCount;
@@ -35,7 +35,7 @@ namespace Stacker.ModClasses
 
         public Dictionary<int, XYPosition> PlacedModsBasePosition;
 
-        public Dictionary<int, List<XYPosition>> PlacedModsOuterPosition;
+        public Dictionary<int, XYPosition4Corners> PlacedModsOuterPosition;
 
         public Dictionary<int, double> SFBlock;
 
@@ -50,7 +50,8 @@ namespace Stacker.ModClasses
 
             TotalBlockWidth = totalBlockWidth;
             TotalBlockLength = totalBlockLength;
-            AvailableBlockLength = TotalBlockLength;
+            BlockLengthAvailable = TotalBlockLength;
+            BlockLengthUsed = 0;
 
             SFModTotal = totalBlockWidth * TotalBlockLength;
             SFModAvailable = totalBlockWidth * TotalBlockLength;
@@ -58,23 +59,20 @@ namespace Stacker.ModClasses
             PlacedModCount = 0;
             PlacedMods = new Dictionary<int, ModOption>();
             PlacedModsBasePosition = new Dictionary<int, XYPosition>();
-            PlacedModsOuterPosition = new Dictionary<int, List<XYPosition>>();
+            PlacedModsOuterPosition = new Dictionary<int, XYPosition4Corners>();
             SFBlock = new Dictionary<int, double>();
 
             //
             //Create Outer Coordinates of the Block
             //
-            OuterModBlockPts = new List<XYPosition>();
+            OuterModBlockPts = new XYPosition4Corners();
 
             XYPosition origin = GlobalBasePt;
             XYPosition topLeft = new XYPosition(GlobalBasePt.X, GlobalBasePt.Y + TotalBlockWidth);
             XYPosition topRight = new XYPosition(GlobalBasePt.X + TotalBlockLength, GlobalBasePt.Y + TotalBlockWidth);
             XYPosition bottomRight = new XYPosition(GlobalBasePt.X + TotalBlockLength, GlobalBasePt.Y);
 
-            OuterModBlockPts.Add(origin);
-            OuterModBlockPts.Add(topLeft);
-            OuterModBlockPts.Add(topRight);
-            OuterModBlockPts.Add(bottomRight);
+            OuterModBlockPts.Add4Points(origin, topLeft, topRight, bottomRight);
 
         }
 
@@ -84,7 +82,7 @@ namespace Stacker.ModClasses
         {
             ModGeometry modGeometry = modToAdd.Geometry;
 
-            if (AvailableBlockLength < modGeometry.TotalModWidth)
+            if (BlockLengthAvailable < modGeometry.TotalModWidth)
             {
                 return false;
             }
@@ -116,22 +114,22 @@ namespace Stacker.ModClasses
             PlacedMods[PlacedModCount] = modToAdd;
             PlacedModsBasePosition[PlacedModCount] = NextAvailableBasePt;
 
-            List<XYPosition> modGlobalPts = new List<XYPosition>();
+            XYPosition4Corners modGlobalPoints = new XYPosition4Corners();
 
             XYPosition origin = new XYPosition(NextAvailableBasePt.X, NextAvailableBasePt.Y);
             XYPosition topLeft = new XYPosition(NextAvailableBasePt.X, NextAvailableBasePt.Y + modToAdd.UnitModLength);
             XYPosition topRight = new XYPosition(NextAvailableBasePt.X + modToAdd.Geometry.TotalModWidth, NextAvailableBasePt.Y + modToAdd.Geometry.TotalModLength);
             XYPosition bottomRight = new XYPosition(NextAvailableBasePt.X + modToAdd.Geometry.TotalModWidth, NextAvailableBasePt.Y);
 
-            modGlobalPts.Add(origin);
-            modGlobalPts.Add(topLeft);
-            modGlobalPts.Add(topRight);
-            modGlobalPts.Add(bottomRight);
+            modGlobalPoints.Add4Points(origin, topLeft, topRight, bottomRight);
 
-            PlacedModsOuterPosition[PlacedModCount] = modGlobalPts;
+            PlacedModsOuterPosition[PlacedModCount] = modGlobalPoints;
 
             NextAvailableBasePt.X = NextAvailableBasePt.X + modGeometry.TotalModWidth;
-            AvailableBlockLength = AvailableBlockLength - modGeometry.TotalModWidth;
+
+            BlockLengthAvailable = BlockLengthAvailable - modGeometry.TotalModWidth;
+            BlockLengthUsed = BlockLengthUsed + modToAdd.Geometry.TotalModWidth;
+
             SFModAvailable = SFModAvailable - modGeometry.TotalModArea;
 
             PlacedModCount++;

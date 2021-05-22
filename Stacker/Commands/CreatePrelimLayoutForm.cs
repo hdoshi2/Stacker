@@ -36,6 +36,8 @@ namespace Stacker.Commands
         private Document _doc;
         private UIDocument _uidoc;
 
+
+
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
@@ -231,14 +233,14 @@ namespace Stacker.Commands
                     CurveArray floorEdgeCurveArray = createCurves(floorEdgePoints, elevation, out floorEdgeLines);
 
 
-                    List<Line> hallwayLines = new List<Line>();
+                    //List<Line> hallwayLines = new List<Line>();
 
-                    foreach (List<XYPosition> hallway in floorHallwayPoints)
-                    {
-                        List<Line> hallwayLine = new List<Line>();
-                        createCurves(hallway, elevation, out hallwayLine);
-                        hallwayLines.AddRange(hallwayLine);
-                    }
+                    //foreach (List<XYPosition> hallway in floorHallwayPoints)
+                    //{
+                    //    List<Line> hallwayLine = new List<Line>();
+                    //    createCurves(hallway, elevation, out hallwayLine);
+                    //    hallwayLines.AddRange(hallwayLine);
+                    //}
 
 
 
@@ -253,15 +255,15 @@ namespace Stacker.Commands
                     // The normal vector (0,0,1) that must be perpendicular to the profile.
                     XYZ normal = XYZ.BasisZ;
 
-                    using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor View"))
-                    {
-                        transCreateFloorView.Start();
+                    //using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
+                    //{
+                    //    transCreateFloorView.Start();
 
-                        Floor newFloor = _doc.Create.NewFloor(floorEdgeCurveArray, floorType, level, true, normal);
-                        elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
+                    //    Floor newFloor = _doc.Create.NewFloor(floorEdgeCurveArray, floorType, level, true, normal);
+                    //    elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
 
-                        transCreateFloorView.Commit();
-                    }
+                    //    transCreateFloorView.Commit();
+                    //}
 
 
 
@@ -279,22 +281,22 @@ namespace Stacker.Commands
 
                         var wallsBuilt = new List<ElementId>();
 
-                        foreach (var line in hallwayLines)
-                        {
-                            var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
-                            wall.WallType = wType;
+                        //foreach (var line in hallwayLines)
+                        //{
+                        //    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                        //    wall.WallType = wType;
 
-                            wallsBuilt.Add(wall.Id);
-                        }
+                        //    wallsBuilt.Add(wall.Id);
+                        //}
 
-                        foreach (var line in floorEdgeLines)
-                        {
-                            var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                        //foreach (var line in floorEdgeLines)
+                        //{
+                        //    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
 
-                            wallsBuilt.Add(wall.Id);
-                        }
+                        //    wallsBuilt.Add(wall.Id);
+                        //}
 
-                        elementsBuilt["Walls - Primary"] = wallsBuilt;
+                        //elementsBuilt["Walls - Primary"] = wallsBuilt;
 
 
                         transCreatewalls.Commit();
@@ -362,6 +364,7 @@ namespace Stacker.Commands
                         {
                             currentBlockOption.AddBlock(optionsOneBed[fixedModWidth]);
                             percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                            
                             modsAdded++;
                         }
 
@@ -369,6 +372,7 @@ namespace Stacker.Commands
                         {
                             currentBlockOption.AddBlock(optionsStudio[fixedModWidth]);
                             percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                            
                             modsAdded++;
                         }
 
@@ -378,7 +382,26 @@ namespace Stacker.Commands
                     }
 
 
+                    FloorLayoutOption floorLayoutOptions = new FloorLayoutOption();
+                    foreach (FloorModBlock option in floorBlockOptions)
+                    {
+                        floorLayoutOptions.AddModBlock(option);
+                    }
 
+
+                    List<XYPosition> floorExtents = floorLayoutOptions.FloorOverallExtents.getXYPositions();
+
+                    CurveArray revisedfloorEdgeCurveArray = createCurves(floorExtents, elevation, out floorEdgeLines);
+
+                    using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
+                    {
+                        transCreateFloorView.Start();
+
+                        Floor newFloor = _doc.Create.NewFloor(revisedfloorEdgeCurveArray, floorType, level, true, normal);
+                        elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
+
+                        transCreateFloorView.Commit();
+                    }
 
 
 
@@ -387,10 +410,6 @@ namespace Stacker.Commands
                         createRegion.Start();
 
                         FilteredElementCollector fillRegionTypes = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
-
-                        IEnumerable<FilledRegionType> myPatterns = from pattern in fillRegionTypes.Cast<FilledRegionType>()
-                                                                   where pattern.Name.Equals("Diagonal Crosshatch")
-                                                                   select pattern;
 
                         FilledRegionType solidPattern = (from pattern in fillRegionTypes.Cast<FilledRegionType>()
                                                          where pattern.Name.Equals("Solid Black")
@@ -416,16 +435,16 @@ namespace Stacker.Commands
                                 ModOption currentMod = blk.PlacedMods[i];
                                 XYPosition currentModBasePos = blk.PlacedModsBasePosition[i];
 
-                                List<XYPosition> currentModGlobalPoints = blk.PlacedModsOuterPosition[i];
+                                XYPosition4Corners currentModGlobalPoints = blk.PlacedModsOuterPosition[i];
 
                                 List<Line> lines;
 
-                                XYPosition pt1 = currentModGlobalPoints[0];
-                                XYPosition pt2 = currentModGlobalPoints[1];
-                                XYPosition pt3 = currentModGlobalPoints[2];
-                                XYPosition pt4 = currentModGlobalPoints[3];
+                                XYPosition pt1 = currentModGlobalPoints.BottomLeft;
+                                XYPosition pt2 = currentModGlobalPoints.TopLeft;
+                                XYPosition pt3 = currentModGlobalPoints.TopRight;
+                                XYPosition pt4 = currentModGlobalPoints.BottomRight;
 
-                                CurveLoop profilelp = createCurveLoop(currentModGlobalPoints, elevation, out lines);
+                                CurveLoop profilelp = createCurveLoop(new List<XYPosition>() { pt1, pt2, pt3, pt4 }, elevation, out lines);
 
                                 profilelps.Add(profilelp);
 
@@ -466,6 +485,7 @@ namespace Stacker.Commands
 
                     FloorOverallLength = FloorOverallLength + 5;
                     _uidoc.RefreshActiveView();
+
                 }
 
                 

@@ -101,10 +101,18 @@ namespace Stacker.ModClasses
 
 
 
+
+
         public int TotalModBlocks;
         public Dictionary<int, XYPosition> ModBlockBasePt = new Dictionary<int, XYPosition>();
         public Dictionary<int, double> ModBlockWidth = new Dictionary<int, double>();
         public Dictionary<int, double> ModBlockLength = new Dictionary<int, double>();
+
+
+
+
+
+
 
         public FloorLayout(double overallFloorLength, double overallFloorWidth, double hallwayWidth)
         {
