@@ -389,44 +389,6 @@ namespace Stacker.Commands
                     FilledRegionType newPattern2 = findOrCreateSolidFieldRegions("BedTwo", colorTwoBed);
 
 
-
-                    //List<string> filledRegionPatters = new List<string>() { "BedStudio", "BedOne", "BedTwo" }
-
-
-                    //newPattern0 = new FilteredElementCollector(_doc)
-                    //                .OfClass(typeof(FilledRegionType))
-                    //                .Cast<FilledRegionType>()
-                    //                .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
-
-                    //newPattern1 = new FilteredElementCollector(_doc)
-                    //                .OfClass(typeof(FilledRegionType))
-                    //                .Cast<FilledRegionType>()
-                    //                .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
-
-                    //newPattern1 = new FilteredElementCollector(_doc)
-                    //                .OfClass(typeof(FilledRegionType))
-                    //                .Cast<FilledRegionType>()
-                    //                .FirstOrDefault(q => q.Name == "Solid Black") as FilledRegionType;
-
-
-                    //if (!levelBuilt)
-                    //{
-                    //    newPattern0 = solidPattern.Duplicate("BedStudio") as FilledRegionType;
-                    //    newPattern1 = solidPattern.Duplicate("BedOne") as FilledRegionType;
-                    //    newPattern2 = solidPattern.Duplicate("BedTwo") as FilledRegionType;
-
-                    //    newPattern0.BackgroundPatternColor = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
-                    //    newPattern1.BackgroundPatternColor = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
-                    //    newPattern2.BackgroundPatternColor = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
-
-                    //    newPattern0.ForegroundPatternColor = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
-                    //    newPattern1.ForegroundPatternColor = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
-                    //    newPattern2.ForegroundPatternColor = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
-                    //}
-
-
-
-                    int count = fillRegionTypes.Count();
                     var regionsBuilt = new List<ElementId>();
 
                     foreach (FloorModBlock blk in floorBlockOptions)
