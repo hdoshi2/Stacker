@@ -321,34 +321,39 @@ namespace Stacker.Commands
                 List<FloorModBlock> floorBlockOptions = new List<FloorModBlock>();
                 int floorBlockCount = 0;
 
-                foreach(var block in floorLayout.ModBlockBasePt)
+                for(var i = 1; i <= floorLayout.TotalModBlocks; i++)
                 {
-                    XYPosition currentBlockBasePt = block.Value;
-                    int count = 0;
 
-                    FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {count.ToString()}", currentBlockBasePt, floorLayout.OverallFloorWidth, floorLayout.OverallFloorLength);
+                    double floorBlockWidth = floorLayout.ModBlockWidth[i];
+                    double floorBlockLength = floorLayout.ModBlockLength[i];
+                    XYPosition currentBlockBasePt = floorLayout.ModBlockBasePt[i];
+
+                    int modsAdded = 0;
+
+                    FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {modsAdded.ToString()}", currentBlockBasePt, floorBlockWidth, floorBlockLength);
 
                     decimal roomRatio = 1;
 
                     while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[fixedModWidth]) && (roomRatio > Convert.ToDecimal(0.6)))
                     {
                         currentBlockOption.AddBlock(optionsTwoBed[fixedModWidth]);
-                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFAvailable), Convert.ToDecimal(currentBlockOption.SFTotal));
-                        count++;
+                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+
+                        modsAdded++;
                     }
 
                     while (currentBlockOption.ValidateBlockAdd(optionsOneBed[fixedModWidth]) && (roomRatio > Convert.ToDecimal(0.3)))
                     {
                         currentBlockOption.AddBlock(optionsOneBed[fixedModWidth]);
-                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFAvailable), Convert.ToDecimal(currentBlockOption.SFTotal));
-                        count++;
+                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                        modsAdded++;
                     }
 
                     while (currentBlockOption.ValidateBlockAdd(optionsStudio[fixedModWidth]))
                     {
                         currentBlockOption.AddBlock(optionsStudio[fixedModWidth]);
-                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFAvailable), Convert.ToDecimal(currentBlockOption.SFTotal));
-                        count++;
+                        roomRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                        modsAdded++;
                     }
 
 

@@ -20,9 +20,10 @@ namespace Stacker.ModClasses
 
         public double TotalBlockLength;
 
-        public double SFTotal;
+        public double SFModTotal;
 
-        public double SFAvailable;
+        public double SFModAvailable;
+
 
         public double AvailableBlockLength;
 
@@ -36,6 +37,9 @@ namespace Stacker.ModClasses
 
         public Dictionary<int, List<XYPosition>> PlacedModsOuterPosition;
 
+        public Dictionary<int, double> SFBlock;
+
+
 
         public FloorModBlock(string name, XYPosition globalBasePt, double totalBlockWidth, double totalBlockLength)
         {
@@ -48,13 +52,14 @@ namespace Stacker.ModClasses
             TotalBlockLength = totalBlockLength;
             AvailableBlockLength = TotalBlockLength;
 
-            SFTotal = totalBlockWidth * TotalBlockLength;
-            SFAvailable = totalBlockWidth * TotalBlockLength;
+            SFModTotal = totalBlockWidth * TotalBlockLength;
+            SFModAvailable = totalBlockWidth * TotalBlockLength;
 
             PlacedModCount = 0;
             PlacedMods = new Dictionary<int, ModOption>();
             PlacedModsBasePosition = new Dictionary<int, XYPosition>();
             PlacedModsOuterPosition = new Dictionary<int, List<XYPosition>>();
+            SFBlock = new Dictionary<int, double>();
 
             //
             //Create Outer Coordinates of the Block
@@ -89,7 +94,7 @@ namespace Stacker.ModClasses
                 return false;
             }
 
-            if (SFTotal < modGeometry.TotalModArea)
+            if (SFModTotal < modGeometry.TotalModArea)
             {
                 return false;
             }
@@ -125,11 +130,9 @@ namespace Stacker.ModClasses
 
             PlacedModsOuterPosition[PlacedModCount] = modGlobalPts;
 
-
-
             NextAvailableBasePt.X = NextAvailableBasePt.X + modGeometry.TotalModWidth;
             AvailableBlockLength = AvailableBlockLength - modGeometry.TotalModWidth;
-            SFAvailable = SFAvailable - modGeometry.TotalModArea;
+            SFModAvailable = SFModAvailable - modGeometry.TotalModArea;
 
             PlacedModCount++;
 
