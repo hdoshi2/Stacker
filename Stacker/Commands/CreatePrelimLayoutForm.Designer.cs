@@ -85,6 +85,7 @@ namespace Stacker.Commands
             this.label21 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
+            this.btnNext = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -372,6 +373,7 @@ namespace Stacker.Commands
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnNext);
             this.groupBox1.Controls.Add(this.btnDeleteGeom);
             this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.textBox3);
@@ -683,6 +685,17 @@ namespace Stacker.Commands
             this.textBox7.Size = new System.Drawing.Size(45, 20);
             this.textBox7.TabIndex = 20;
             // 
+            // btnNext
+            // 
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNext.Location = new System.Drawing.Point(312, 84);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(57, 30);
+            this.btnNext.TabIndex = 18;
+            this.btnNext.Text = "Next >>";
+            this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -768,5 +781,6 @@ namespace Stacker.Commands
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button btnNext;
     }
 }
