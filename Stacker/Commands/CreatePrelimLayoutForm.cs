@@ -145,7 +145,7 @@ namespace Stacker.Commands
                 double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
 
 
-                double fixedModWidth = Convert.ToDouble(btnFixedWidth.Text);
+                double fixedModWidth = Convert.ToDouble(tbFixedWidth.Text);
 
                 // The elevation to apply to the new level
                 double elevation = 20.0;
@@ -236,37 +236,6 @@ namespace Stacker.Commands
                     CurveArray floorEdgeCurveArray = createCurves(floorEdgePoints, elevation, out floorEdgeLines);
 
 
-                    //List<Line> hallwayLines = new List<Line>();
-
-                    //foreach (List<XYPosition> hallway in floorHallwayPoints)
-                    //{
-                    //    List<Line> hallwayLine = new List<Line>();
-                    //    createCurves(hallway, elevation, out hallwayLine);
-                    //    hallwayLines.AddRange(hallwayLine);
-                    //}
-
-
-
-
-
-                    // Get a floor type for floor creation
-                    FilteredElementCollector collector = new FilteredElementCollector(_doc);
-                    collector.OfClass(typeof(FloorType));
-
-                    FloorType floorType = collector.FirstElement() as FloorType;
-
-                    // The normal vector (0,0,1) that must be perpendicular to the profile.
-                    XYZ normal = XYZ.BasisZ;
-
-                    //using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
-                    //{
-                    //    transCreateFloorView.Start();
-
-                    //    Floor newFloor = _doc.Create.NewFloor(floorEdgeCurveArray, floorType, level, true, normal);
-                    //    elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
-
-                    //    transCreateFloorView.Commit();
-                    //}
 
 
 
@@ -274,36 +243,8 @@ namespace Stacker.Commands
 
 
 
-                    WallType wType = new FilteredElementCollector(_doc).OfClass(typeof(WallType))
-                                        .Cast<WallType>().FirstOrDefault();
 
 
-                    using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
-                    {
-                        transCreatewalls.Start();
-
-                        var wallsBuilt = new List<ElementId>();
-
-                        //foreach (var line in hallwayLines)
-                        //{
-                        //    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
-                        //    wall.WallType = wType;
-
-                        //    wallsBuilt.Add(wall.Id);
-                        //}
-
-                        //foreach (var line in floorEdgeLines)
-                        //{
-                        //    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
-
-                        //    wallsBuilt.Add(wall.Id);
-                        //}
-
-                        //elementsBuilt["Walls - Primary"] = wallsBuilt;
-
-
-                        transCreatewalls.Commit();
-                    }
 
 
 
@@ -407,6 +348,16 @@ namespace Stacker.Commands
                     {
                         transCreateFloorView.Start();
 
+                        // Get a floor type for floor creation
+                        FilteredElementCollector collector = new FilteredElementCollector(_doc);
+                        collector.OfClass(typeof(FloorType));
+
+                        FloorType floorType = collector.FirstElement() as FloorType;
+
+
+                        // The normal vector (0,0,1) that must be perpendicular to the profile.
+                        XYZ normal = XYZ.BasisZ;
+
                         Floor newFloor = _doc.Create.NewFloor(revisedfloorEdgeCurveArray, floorType, level, true, normal);
                         elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
 
@@ -430,6 +381,9 @@ namespace Stacker.Commands
                     using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
                     {
                         transCreatewalls.Start();
+
+                        WallType wType = new FilteredElementCollector(_doc).OfClass(typeof(WallType))
+                                            .Cast<WallType>().FirstOrDefault();
 
 
                         var wallsBuilt = new List<ElementId>();

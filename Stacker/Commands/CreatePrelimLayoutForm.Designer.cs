@@ -72,7 +72,7 @@ namespace Stacker.Commands
             this.btnClose = new System.Windows.Forms.Button();
             this.gbModLimitations = new System.Windows.Forms.GroupBox();
             this.label20 = new System.Windows.Forms.Label();
-            this.btnFixedWidth = new System.Windows.Forms.TextBox();
+            this.tbFixedWidth = new System.Windows.Forms.TextBox();
             this.tbModWidthMax = new System.Windows.Forms.TextBox();
             this.tbModWidthMin = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -548,7 +548,7 @@ namespace Stacker.Commands
             // gbModLimitations
             // 
             this.gbModLimitations.Controls.Add(this.label20);
-            this.gbModLimitations.Controls.Add(this.btnFixedWidth);
+            this.gbModLimitations.Controls.Add(this.tbFixedWidth);
             this.gbModLimitations.Controls.Add(this.tbModWidthMax);
             this.gbModLimitations.Controls.Add(this.tbModWidthMin);
             this.gbModLimitations.Controls.Add(this.label19);
@@ -573,13 +573,13 @@ namespace Stacker.Commands
             this.label20.TabIndex = 12;
             this.label20.Text = "Set Width (ft):";
             // 
-            // btnFixedWidth
+            // tbFixedWidth
             // 
-            this.btnFixedWidth.Location = new System.Drawing.Point(123, 100);
-            this.btnFixedWidth.Name = "btnFixedWidth";
-            this.btnFixedWidth.Size = new System.Drawing.Size(39, 20);
-            this.btnFixedWidth.TabIndex = 11;
-            this.btnFixedWidth.Text = "12";
+            this.tbFixedWidth.Location = new System.Drawing.Point(123, 100);
+            this.tbFixedWidth.Name = "tbFixedWidth";
+            this.tbFixedWidth.Size = new System.Drawing.Size(39, 20);
+            this.tbFixedWidth.TabIndex = 11;
+            this.tbFixedWidth.Text = "12";
             // 
             // tbModWidthMax
             // 
@@ -775,7 +775,7 @@ namespace Stacker.Commands
         private System.Windows.Forms.TextBox tbModLengthMax;
         private System.Windows.Forms.TextBox tbModLengthMin;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox btnFixedWidth;
+        private System.Windows.Forms.TextBox tbFixedWidth;
         private System.Windows.Forms.Button btnDeleteGeom;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.TextBox textBox6;
