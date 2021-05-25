@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Stacker.ModClasses.FloorLayout;
 
 namespace Stacker.ModClasses
 {
@@ -58,7 +59,6 @@ namespace Stacker.ModClasses
 
                         topRightX = topRight.X;
                         topRightY = topRight.Y;
-
                     }
 
 
@@ -82,15 +82,76 @@ namespace Stacker.ModClasses
 
             FloorOverallExtents = new XYPosition4Corners();
 
-            XYPosition bottomLeftFinal = new XYPosition(0, bottomLeftY);
+            XYPosition bottomLeftFinal = new XYPosition(0, 0);
             XYPosition topLeftFinal = new XYPosition(bottomLeftX, topRightY);
             XYPosition topRightFinal = new XYPosition(topRightX, topRightY);
             XYPosition bottomRightFinal = new XYPosition(topRightX, 0);
 
             FloorOverallExtents.Add4Points(bottomLeftFinal, topLeftFinal, topRightFinal, bottomRightFinal);
 
+            ActualTotalFloorWidth = topLeftFinal.Y - bottomLeftFinal.Y;
+            ActualTotalFloorLength = bottomRightFinal.X - bottomLeftFinal.X;
 
+            InternalHallwayPoints = determineModifiedHallwayPosition(block.FloorLayoutReference);
         }
+
+
+
+        private List<List<XYPosition>> determineModifiedHallwayPosition(FloorLayout floorLayout)
+        {
+            List<List<XYPosition>> internalHallwayPoints = new List<List<XYPosition>>();
+            
+            FloorLayout refFloorLayout = floorLayout;
+
+            if (refFloorLayout.FloorModStackScheme == ModStackType.Single)
+            {
+                refFloorLayout.TotalModBlocks = 1;
+
+                //Hallway Wall 2
+                var wallEnds2 = new List<XYPosition>();
+
+                XYPosition topPoint1 = new XYPosition(0, refFloorLayout.HallwayWidth);
+                XYPosition topPoint2 = new XYPosition(ActualTotalFloorLength, refFloorLayout.HallwayWidth);
+
+                wallEnds2.Add(topPoint1);
+                wallEnds2.Add(topPoint2);
+
+                internalHallwayPoints.Add(wallEnds2);
+
+            }
+            else if (refFloorLayout.FloorModStackScheme == ModStackType.Double)
+            {
+                refFloorLayout.TotalModBlocks = 2;
+
+                //Hallway Wall 1
+                var wallEnds1 = new List<XYPosition>();
+
+                XYPosition bottomPoint1 = new XYPosition(0, (refFloorLayout.OverallFloorWidth / 2) + (refFloorLayout.HallwayWidth / 2));
+                XYPosition bottomPoint2 = new XYPosition(ActualTotalFloorLength, (refFloorLayout.OverallFloorWidth / 2) + (refFloorLayout.HallwayWidth / 2));
+
+                wallEnds1.Add(bottomPoint1);
+                wallEnds1.Add(bottomPoint2);
+
+                internalHallwayPoints.Add(wallEnds1);
+
+                //Hallway Wall 2
+                var wallEnds2 = new List<XYPosition>();
+
+                XYPosition topPoint1 = new XYPosition(0, (refFloorLayout.OverallFloorWidth / 2) - (refFloorLayout.HallwayWidth / 2));
+                XYPosition topPoint2 = new XYPosition(ActualTotalFloorLength, (refFloorLayout.OverallFloorWidth / 2) - (refFloorLayout.HallwayWidth / 2));
+
+                wallEnds2.Add(topPoint1);
+                wallEnds2.Add(topPoint2);
+
+                internalHallwayPoints.Add(wallEnds2);
+
+            }
+
+            return internalHallwayPoints;
+        }
+
+
+
 
     }
 }

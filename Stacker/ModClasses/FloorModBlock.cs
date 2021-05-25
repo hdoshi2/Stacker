@@ -10,6 +10,8 @@ namespace Stacker.ModClasses
     {
         public string Name;
 
+        public FloorLayout FloorLayoutReference;
+
         public XYPosition GlobalBasePt;
 
         public XYPosition NextAvailableBasePt;
@@ -41,10 +43,11 @@ namespace Stacker.ModClasses
 
 
 
-        public FloorModBlock(string name, XYPosition globalBasePt, double totalBlockWidth, double totalBlockLength)
+        public FloorModBlock(string name, XYPosition globalBasePt, double totalBlockWidth, double totalBlockLength, FloorLayout floorLayout)
         {
             Name = name;
-            
+            FloorLayoutReference = floorLayout;
+
             GlobalBasePt = globalBasePt;
             NextAvailableBasePt = globalBasePt;
 
@@ -102,7 +105,7 @@ namespace Stacker.ModClasses
 
 
 
-        public int AddBlock(ModOption modToAdd)
+        public int AddModToBlock(ModOption modToAdd)
         {
             var modGeometry = modToAdd.Geometry;
 

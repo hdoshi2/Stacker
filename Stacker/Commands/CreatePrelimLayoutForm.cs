@@ -219,9 +219,12 @@ namespace Stacker.Commands
                             transDeleteOldMods.Commit();
                         }
                     }
-
-
-
+                    
+                    //
+                    //
+                    //Initialize Floor Layout
+                    //
+                    //
                     FloorLayout floorLayout = new FloorLayout(FloorOverallLength, FloorOverallWidth, FloorHallwayWidth);
 
                     List<XYPosition> floorEdgePoints = floorLayout.OverallFloorPoints;
@@ -304,6 +307,11 @@ namespace Stacker.Commands
 
 
 
+
+                    //
+                    //Create Base Mod Options
+                    //
+
                     ModBase modBaseStudio = new ModBase("Studio", 1, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
                     ModBase modBaseOneBed = new ModBase("OneBed", 2, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
                     ModBase modBaseTwoBed = new ModBase("TwoBed", 3, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
@@ -312,7 +320,9 @@ namespace Stacker.Commands
                     Dictionary<double, ModOption> optionsOneBed = new Dictionary<double, ModOption>();
                     Dictionary<double, ModOption> optionsTwoBed = new Dictionary<double, ModOption>();
 
-
+                    //
+                    //Create Mod Options of Varying Widths
+                    //
                     for (double i = PodWidthMin; i <= PodWidthMax; i++)
                     {
                         ModOption studio = new ModOption(i, modIdealLength, modBaseStudio);
@@ -339,7 +349,7 @@ namespace Stacker.Commands
 
                         int modsAdded = 0;
 
-                        FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {modsAdded.ToString()}", currentBlockBasePt, floorBlockWidth, floorBlockLength);
+                        FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {modsAdded.ToString()}", currentBlockBasePt, floorBlockWidth, floorBlockLength, floorLayout);
 
                         decimal percentageRoomAreaFilled = 1;
 
@@ -354,7 +364,7 @@ namespace Stacker.Commands
 
                         while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[fixedModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(randomDec)))
                         {
-                            currentBlockOption.AddBlock(optionsTwoBed[fixedModWidth]);
+                            currentBlockOption.AddModToBlock(optionsTwoBed[fixedModWidth]);
                             percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
 
                             modsAdded++;
@@ -362,7 +372,7 @@ namespace Stacker.Commands
 
                         while (currentBlockOption.ValidateBlockAdd(optionsOneBed[fixedModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(randomDec2)))
                         {
-                            currentBlockOption.AddBlock(optionsOneBed[fixedModWidth]);
+                            currentBlockOption.AddModToBlock(optionsOneBed[fixedModWidth]);
                             percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
                             
                             modsAdded++;
@@ -370,7 +380,7 @@ namespace Stacker.Commands
 
                         while (currentBlockOption.ValidateBlockAdd(optionsStudio[fixedModWidth]))
                         {
-                            currentBlockOption.AddBlock(optionsStudio[fixedModWidth]);
+                            currentBlockOption.AddModToBlock(optionsStudio[fixedModWidth]);
                             percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
                             
                             modsAdded++;
@@ -389,9 +399,9 @@ namespace Stacker.Commands
                     }
 
 
-                    List<XYPosition> floorExtents = floorLayoutOptions.FloorOverallExtents.getXYPositions();
-
-                    CurveArray revisedfloorEdgeCurveArray = createCurves(floorExtents, elevation, out floorEdgeLines);
+                    List<XYPosition> actualFloorExtentPts = floorLayoutOptions.FloorOverallExtents.getXYPositions();
+                    List<Line> actualFloorExtentLines = new List<Line>();
+                    CurveArray revisedfloorEdgeCurveArray = createCurves(actualFloorExtentPts, elevation, out actualFloorExtentLines);
 
                     using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
                     {
@@ -402,6 +412,52 @@ namespace Stacker.Commands
 
                         transCreateFloorView.Commit();
                     }
+
+
+
+
+                    List<Line> hallwayLines = new List<Line>();
+
+                    foreach (List<XYPosition> hallway in floorLayoutOptions.InternalHallwayPoints)
+                    {
+                        List<Line> hallwayLine = new List<Line>();
+                        createCurves(hallway, elevation, out hallwayLine);
+                        hallwayLines.AddRange(hallwayLine);
+                    }
+
+
+
+                    using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
+                    {
+                        transCreatewalls.Start();
+
+
+                        var wallsBuilt = new List<ElementId>();
+
+                        foreach (var line in hallwayLines)
+                        {
+                            var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                            wall.WallType = wType;
+
+                            wallsBuilt.Add(wall.Id);
+                        }
+
+                        foreach (var line in actualFloorExtentLines)
+                        {
+                            var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+
+                            wallsBuilt.Add(wall.Id);
+                        }
+
+                        elementsBuilt["Walls - Primary"] = wallsBuilt;
+
+
+                        transCreatewalls.Commit();
+                    }
+
+
+
+
 
 
 
