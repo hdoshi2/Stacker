@@ -101,14 +101,25 @@ namespace Stacker.ModClasses
 
 
 
+        private Dictionary<int, XYPosition> _modBlockBasePt;
+        public Dictionary<int, XYPosition> ModBlockBasePt
+        {
+            get
+            {
+                return _modBlockBasePt;
+            }
+        }
+
+
+
 
 
         public int TotalModBlocks;
-        public Dictionary<int, XYPosition> ModBlockBasePt = new Dictionary<int, XYPosition>();
+        //public Dictionary<int, XYPosition> ModBlockBasePt = new Dictionary<int, XYPosition>();
         public Dictionary<int, double> ModBlockWidth = new Dictionary<int, double>();
         public Dictionary<int, double> ModBlockLength = new Dictionary<int, double>();
 
-
+        public List<FloorLayoutOption> FloorLayoutOptions = new List<FloorLayoutOption>();
 
 
 
@@ -135,14 +146,16 @@ namespace Stacker.ModClasses
             _overallFloorPoints.Add(topRight);
             _overallFloorPoints.Add(bottomRight);
 
+            _modBlockBasePt = new Dictionary<int, XYPosition>();
+
             _idealModLength = determineModLayoutStacking();
 
-            _internalHallwayPoints = determineHallwayPosition();
+            _internalHallwayPoints = DetermineHallwayPosition();
 
         }
 
 
-        private List<List<XYPosition>> determineHallwayPosition()
+        public List<List<XYPosition>> DetermineHallwayPosition()
         {
             var internalHallwayPoints = new List<List<XYPosition>>();
 
@@ -161,8 +174,8 @@ namespace Stacker.ModClasses
                 wallEnds2.Add(topPoint2);
 
                 internalHallwayPoints.Add(wallEnds2);
-                
-                ModBlockBasePt[1] = topPoint1;
+
+                _modBlockBasePt[1] = topPoint1;
                 ModBlockLength[1] = OverallFloorLength;
                 ModBlockWidth[1] = OverallFloorWidth - HallwayWidth;
 
@@ -194,8 +207,8 @@ namespace Stacker.ModClasses
                 internalHallwayPoints.Add(wallEnds2);
 
 
-                ModBlockBasePt[1] = new XYPosition(0,0);
-                ModBlockBasePt[2] = bottomPoint1;
+                _modBlockBasePt[1] = new XYPosition(0,0);
+                _modBlockBasePt[2] = bottomPoint1;
 
                 ModBlockLength[1] = OverallFloorLength;
                 ModBlockWidth[1] = (OverallFloorWidth - HallwayWidth) / 2;

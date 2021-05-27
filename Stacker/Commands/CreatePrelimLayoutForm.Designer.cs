@@ -86,6 +86,7 @@ namespace Stacker.Commands
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.btnNext = new System.Windows.Forms.Button();
+            this.tbOptionsGenerated = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -696,11 +697,21 @@ namespace Stacker.Commands
             this.btnNext.UseVisualStyleBackColor = true;
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
+            // tbOptionsGenerated
+            // 
+            this.tbOptionsGenerated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbOptionsGenerated.Location = new System.Drawing.Point(340, 545);
+            this.tbOptionsGenerated.Name = "tbOptionsGenerated";
+            this.tbOptionsGenerated.ReadOnly = true;
+            this.tbOptionsGenerated.Size = new System.Drawing.Size(39, 20);
+            this.tbOptionsGenerated.TabIndex = 19;
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(417, 574);
+            this.Controls.Add(this.tbOptionsGenerated);
             this.Controls.Add(this.gbModLimitations);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.groupBox1);
@@ -721,6 +732,7 @@ namespace Stacker.Commands
             this.gbModLimitations.ResumeLayout(false);
             this.gbModLimitations.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -782,5 +794,6 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.TextBox tbOptionsGenerated;
     }
 }

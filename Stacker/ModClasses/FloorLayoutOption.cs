@@ -105,7 +105,6 @@ namespace Stacker.ModClasses
 
             if (refFloorLayout.FloorModStackScheme == ModStackType.Single)
             {
-                refFloorLayout.TotalModBlocks = 1;
 
                 //Hallway Wall 2
                 var wallEnds2 = new List<XYPosition>();
@@ -121,7 +120,6 @@ namespace Stacker.ModClasses
             }
             else if (refFloorLayout.FloorModStackScheme == ModStackType.Double)
             {
-                refFloorLayout.TotalModBlocks = 2;
 
                 //Hallway Wall 1
                 var wallEnds1 = new List<XYPosition>();
