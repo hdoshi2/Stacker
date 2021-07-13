@@ -455,6 +455,51 @@ namespace Stacker.Commands
 
 
 
+                        //
+                        //Find all elements in the model
+                        //
+
+                        List<Element> AllElem = new FilteredElementCollector(_doc)
+                                                .WhereElementIsNotElementType()
+                                                .Where(elem => IsPhysicalElement(elem))
+                                                .ToList<Element>();
+
+                        List<ElementId> selectedElemsModLab1BDTYPA = new List<ElementId>();
+                        Element wallToMoveModLab1BDTYPA = null;
+
+                        //Find all elements of precreated wall types
+                        foreach (var elem in AllElem)
+                        {
+                            var parComments = elem.LookupParameter("Comments");
+                            var parMark = elem.LookupParameter("Mark");
+
+                            if (parComments == null)
+                                continue;
+
+                            var commentInfo = parComments.AsString();
+
+                            if (commentInfo == "ModLab1BDTYPA")
+                            {
+                                selectedElemsModLab1BDTYPA.Add(elem.Id);
+
+                                if (parMark != null)
+                                {
+                                    var markInfo = parMark.AsString();
+
+                                    if (markInfo == "ModLab1BDTYPAMainWall")
+                                    {
+                                        wallToMoveModLab1BDTYPA = elem;
+                                    }
+
+                                }
+                            }
+                        }
+
+                        int count = selectedElemsModLab1BDTYPA.Count();
+
+                        if (count > 0)
+                            _uidoc.Selection.SetElementIds(selectedElemsModLab1BDTYPA);
+
 
 
 
@@ -478,6 +523,7 @@ namespace Stacker.Commands
 
 
                             var regionsBuilt = new List<ElementId>();
+                            elementsBuilt[$"Temp Line"] = new List<ElementId>();
 
                             foreach (FloorModBlock blk in floorBlockOptions)
                             {
@@ -515,6 +561,11 @@ namespace Stacker.Commands
                                     {
                                         filledRegion = FilledRegion.Create(_doc, newPattern0.Id, vplan.Id, profilelps);
                                     }
+
+                                    Line lineA = Line.CreateBound(new XYZ(pt2.X, pt2.Y, elevation), new XYZ(pt2.X + 10, pt2.Y + 10, elevation));
+                                    ModelLine line = _doc.Create.NewModelCurve(lineA, vplan.SketchPlane) as ModelLine;
+
+                                    elementsBuilt[$"Temp Line"].Add(line.Id);
 
                                     regionsBuilt.Add(filledRegion.Id);
                                 }
@@ -705,6 +756,22 @@ namespace Stacker.Commands
             return newPattern;
 
         }
+
+
+        private bool IsPhysicalElement(Element e)
+        {
+
+            if (e.Category == null) return false;
+
+            if (e.ViewSpecific) return false;
+
+            // exclude specific unwanted categories
+            if (((BuiltInCategory)e.Category.Id.IntegerValue) == BuiltInCategory.OST_HVAC_Zones) return false;
+
+            return e.Category.CategoryType == CategoryType.Model && e.Category.CanAddSubcategory;
+        }
+
+
 
 
         /// <summary>
