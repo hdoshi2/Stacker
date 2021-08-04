@@ -33,6 +33,12 @@ namespace Stacker.Commands
         public int Priority1Bed;
         public int Priority2Bed;
 
+        public double PercentageStudio;
+        public double Percentage1Bed;
+        public double Percentage2Bed;
+
+
+
         private Document _doc;
         private UIDocument _uidoc;
 
@@ -111,7 +117,10 @@ namespace Stacker.Commands
                     {
                         foreach (var elem in elemCat.Value)
                         {
-                            _doc.Delete(elem);
+                            Element searchElem = _doc.GetElement(elem);
+
+                            if (searchElem != null)
+                                _doc.Delete(elem);
                         }
                     }
 
@@ -135,6 +144,12 @@ namespace Stacker.Commands
                 FloorOverallLength = Convert.ToDouble(tbLength.Text);
                 FloorOverallWidth = Convert.ToDouble(tbWidth.Text);
                 FloorHallwayWidth = Convert.ToDouble(tbHallwayWidth.Text);
+
+
+                PercentageStudio = Convert.ToDouble(tbPercentageStudio.Text);
+                Percentage1Bed = Convert.ToDouble(tbPercentage1Bed.Text);
+                Percentage2Bed = Convert.ToDouble(tbPercentage2Bed.Text);
+
 
                 double maxFloorLength = Convert.ToDouble(tbLength.Text) + 50;
 
@@ -166,6 +181,10 @@ namespace Stacker.Commands
 
                 while (FloorOverallLength <= maxFloorLength)
                 {
+
+
+                    if (cbTotalIterations.Checked && totalOptionsGenerated >= Convert.ToInt32(tbLimitIterations.Text))
+                        break;
 
 
                     if (!levelBuilt)
@@ -213,7 +232,10 @@ namespace Stacker.Commands
                             {
                                 foreach (var elem in elemCat.Value)
                                 {
-                                    _doc.Delete(elem);
+                                    Element searchElem = _doc.GetElement(elem);
+
+                                    if (searchElem != null)
+                                        _doc.Delete(elem);
                                 }
                             }
 
@@ -280,11 +302,22 @@ namespace Stacker.Commands
                     }
 
 
+
+
+
+
+                    //
+                    //Start processing floor layout options.
+                    //
                     double currentModWidth = new Double();
                     currentModWidth = PodWidthMin;
 
                     while (currentModWidth <= PodWidthMax)
                     {
+
+                        if (cbTotalIterations.Checked && totalOptionsGenerated >= Convert.ToInt32(tbLimitIterations.Text))
+                            break;
+
 
                         if (elementsBuilt.Count > 0)
                         {
@@ -296,7 +329,10 @@ namespace Stacker.Commands
                                 {
                                     foreach (var elem in elemCat.Value)
                                     {
-                                        _doc.Delete(elem);
+                                        Element searchElem = _doc.GetElement(elem);
+
+                                        if(searchElem != null)
+                                            _doc.Delete(elem);
                                     }
                                 }
 
@@ -421,36 +457,40 @@ namespace Stacker.Commands
 
 
 
-                        using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
+                        if (cbDrawOutlineWalls.Checked)
                         {
-                            transCreatewalls.Start();
-
-                            WallType wType = new FilteredElementCollector(_doc).OfClass(typeof(WallType))
-                                                .Cast<WallType>().FirstOrDefault();
-
-
-                            var wallsBuilt = new List<ElementId>();
-
-                            foreach (var line in hallwayLines)
+                            using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
                             {
-                                var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
-                                wall.WallType = wType;
+                                transCreatewalls.Start();
 
-                                wallsBuilt.Add(wall.Id);
+                                WallType wType = new FilteredElementCollector(_doc).OfClass(typeof(WallType))
+                                                    .Cast<WallType>().FirstOrDefault();
+
+
+                                var wallsBuilt = new List<ElementId>();
+
+                                foreach (var line in hallwayLines)
+                                {
+                                    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                                    wall.WallType = wType;
+
+                                    wallsBuilt.Add(wall.Id);
+                                }
+
+                                foreach (var line in actualFloorExtentLines)
+                                {
+                                    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+
+                                    wallsBuilt.Add(wall.Id);
+                                }
+
+                                elementsBuilt["Walls - Primary"] = wallsBuilt;
+
+
+                                transCreatewalls.Commit();
                             }
-
-                            foreach (var line in actualFloorExtentLines)
-                            {
-                                var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
-
-                                wallsBuilt.Add(wall.Id);
-                            }
-
-                            elementsBuilt["Walls - Primary"] = wallsBuilt;
-
-
-                            transCreatewalls.Commit();
                         }
+
 
 
 
@@ -464,8 +504,22 @@ namespace Stacker.Commands
                                                 .Where(elem => IsPhysicalElement(elem))
                                                 .ToList<Element>();
 
+                        List<ElementId> selectedElemsModLab0BDTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLab1BDTYPA = new List<ElementId>();
-                        Element wallToMoveModLab1BDTYPA = null;
+                        List<ElementId> selectedElemsModLab2BDTYPA = new List<ElementId>();
+
+                        Element wallToMoveModLab0BDTYPA_X = null;
+                        Element wallToMoveModLab1BDTYPA_X = null;
+                        Element wallToMoveModLab2BDTYPA_X = null;
+
+                        Element wallToMoveModLab0BDTYPA_Y = null;
+                        Element wallToMoveModLab1BDTYPA_Y = null;
+                        Element wallToMoveModLab2BDTYPA_Y = null;
+
+                        Element centralColModLab0BDTYPA = null;
+                        Element centralColModLab1BDTYPA = null;
+                        Element centralColModLab2BDTYPA = null;
+
 
                         //Find all elements of precreated wall types
                         foreach (var elem in AllElem)
@@ -478,7 +532,15 @@ namespace Stacker.Commands
 
                             var commentInfo = parComments.AsString();
 
-                            if (commentInfo == "ModLab1BDTYPA")
+                            //ModLab_BD_0_MOD_1_TYPA
+                            if (parMark.AsString() == "ModLab_BD_0_MOD_1_TYPA_Center")
+                                centralColModLab0BDTYPA = elem;
+                            else if (parMark.AsString() == "ModLab_BD_1_MOD_2_TYPA_Center")
+                                centralColModLab1BDTYPA = elem;
+                            else if (parMark.AsString() == "ModLab_BD_2_MOD_3_TYPA_Center")
+                                centralColModLab2BDTYPA = elem;
+
+                            if (commentInfo == "ModLab_BD_1_MOD_2_TYPA")
                             {
                                 selectedElemsModLab1BDTYPA.Add(elem.Id);
 
@@ -486,20 +548,58 @@ namespace Stacker.Commands
                                 {
                                     var markInfo = parMark.AsString();
 
-                                    if (markInfo == "ModLab1BDTYPAMainWall")
+                                    if (markInfo == "ModLab_BD_1_MOD_2_TYPA_WallX")
                                     {
-                                        wallToMoveModLab1BDTYPA = elem;
+                                        wallToMoveModLab1BDTYPA_X = elem;
+                                    }
+                                    else if (markInfo == "ModLab_BD_1_MOD_2_TYPA_WallY")
+                                    {
+                                        wallToMoveModLab1BDTYPA_Y = elem;
                                     }
 
                                 }
                             }
+                            else if (commentInfo == "ModLab_BD_2_MOD_3_TYPA")
+                            {
+                                selectedElemsModLab2BDTYPA.Add(elem.Id);
+
+                                if (parMark != null)
+                                {
+                                    var markInfo = parMark.AsString();
+
+                                    if (markInfo == "ModLab_BD_2_MOD_3_TYPA_WallX")
+                                    {
+                                        wallToMoveModLab2BDTYPA_X = elem;
+                                    }
+                                    else if (markInfo == "ModLab_BD_2_MOD_3_TYPA_WallY")
+                                    {
+                                        wallToMoveModLab2BDTYPA_Y = elem;
+                                    }
+
+                                }
+                            }
+                            else if (commentInfo == "ModLab_BD_0_MOD_1_TYPA")
+                            {
+                                selectedElemsModLab0BDTYPA.Add(elem.Id);
+
+                                if (parMark != null)
+                                {
+                                    var markInfo = parMark.AsString();
+
+                                    if (markInfo == "ModLab_BD_0_MOD_1_TYPA_WallX")
+                                    {
+                                        wallToMoveModLab0BDTYPA_X = elem;
+                                    }
+                                    else if (markInfo == "ModLab_BD_0_MOD_1_TYPA_WallY")
+                                    {
+                                        wallToMoveModLab0BDTYPA_Y = elem;
+                                    }
+                                }
+                            }
+
+
+
                         }
-
-                        int count = selectedElemsModLab1BDTYPA.Count();
-
-                        if (count > 0)
-                            _uidoc.Selection.SetElementIds(selectedElemsModLab1BDTYPA);
-
 
 
 
@@ -524,9 +624,27 @@ namespace Stacker.Commands
 
                             var regionsBuilt = new List<ElementId>();
                             elementsBuilt[$"Temp Line"] = new List<ElementId>();
+                            elementsBuilt[$"Room Elements"] = new List<ElementId>();
 
-                            foreach (FloorModBlock blk in floorBlockOptions)
+
+
+                            var viewDrafting = new FilteredElementCollector(_doc).OfClass(typeof(ViewDrafting)).OfType<ViewDrafting>().ToList();
+                            List<string> viewDraftingNames = (from v in viewDrafting
+                                                      select v.Name).ToList();
+
+                            var views = new FilteredElementCollector(_doc).OfClass(typeof(Autodesk.Revit.DB.View)).OfType<Autodesk.Revit.DB.View>().ToList();
+                            List<string> viewNames = (from v in views
+                                                      select v.Name).ToList();
+
+                            Autodesk.Revit.DB.View viewSource = (from v in views
+                                                                 where v.Name == "Level 1"
+                                                                 select v).First();
+
+
+                            for (var j = 0; j < floorBlockOptions.Count; j++)
                             {
+                                FloorModBlock blk = floorBlockOptions[j];
+
                                 for (var i = 0; i < blk.PlacedMods.Count; i++)
                                 {
                                     List<CurveLoop> profilelps = new List<CurveLoop>();
@@ -542,32 +660,277 @@ namespace Stacker.Commands
                                     XYPosition pt2 = currentModGlobalPoints.TopLeft;
                                     XYPosition pt3 = currentModGlobalPoints.TopRight;
                                     XYPosition pt4 = currentModGlobalPoints.BottomRight;
+                                    XYZ ptMid = new XYZ(pt2.X + (pt3.X - pt2.X) / 2, pt1.Y + (pt2.Y - pt1.Y) / 2, elevation);
 
                                     CurveLoop profilelp = createCurveLoop(new List<XYPosition>() { pt1, pt2, pt3, pt4 }, elevation, out lines);
-
                                     profilelps.Add(profilelp);
 
                                     FilledRegion filledRegion = null;
 
+
+
                                     if (currentMod.TotalMods == 3)
                                     {
+
                                         filledRegion = FilledRegion.Create(_doc, newPattern2.Id, vplan.Id, profilelps);
+
+
+                                        if (cbDrawInteriorLAyout.Checked)
+                                        {
+
+                                            bool wallMoved_X = false;
+                                            double width = currentMod.UnitModWidth;
+                                            double dimToMoveX = (width - 10)*currentMod.TotalMods;
+
+                                            if (wallToMoveModLab2BDTYPA_X != null && dimToMoveX > 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab2BDTYPA_X.Id, new XYZ(dimToMoveX, 0, 0));
+                                                wallMoved_X = true;
+                                            }
+
+
+                                            bool wallMoved_Y = false;
+                                            double length = currentMod.UnitModLength;
+                                            double dimToMoveY = length - 30;
+
+                                            if (wallToMoveModLab2BDTYPA_Y != null && dimToMoveY != 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab2BDTYPA_Y.Id, new XYZ(0, -dimToMoveY, 0));
+                                                wallMoved_Y = true;
+                                            }
+
+
+                                            _uidoc.Selection.SetElementIds(new List<ElementId>() { });
+                                            _uidoc.Selection.SetElementIds(selectedElemsModLab2BDTYPA);
+
+                                            LocationPoint locationPt = (LocationPoint)centralColModLab2BDTYPA.Location;
+                                            XYZ point = locationPt.Point;
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, elevation);
+
+                                            // Set handler to skip the duplicate types dialog
+                                            CopyPasteOptions options = new CopyPasteOptions();
+                                            options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
+
+
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab2BDTYPA, vplan, Transform.Identity, options);
+
+                                            if (j == 0)
+                                            {
+                                                LocationPoint lp = (LocationPoint)centralColModLab2BDTYPA.Location;
+                                                XYZ ppt = new XYZ(lp.Point.X, lp.Point.Y, 0);
+                                                Line axis = Line.CreateBound(ppt, new XYZ(ppt.X, ppt.Y, ppt.Z + 10));
+
+                                                ElementTransformUtils.RotateElements(_doc, elementsAddedToDelete, axis, Math.PI);
+                                            }
+
+
+                                            var elementsAdded = ElementTransformUtils.CopyElements(_doc, elementsAddedToDelete, translationPt);
+
+                                            foreach (ElementId eId in elementsAdded)
+                                            {
+                                                Element elem = _doc.GetElement(eId);
+
+                                                var parOffset = elem.LookupParameter("Offset");
+                                                if (parOffset != null)
+                                                    parOffset.Set(0);
+                                            }
+
+
+
+                                            _doc.Delete(elementsAddedToDelete);
+
+
+                                            if (wallMoved_X)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab2BDTYPA_X.Id, new XYZ(-dimToMoveX, 0, 0));
+
+                                            if (wallMoved_Y)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab2BDTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
+
+
+                                            elementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+
+                                        }
+
+
                                     }
                                     else if (currentMod.TotalMods == 2)
                                     {
+
                                         filledRegion = FilledRegion.Create(_doc, newPattern1.Id, vplan.Id, profilelps);
+
+
+                                        if (cbDrawInteriorLAyout.Checked)
+                                        {
+                                            bool wallMoved_X = false;
+                                            double width = currentMod.UnitModWidth;
+                                            double dimToMoveX = (width - 10) * currentMod.TotalMods;
+
+                                            if (wallToMoveModLab1BDTYPA_X != null && dimToMoveX > 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab1BDTYPA_X.Id, new XYZ(dimToMoveX, 0, 0));
+                                                wallMoved_X = true;
+                                            }
+
+
+                                            bool wallMoved_Y = false;
+                                            double length = currentMod.UnitModLength;
+                                            double dimToMoveY = length - 30;
+
+                                            if (wallToMoveModLab1BDTYPA_Y != null && dimToMoveY != 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab1BDTYPA_Y.Id, new XYZ(0, -dimToMoveY, 0));
+                                                wallMoved_Y = true;
+                                            }
+
+
+                                            _uidoc.Selection.SetElementIds(new List<ElementId>() { });
+                                            _uidoc.Selection.SetElementIds(selectedElemsModLab1BDTYPA);
+
+                                            LocationPoint locationPt = (LocationPoint)centralColModLab1BDTYPA.Location;
+                                            XYZ point = locationPt.Point;
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, elevation);
+
+                                            // Set handler to skip the duplicate types dialog
+                                            CopyPasteOptions options = new CopyPasteOptions();
+                                            options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
+
+
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab1BDTYPA, vplan, Transform.Identity, options);
+
+                                            if (j == 0)
+                                            {
+                                                LocationPoint lp = (LocationPoint)centralColModLab1BDTYPA.Location;
+                                                XYZ ppt = new XYZ(lp.Point.X, lp.Point.Y, 0);
+                                                Line axis = Line.CreateBound(ppt, new XYZ(ppt.X, ppt.Y, ppt.Z + 10));
+
+                                                ElementTransformUtils.RotateElements(_doc, elementsAddedToDelete, axis, Math.PI);
+                                            }
+
+                                            var elementsAdded = ElementTransformUtils.CopyElements(_doc, elementsAddedToDelete, translationPt);
+
+                                            foreach(ElementId eId in elementsAdded)
+                                            {
+                                                Element elem = _doc.GetElement(eId);
+
+                                                var parOffset = elem.LookupParameter("Offset");
+                                                if (parOffset != null)
+                                                    parOffset.Set(0);
+                                            }
+
+
+                                            _doc.Delete(elementsAddedToDelete);
+
+                                            if (wallMoved_X)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab1BDTYPA_X.Id, new XYZ(-dimToMoveX, 0, 0));
+
+                                            if (wallMoved_Y)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab1BDTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
+
+                                            elementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+                                        }
+
+
+
+
                                     }
                                     else
                                     {
+
                                         filledRegion = FilledRegion.Create(_doc, newPattern0.Id, vplan.Id, profilelps);
+
+
+
+                                        if (cbDrawInteriorLAyout.Checked)
+                                        {
+                                            bool wallMoved_X = false;
+                                            double width = currentMod.UnitModWidth;
+                                            double dimToMoveX = (width - 10) * currentMod.TotalMods;
+
+                                            if (wallToMoveModLab0BDTYPA_X != null && dimToMoveX > 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab0BDTYPA_X.Id, new XYZ(dimToMoveX, 0, 0));
+                                                wallMoved_X = true;
+                                            }
+
+
+
+                                            bool wallMoved_Y = false;
+                                            double length = currentMod.UnitModLength;
+                                            double dimToMoveY = length - 30;
+
+                                            if (wallToMoveModLab0BDTYPA_Y != null && dimToMoveY != 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab0BDTYPA_Y.Id, new XYZ(0, -dimToMoveY, 0));
+                                                wallMoved_Y = true;
+                                            }
+
+
+
+
+                                            _uidoc.Selection.SetElementIds(new List<ElementId>() { });
+                                            _uidoc.Selection.SetElementIds(selectedElemsModLab0BDTYPA);
+
+                                            LocationPoint locationPt = (LocationPoint)centralColModLab0BDTYPA.Location;
+                                            XYZ point = locationPt.Point;
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, elevation);
+
+                                            // Set handler to skip the duplicate types dialog
+                                            CopyPasteOptions options = new CopyPasteOptions();
+                                            options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
+
+
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab0BDTYPA, vplan, Transform.Identity, options);
+
+                                            if (j == 0)
+                                            {
+                                                LocationPoint lp = (LocationPoint)centralColModLab0BDTYPA.Location;
+                                                XYZ ppt = new XYZ(lp.Point.X, lp.Point.Y, 0);
+                                                Line axis = Line.CreateBound(ppt, new XYZ(ppt.X, ppt.Y, ppt.Z + 10));
+
+                                                ElementTransformUtils.RotateElements(_doc, elementsAddedToDelete, axis, Math.PI);
+                                            }
+
+                                            var elementsAdded = ElementTransformUtils.CopyElements(_doc, elementsAddedToDelete, translationPt);
+
+
+                                            foreach (ElementId eId in elementsAdded)
+                                            {
+                                                Element elem = _doc.GetElement(eId);
+
+                                                var parOffset = elem.LookupParameter("Offset");
+                                                if (parOffset != null)
+                                                    parOffset.Set(0);
+
+                                            }
+
+
+
+
+
+                                            _doc.Delete(elementsAddedToDelete);
+
+                                            if (wallMoved_X)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab0BDTYPA_X.Id, new XYZ(-dimToMoveX, 0, 0));
+
+                                            if (wallMoved_Y)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLab0BDTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
+
+
+                                            elementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+                                        }
+
+                                        
                                     }
+
+
 
                                     Line lineA = Line.CreateBound(new XYZ(pt2.X, pt2.Y, elevation), new XYZ(pt2.X + 10, pt2.Y + 10, elevation));
                                     ModelLine line = _doc.Create.NewModelCurve(lineA, vplan.SketchPlane) as ModelLine;
 
                                     elementsBuilt[$"Temp Line"].Add(line.Id);
 
-                                    regionsBuilt.Add(filledRegion.Id);
+                                    if(filledRegion != null)
+                                        regionsBuilt.Add(filledRegion.Id);
                                 }
                             }
 
@@ -615,6 +978,25 @@ namespace Stacker.Commands
         }
 
 
+
+
+        class HideAndAcceptDuplicateTypeNamesHandler : IDuplicateTypeNamesHandler
+        {
+            #region IDuplicateTypeNamesHandler Members
+
+            /// <summary>
+            /// Implementation of the IDuplicateTypeNameHandler
+            /// </summary>
+            /// <param name="args"></param>
+            /// <returns></returns>
+            public DuplicateTypeAction OnDuplicateTypeNamesFound(DuplicateTypeNamesHandlerArgs args)
+            {
+                // Always use duplicate destination types when asked
+                return DuplicateTypeAction.UseDestinationTypes;
+            }
+
+            #endregion
+        }
 
 
 

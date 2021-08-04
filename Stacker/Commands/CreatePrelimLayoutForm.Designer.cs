@@ -37,6 +37,8 @@ namespace Stacker.Commands
             this.tbWidth = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.gbFloorDimension = new System.Windows.Forms.GroupBox();
+            this.cbDrawInteriorLAyout = new System.Windows.Forms.CheckBox();
+            this.cbDrawOutlineWalls = new System.Windows.Forms.CheckBox();
             this.cbHallwayAlignment = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -45,6 +47,10 @@ namespace Stacker.Commands
             this.label5 = new System.Windows.Forms.Label();
             this.btnApplyFlrDim = new System.Windows.Forms.Button();
             this.gbUnitConfig = new System.Windows.Forms.GroupBox();
+            this.tbPercentage2Bed = new System.Windows.Forms.TextBox();
+            this.tbPercentage1Bed = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tbPercentageStudio = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.cb2BedPriority = new System.Windows.Forms.ComboBox();
@@ -55,6 +61,7 @@ namespace Stacker.Commands
             this.label2 = new System.Windows.Forms.Label();
             this.btnLoadDataFile = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnNext = new System.Windows.Forms.Button();
             this.btnDeleteGeom = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -81,12 +88,9 @@ namespace Stacker.Commands
             this.label16 = new System.Windows.Forms.Label();
             this.tbModLengthMax = new System.Windows.Forms.TextBox();
             this.tbModLengthMin = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.btnNext = new System.Windows.Forms.Button();
             this.tbOptionsGenerated = new System.Windows.Forms.TextBox();
+            this.cbTotalIterations = new System.Windows.Forms.CheckBox();
+            this.tbLimitIterations = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -97,7 +101,7 @@ namespace Stacker.Commands
             // btnBuildLayout
             // 
             this.btnBuildLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBuildLayout.Location = new System.Drawing.Point(79, 535);
+            this.btnBuildLayout.Location = new System.Drawing.Point(79, 596);
             this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnBuildLayout.Name = "btnBuildLayout";
             this.btnBuildLayout.Size = new System.Drawing.Size(134, 30);
@@ -112,7 +116,7 @@ namespace Stacker.Commands
             this.pictureBox1.ErrorImage = global::Stacker.Properties.Resources.floorStack_128;
             this.pictureBox1.Image = global::Stacker.Properties.Resources.floorStack_32;
             this.pictureBox1.InitialImage = global::Stacker.Properties.Resources.floorStack_128;
-            this.pictureBox1.Location = new System.Drawing.Point(348, 20);
+            this.pictureBox1.Location = new System.Drawing.Point(342, 20);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -157,6 +161,8 @@ namespace Stacker.Commands
             // 
             this.gbFloorDimension.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbFloorDimension.Controls.Add(this.cbDrawInteriorLAyout);
+            this.gbFloorDimension.Controls.Add(this.cbDrawOutlineWalls);
             this.gbFloorDimension.Controls.Add(this.cbHallwayAlignment);
             this.gbFloorDimension.Controls.Add(this.label10);
             this.gbFloorDimension.Controls.Add(this.label9);
@@ -171,10 +177,32 @@ namespace Stacker.Commands
             this.gbFloorDimension.Controls.Add(this.pictureBox1);
             this.gbFloorDimension.Location = new System.Drawing.Point(12, 54);
             this.gbFloorDimension.Name = "gbFloorDimension";
-            this.gbFloorDimension.Size = new System.Drawing.Size(393, 123);
+            this.gbFloorDimension.Size = new System.Drawing.Size(387, 143);
             this.gbFloorDimension.TabIndex = 1;
             this.gbFloorDimension.TabStop = false;
             this.gbFloorDimension.Text = "Floor Geometry";
+            // 
+            // cbDrawInteriorLAyout
+            // 
+            this.cbDrawInteriorLAyout.AutoSize = true;
+            this.cbDrawInteriorLAyout.Checked = true;
+            this.cbDrawInteriorLAyout.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbDrawInteriorLAyout.Location = new System.Drawing.Point(74, 87);
+            this.cbDrawInteriorLAyout.Name = "cbDrawInteriorLAyout";
+            this.cbDrawInteriorLAyout.Size = new System.Drawing.Size(121, 17);
+            this.cbDrawInteriorLAyout.TabIndex = 12;
+            this.cbDrawInteriorLAyout.Text = "Draw Interior Layout";
+            this.cbDrawInteriorLAyout.UseVisualStyleBackColor = true;
+            // 
+            // cbDrawOutlineWalls
+            // 
+            this.cbDrawOutlineWalls.AutoSize = true;
+            this.cbDrawOutlineWalls.Location = new System.Drawing.Point(74, 110);
+            this.cbDrawOutlineWalls.Name = "cbDrawOutlineWalls";
+            this.cbDrawOutlineWalls.Size = new System.Drawing.Size(116, 17);
+            this.cbDrawOutlineWalls.TabIndex = 11;
+            this.cbDrawOutlineWalls.Text = "Draw Wall Outlines";
+            this.cbDrawOutlineWalls.UseVisualStyleBackColor = true;
             // 
             // cbHallwayAlignment
             // 
@@ -217,7 +245,7 @@ namespace Stacker.Commands
             // tbTotalSquareFootage
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalSquareFootage.Location = new System.Drawing.Point(341, 93);
+            this.tbTotalSquareFootage.Location = new System.Drawing.Point(335, 108);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(39, 20);
@@ -227,7 +255,7 @@ namespace Stacker.Commands
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(210, 96);
+            this.label5.Location = new System.Drawing.Point(204, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(130, 13);
             this.label5.TabIndex = 5;
@@ -235,7 +263,7 @@ namespace Stacker.Commands
             // 
             // btnApplyFlrDim
             // 
-            this.btnApplyFlrDim.Location = new System.Drawing.Point(10, 83);
+            this.btnApplyFlrDim.Location = new System.Drawing.Point(10, 91);
             this.btnApplyFlrDim.Margin = new System.Windows.Forms.Padding(6);
             this.btnApplyFlrDim.Name = "btnApplyFlrDim";
             this.btnApplyFlrDim.Padding = new System.Windows.Forms.Padding(3);
@@ -249,10 +277,10 @@ namespace Stacker.Commands
             // 
             this.gbUnitConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbUnitConfig.Controls.Add(this.textBox7);
-            this.gbUnitConfig.Controls.Add(this.textBox6);
+            this.gbUnitConfig.Controls.Add(this.tbPercentage2Bed);
+            this.gbUnitConfig.Controls.Add(this.tbPercentage1Bed);
             this.gbUnitConfig.Controls.Add(this.label21);
-            this.gbUnitConfig.Controls.Add(this.textBox1);
+            this.gbUnitConfig.Controls.Add(this.tbPercentageStudio);
             this.gbUnitConfig.Controls.Add(this.label15);
             this.gbUnitConfig.Controls.Add(this.label14);
             this.gbUnitConfig.Controls.Add(this.cb2BedPriority);
@@ -261,12 +289,47 @@ namespace Stacker.Commands
             this.gbUnitConfig.Controls.Add(this.label4);
             this.gbUnitConfig.Controls.Add(this.label3);
             this.gbUnitConfig.Controls.Add(this.label2);
-            this.gbUnitConfig.Location = new System.Drawing.Point(12, 183);
+            this.gbUnitConfig.Location = new System.Drawing.Point(12, 203);
             this.gbUnitConfig.Name = "gbUnitConfig";
-            this.gbUnitConfig.Size = new System.Drawing.Size(201, 178);
+            this.gbUnitConfig.Size = new System.Drawing.Size(195, 178);
             this.gbUnitConfig.TabIndex = 2;
             this.gbUnitConfig.TabStop = false;
             this.gbUnitConfig.Text = "Unit Configuration Priority";
+            // 
+            // tbPercentage2Bed
+            // 
+            this.tbPercentage2Bed.Location = new System.Drawing.Point(111, 94);
+            this.tbPercentage2Bed.Name = "tbPercentage2Bed";
+            this.tbPercentage2Bed.Size = new System.Drawing.Size(45, 20);
+            this.tbPercentage2Bed.TabIndex = 20;
+            this.tbPercentage2Bed.Text = "30";
+            // 
+            // tbPercentage1Bed
+            // 
+            this.tbPercentage1Bed.Location = new System.Drawing.Point(111, 66);
+            this.tbPercentage1Bed.Name = "tbPercentage1Bed";
+            this.tbPercentage1Bed.Size = new System.Drawing.Size(45, 20);
+            this.tbPercentage1Bed.TabIndex = 19;
+            this.tbPercentage1Bed.Text = "40";
+            // 
+            // label21
+            // 
+            this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(125, 22);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(15, 13);
+            this.label21.TabIndex = 18;
+            this.label21.Text = "%";
+            // 
+            // tbPercentageStudio
+            // 
+            this.tbPercentageStudio.Location = new System.Drawing.Point(111, 39);
+            this.tbPercentageStudio.Name = "tbPercentageStudio";
+            this.tbPercentageStudio.Size = new System.Drawing.Size(45, 20);
+            this.tbPercentageStudio.TabIndex = 12;
+            this.tbPercentageStudio.Text = "30";
             // 
             // label15
             // 
@@ -360,13 +423,12 @@ namespace Stacker.Commands
             // 
             // btnLoadDataFile
             // 
-            this.btnLoadDataFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoadDataFile.Location = new System.Drawing.Point(142, 17);
+            this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnLoadDataFile.Location = new System.Drawing.Point(138, 15);
             this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
             this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(3);
-            this.btnLoadDataFile.Size = new System.Drawing.Size(134, 30);
+            this.btnLoadDataFile.Size = new System.Drawing.Size(141, 30);
             this.btnLoadDataFile.TabIndex = 3;
             this.btnLoadDataFile.Text = "Load Data File";
             this.btnLoadDataFile.UseVisualStyleBackColor = true;
@@ -374,6 +436,8 @@ namespace Stacker.Commands
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.btnNext);
             this.groupBox1.Controls.Add(this.btnDeleteGeom);
             this.groupBox1.Controls.Add(this.label13);
@@ -389,17 +453,28 @@ namespace Stacker.Commands
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Location = new System.Drawing.Point(12, 367);
+            this.groupBox1.Location = new System.Drawing.Point(12, 388);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(380, 154);
+            this.groupBox1.Size = new System.Drawing.Size(387, 157);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Unit Configuration Preview";
             // 
+            // btnNext
+            // 
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNext.Location = new System.Drawing.Point(319, 84);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(57, 30);
+            this.btnNext.TabIndex = 18;
+            this.btnNext.Text = "Next >>";
+            this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            // 
             // btnDeleteGeom
             // 
             this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteGeom.Location = new System.Drawing.Point(312, 16);
+            this.btnDeleteGeom.Location = new System.Drawing.Point(319, 16);
             this.btnDeleteGeom.Name = "btnDeleteGeom";
             this.btnDeleteGeom.Size = new System.Drawing.Size(57, 30);
             this.btnDeleteGeom.TabIndex = 17;
@@ -456,7 +531,7 @@ namespace Stacker.Commands
             // textBox2
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(328, 124);
+            this.textBox2.Location = new System.Drawing.Point(335, 124);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(39, 20);
@@ -466,7 +541,7 @@ namespace Stacker.Commands
             // 
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(166, 127);
+            this.label11.Location = new System.Drawing.Point(173, 127);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(158, 13);
             this.label11.TabIndex = 11;
@@ -535,7 +610,7 @@ namespace Stacker.Commands
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
             this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnClose.Location = new System.Drawing.Point(225, 535);
+            this.btnClose.Location = new System.Drawing.Point(219, 596);
             this.btnClose.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(2);
@@ -548,6 +623,7 @@ namespace Stacker.Commands
             // 
             // gbModLimitations
             // 
+            this.gbModLimitations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.gbModLimitations.Controls.Add(this.label20);
             this.gbModLimitations.Controls.Add(this.tbFixedWidth);
             this.gbModLimitations.Controls.Add(this.tbModWidthMax);
@@ -558,7 +634,7 @@ namespace Stacker.Commands
             this.gbModLimitations.Controls.Add(this.label16);
             this.gbModLimitations.Controls.Add(this.tbModLengthMax);
             this.gbModLimitations.Controls.Add(this.tbModLengthMin);
-            this.gbModLimitations.Location = new System.Drawing.Point(228, 183);
+            this.gbModLimitations.Location = new System.Drawing.Point(222, 203);
             this.gbModLimitations.Name = "gbModLimitations";
             this.gbModLimitations.Size = new System.Drawing.Size(177, 177);
             this.gbModLimitations.TabIndex = 84;
@@ -568,7 +644,7 @@ namespace Stacker.Commands
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(8, 103);
+            this.label20.Location = new System.Drawing.Point(8, 120);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(72, 13);
             this.label20.TabIndex = 12;
@@ -576,7 +652,7 @@ namespace Stacker.Commands
             // 
             // tbFixedWidth
             // 
-            this.tbFixedWidth.Location = new System.Drawing.Point(123, 100);
+            this.tbFixedWidth.Location = new System.Drawing.Point(123, 117);
             this.tbFixedWidth.Name = "tbFixedWidth";
             this.tbFixedWidth.Size = new System.Drawing.Size(39, 20);
             this.tbFixedWidth.TabIndex = 11;
@@ -654,63 +730,42 @@ namespace Stacker.Commands
             this.tbModLengthMin.Size = new System.Drawing.Size(39, 20);
             this.tbModLengthMin.TabIndex = 14;
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(111, 39);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(45, 20);
-            this.textBox1.TabIndex = 12;
-            // 
-            // label21
-            // 
-            this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(125, 22);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(15, 13);
-            this.label21.TabIndex = 18;
-            this.label21.Text = "%";
-            // 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(111, 66);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(45, 20);
-            this.textBox6.TabIndex = 19;
-            // 
-            // textBox7
-            // 
-            this.textBox7.Location = new System.Drawing.Point(111, 94);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(45, 20);
-            this.textBox7.TabIndex = 20;
-            // 
-            // btnNext
-            // 
-            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(312, 84);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(57, 30);
-            this.btnNext.TabIndex = 18;
-            this.btnNext.Text = "Next >>";
-            this.btnNext.UseVisualStyleBackColor = true;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
-            // 
             // tbOptionsGenerated
             // 
-            this.tbOptionsGenerated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbOptionsGenerated.Location = new System.Drawing.Point(340, 545);
+            this.tbOptionsGenerated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbOptionsGenerated.Location = new System.Drawing.Point(347, 602);
             this.tbOptionsGenerated.Name = "tbOptionsGenerated";
             this.tbOptionsGenerated.ReadOnly = true;
             this.tbOptionsGenerated.Size = new System.Drawing.Size(39, 20);
             this.tbOptionsGenerated.TabIndex = 19;
             // 
+            // cbTotalIterations
+            // 
+            this.cbTotalIterations.AutoSize = true;
+            this.cbTotalIterations.Checked = true;
+            this.cbTotalIterations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTotalIterations.Location = new System.Drawing.Point(80, 563);
+            this.cbTotalIterations.Name = "cbTotalIterations";
+            this.cbTotalIterations.Size = new System.Drawing.Size(120, 17);
+            this.cbTotalIterations.TabIndex = 21;
+            this.cbTotalIterations.Text = "Limit Total Iterations";
+            this.cbTotalIterations.UseVisualStyleBackColor = true;
+            // 
+            // tbLimitIterations
+            // 
+            this.tbLimitIterations.Location = new System.Drawing.Point(214, 561);
+            this.tbLimitIterations.Name = "tbLimitIterations";
+            this.tbLimitIterations.Size = new System.Drawing.Size(39, 20);
+            this.tbLimitIterations.TabIndex = 21;
+            this.tbLimitIterations.Text = "1";
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 574);
+            this.ClientSize = new System.Drawing.Size(411, 635);
+            this.Controls.Add(this.tbLimitIterations);
+            this.Controls.Add(this.cbTotalIterations);
             this.Controls.Add(this.tbOptionsGenerated);
             this.Controls.Add(this.gbModLimitations);
             this.Controls.Add(this.btnClose);
@@ -719,8 +774,11 @@ namespace Stacker.Commands
             this.Controls.Add(this.gbUnitConfig);
             this.Controls.Add(this.gbFloorDimension);
             this.Controls.Add(this.btnBuildLayout);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "CreatePrelimLayoutForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Start Building Modular Layout";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.gbFloorDimension.ResumeLayout(false);
@@ -789,11 +847,15 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.TextBox tbFixedWidth;
         private System.Windows.Forms.Button btnDeleteGeom;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox tbPercentage2Bed;
+        private System.Windows.Forms.TextBox tbPercentage1Bed;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbPercentageStudio;
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.TextBox tbOptionsGenerated;
+        private System.Windows.Forms.CheckBox cbDrawOutlineWalls;
+        private System.Windows.Forms.CheckBox cbDrawInteriorLAyout;
+        private System.Windows.Forms.CheckBox cbTotalIterations;
+        private System.Windows.Forms.TextBox tbLimitIterations;
     }
 }
