@@ -51,11 +51,6 @@ namespace Stacker.Commands
             this.tbPercentage1Bed = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.tbPercentageStudio = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.cb2BedPriority = new System.Windows.Forms.ComboBox();
-            this.cb1BedPriority = new System.Windows.Forms.ComboBox();
-            this.cbStudioPriority = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -91,17 +86,26 @@ namespace Stacker.Commands
             this.tbOptionsGenerated = new System.Windows.Forms.TextBox();
             this.cbTotalIterations = new System.Windows.Forms.CheckBox();
             this.tbLimitIterations = new System.Windows.Forms.TextBox();
+            this.btnPrevious = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.btnAddInteriorLayout = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbModLimitations.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBuildLayout
             // 
             this.btnBuildLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBuildLayout.Location = new System.Drawing.Point(79, 596);
+            this.btnBuildLayout.Location = new System.Drawing.Point(163, 527);
             this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnBuildLayout.Name = "btnBuildLayout";
             this.btnBuildLayout.Size = new System.Drawing.Size(134, 30);
@@ -116,7 +120,7 @@ namespace Stacker.Commands
             this.pictureBox1.ErrorImage = global::Stacker.Properties.Resources.floorStack_128;
             this.pictureBox1.Image = global::Stacker.Properties.Resources.floorStack_32;
             this.pictureBox1.InitialImage = global::Stacker.Properties.Resources.floorStack_128;
-            this.pictureBox1.Location = new System.Drawing.Point(342, 20);
+            this.pictureBox1.Location = new System.Drawing.Point(572, 15);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -174,10 +178,9 @@ namespace Stacker.Commands
             this.gbFloorDimension.Controls.Add(this.tbWidth);
             this.gbFloorDimension.Controls.Add(this.lblLength);
             this.gbFloorDimension.Controls.Add(this.tbLength);
-            this.gbFloorDimension.Controls.Add(this.pictureBox1);
             this.gbFloorDimension.Location = new System.Drawing.Point(12, 54);
             this.gbFloorDimension.Name = "gbFloorDimension";
-            this.gbFloorDimension.Size = new System.Drawing.Size(387, 143);
+            this.gbFloorDimension.Size = new System.Drawing.Size(382, 143);
             this.gbFloorDimension.TabIndex = 1;
             this.gbFloorDimension.TabStop = false;
             this.gbFloorDimension.Text = "Floor Geometry";
@@ -185,8 +188,6 @@ namespace Stacker.Commands
             // cbDrawInteriorLAyout
             // 
             this.cbDrawInteriorLAyout.AutoSize = true;
-            this.cbDrawInteriorLAyout.Checked = true;
-            this.cbDrawInteriorLAyout.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbDrawInteriorLAyout.Location = new System.Drawing.Point(74, 87);
             this.cbDrawInteriorLAyout.Name = "cbDrawInteriorLAyout";
             this.cbDrawInteriorLAyout.Size = new System.Drawing.Size(121, 17);
@@ -208,12 +209,14 @@ namespace Stacker.Commands
             // 
             this.cbHallwayAlignment.FormattingEnabled = true;
             this.cbHallwayAlignment.Items.AddRange(new object[] {
+            "Auto (Select Largest)",
             "Length",
             "Width"});
             this.cbHallwayAlignment.Location = new System.Drawing.Point(224, 52);
             this.cbHallwayAlignment.Name = "cbHallwayAlignment";
-            this.cbHallwayAlignment.Size = new System.Drawing.Size(61, 21);
+            this.cbHallwayAlignment.Size = new System.Drawing.Size(126, 21);
             this.cbHallwayAlignment.TabIndex = 10;
+            this.cbHallwayAlignment.Text = "Auto (Select Largest)";
             // 
             // label10
             // 
@@ -245,7 +248,7 @@ namespace Stacker.Commands
             // tbTotalSquareFootage
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalSquareFootage.Location = new System.Drawing.Point(335, 108);
+            this.tbTotalSquareFootage.Location = new System.Drawing.Point(330, 108);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(39, 20);
@@ -255,7 +258,7 @@ namespace Stacker.Commands
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(204, 111);
+            this.label5.Location = new System.Drawing.Point(199, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(130, 13);
             this.label5.TabIndex = 5;
@@ -277,28 +280,27 @@ namespace Stacker.Commands
             // 
             this.gbUnitConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbUnitConfig.Controls.Add(this.comboBox3);
+            this.gbUnitConfig.Controls.Add(this.comboBox2);
+            this.gbUnitConfig.Controls.Add(this.comboBox1);
+            this.gbUnitConfig.Controls.Add(this.label15);
             this.gbUnitConfig.Controls.Add(this.tbPercentage2Bed);
             this.gbUnitConfig.Controls.Add(this.tbPercentage1Bed);
             this.gbUnitConfig.Controls.Add(this.label21);
             this.gbUnitConfig.Controls.Add(this.tbPercentageStudio);
-            this.gbUnitConfig.Controls.Add(this.label15);
-            this.gbUnitConfig.Controls.Add(this.label14);
-            this.gbUnitConfig.Controls.Add(this.cb2BedPriority);
-            this.gbUnitConfig.Controls.Add(this.cb1BedPriority);
-            this.gbUnitConfig.Controls.Add(this.cbStudioPriority);
             this.gbUnitConfig.Controls.Add(this.label4);
             this.gbUnitConfig.Controls.Add(this.label3);
             this.gbUnitConfig.Controls.Add(this.label2);
             this.gbUnitConfig.Location = new System.Drawing.Point(12, 203);
             this.gbUnitConfig.Name = "gbUnitConfig";
-            this.gbUnitConfig.Size = new System.Drawing.Size(195, 178);
+            this.gbUnitConfig.Size = new System.Drawing.Size(382, 149);
             this.gbUnitConfig.TabIndex = 2;
             this.gbUnitConfig.TabStop = false;
             this.gbUnitConfig.Text = "Unit Configuration Priority";
             // 
             // tbPercentage2Bed
             // 
-            this.tbPercentage2Bed.Location = new System.Drawing.Point(111, 94);
+            this.tbPercentage2Bed.Location = new System.Drawing.Point(56, 94);
             this.tbPercentage2Bed.Name = "tbPercentage2Bed";
             this.tbPercentage2Bed.Size = new System.Drawing.Size(45, 20);
             this.tbPercentage2Bed.TabIndex = 20;
@@ -306,7 +308,7 @@ namespace Stacker.Commands
             // 
             // tbPercentage1Bed
             // 
-            this.tbPercentage1Bed.Location = new System.Drawing.Point(111, 66);
+            this.tbPercentage1Bed.Location = new System.Drawing.Point(56, 66);
             this.tbPercentage1Bed.Name = "tbPercentage1Bed";
             this.tbPercentage1Bed.Size = new System.Drawing.Size(45, 20);
             this.tbPercentage1Bed.TabIndex = 19;
@@ -317,7 +319,7 @@ namespace Stacker.Commands
             this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(125, 22);
+            this.label21.Location = new System.Drawing.Point(70, 22);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(15, 13);
             this.label21.TabIndex = 18;
@@ -325,68 +327,11 @@ namespace Stacker.Commands
             // 
             // tbPercentageStudio
             // 
-            this.tbPercentageStudio.Location = new System.Drawing.Point(111, 39);
+            this.tbPercentageStudio.Location = new System.Drawing.Point(56, 39);
             this.tbPercentageStudio.Name = "tbPercentageStudio";
             this.tbPercentageStudio.Size = new System.Drawing.Size(45, 20);
             this.tbPercentageStudio.TabIndex = 12;
             this.tbPercentageStudio.Text = "30";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 153);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(103, 13);
-            this.label15.TabIndex = 11;
-            this.label15.Text = "0: Ignore Unity Type";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 136);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(72, 13);
-            this.label14.TabIndex = 10;
-            this.label14.Text = "1: Top Priority";
-            // 
-            // cb2BedPriority
-            // 
-            this.cb2BedPriority.FormattingEnabled = true;
-            this.cb2BedPriority.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3"});
-            this.cb2BedPriority.Location = new System.Drawing.Point(58, 93);
-            this.cb2BedPriority.Name = "cb2BedPriority";
-            this.cb2BedPriority.Size = new System.Drawing.Size(35, 21);
-            this.cb2BedPriority.TabIndex = 8;
-            // 
-            // cb1BedPriority
-            // 
-            this.cb1BedPriority.FormattingEnabled = true;
-            this.cb1BedPriority.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3"});
-            this.cb1BedPriority.Location = new System.Drawing.Point(58, 66);
-            this.cb1BedPriority.Name = "cb1BedPriority";
-            this.cb1BedPriority.Size = new System.Drawing.Size(35, 21);
-            this.cb1BedPriority.TabIndex = 7;
-            // 
-            // cbStudioPriority
-            // 
-            this.cbStudioPriority.FormattingEnabled = true;
-            this.cbStudioPriority.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3"});
-            this.cbStudioPriority.Location = new System.Drawing.Point(58, 39);
-            this.cbStudioPriority.Name = "cbStudioPriority";
-            this.cbStudioPriority.Size = new System.Drawing.Size(35, 21);
-            this.cbStudioPriority.TabIndex = 6;
             // 
             // label4
             // 
@@ -424,13 +369,13 @@ namespace Stacker.Commands
             // btnLoadDataFile
             // 
             this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnLoadDataFile.Location = new System.Drawing.Point(138, 15);
+            this.btnLoadDataFile.Location = new System.Drawing.Point(233, 15);
             this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
             this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(3);
-            this.btnLoadDataFile.Size = new System.Drawing.Size(141, 30);
+            this.btnLoadDataFile.Size = new System.Drawing.Size(155, 30);
             this.btnLoadDataFile.TabIndex = 3;
-            this.btnLoadDataFile.Text = "Load Data File";
+            this.btnLoadDataFile.Text = "Load JSON Data File";
             this.btnLoadDataFile.UseVisualStyleBackColor = true;
             this.btnLoadDataFile.Click += new System.EventHandler(this.btnLoadDataFile_Click);
             // 
@@ -438,6 +383,8 @@ namespace Stacker.Commands
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.btnAddInteriorLayout);
+            this.groupBox1.Controls.Add(this.btnPrevious);
             this.groupBox1.Controls.Add(this.btnNext);
             this.groupBox1.Controls.Add(this.btnDeleteGeom);
             this.groupBox1.Controls.Add(this.label13);
@@ -453,9 +400,9 @@ namespace Stacker.Commands
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Location = new System.Drawing.Point(12, 388);
+            this.groupBox1.Location = new System.Drawing.Point(12, 358);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(387, 157);
+            this.groupBox1.Size = new System.Drawing.Size(382, 157);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Unit Configuration Preview";
@@ -463,7 +410,7 @@ namespace Stacker.Commands
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(319, 84);
+            this.btnNext.Location = new System.Drawing.Point(314, 113);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(57, 30);
             this.btnNext.TabIndex = 18;
@@ -474,7 +421,7 @@ namespace Stacker.Commands
             // btnDeleteGeom
             // 
             this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteGeom.Location = new System.Drawing.Point(319, 16);
+            this.btnDeleteGeom.Location = new System.Drawing.Point(314, 16);
             this.btnDeleteGeom.Name = "btnDeleteGeom";
             this.btnDeleteGeom.Size = new System.Drawing.Size(57, 30);
             this.btnDeleteGeom.TabIndex = 17;
@@ -522,16 +469,16 @@ namespace Stacker.Commands
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(73, 19);
+            this.label12.Location = new System.Drawing.Point(68, 19);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(33, 13);
+            this.label12.Size = new System.Drawing.Size(40, 13);
             this.label12.TabIndex = 10;
-            this.label12.Text = "UNIT";
+            this.label12.Text = "UNITS";
             // 
             // textBox2
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(335, 124);
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox2.Location = new System.Drawing.Point(188, 122);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(39, 20);
@@ -539,9 +486,9 @@ namespace Stacker.Commands
             // 
             // label11
             // 
-            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(173, 127);
+            this.label11.Location = new System.Drawing.Point(22, 125);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(158, 13);
             this.label11.TabIndex = 11;
@@ -610,7 +557,7 @@ namespace Stacker.Commands
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
             this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnClose.Location = new System.Drawing.Point(219, 596);
+            this.btnClose.Location = new System.Drawing.Point(321, 527);
             this.btnClose.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(2);
@@ -634,9 +581,9 @@ namespace Stacker.Commands
             this.gbModLimitations.Controls.Add(this.label16);
             this.gbModLimitations.Controls.Add(this.tbModLengthMax);
             this.gbModLimitations.Controls.Add(this.tbModLengthMin);
-            this.gbModLimitations.Location = new System.Drawing.Point(222, 203);
+            this.gbModLimitations.Location = new System.Drawing.Point(400, 61);
             this.gbModLimitations.Name = "gbModLimitations";
-            this.gbModLimitations.Size = new System.Drawing.Size(177, 177);
+            this.gbModLimitations.Size = new System.Drawing.Size(204, 136);
             this.gbModLimitations.TabIndex = 84;
             this.gbModLimitations.TabStop = false;
             this.gbModLimitations.Text = "Modular Limitations";
@@ -644,7 +591,7 @@ namespace Stacker.Commands
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(8, 120);
+            this.label20.Location = new System.Drawing.Point(8, 104);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(72, 13);
             this.label20.TabIndex = 12;
@@ -652,7 +599,7 @@ namespace Stacker.Commands
             // 
             // tbFixedWidth
             // 
-            this.tbFixedWidth.Location = new System.Drawing.Point(123, 117);
+            this.tbFixedWidth.Location = new System.Drawing.Point(89, 101);
             this.tbFixedWidth.Name = "tbFixedWidth";
             this.tbFixedWidth.Size = new System.Drawing.Size(39, 20);
             this.tbFixedWidth.TabIndex = 11;
@@ -660,17 +607,15 @@ namespace Stacker.Commands
             // 
             // tbModWidthMax
             // 
-            this.tbModWidthMax.Location = new System.Drawing.Point(123, 69);
+            this.tbModWidthMax.Location = new System.Drawing.Point(127, 69);
             this.tbModWidthMax.Name = "tbModWidthMax";
-            this.tbModWidthMax.ReadOnly = true;
             this.tbModWidthMax.Size = new System.Drawing.Size(39, 20);
             this.tbModWidthMax.TabIndex = 20;
             // 
             // tbModWidthMin
             // 
-            this.tbModWidthMin.Location = new System.Drawing.Point(73, 69);
+            this.tbModWidthMin.Location = new System.Drawing.Point(68, 69);
             this.tbModWidthMin.Name = "tbModWidthMin";
-            this.tbModWidthMin.ReadOnly = true;
             this.tbModWidthMin.Size = new System.Drawing.Size(39, 20);
             this.tbModWidthMin.TabIndex = 19;
             // 
@@ -688,7 +633,7 @@ namespace Stacker.Commands
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(128, 22);
+            this.label17.Location = new System.Drawing.Point(132, 22);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(30, 13);
             this.label17.TabIndex = 17;
@@ -699,7 +644,7 @@ namespace Stacker.Commands
             this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(78, 22);
+            this.label18.Location = new System.Drawing.Point(73, 22);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(27, 13);
             this.label18.TabIndex = 16;
@@ -716,24 +661,22 @@ namespace Stacker.Commands
             // 
             // tbModLengthMax
             // 
-            this.tbModLengthMax.Location = new System.Drawing.Point(123, 39);
+            this.tbModLengthMax.Location = new System.Drawing.Point(127, 39);
             this.tbModLengthMax.Name = "tbModLengthMax";
-            this.tbModLengthMax.ReadOnly = true;
             this.tbModLengthMax.Size = new System.Drawing.Size(39, 20);
             this.tbModLengthMax.TabIndex = 15;
             // 
             // tbModLengthMin
             // 
-            this.tbModLengthMin.Location = new System.Drawing.Point(73, 39);
+            this.tbModLengthMin.Location = new System.Drawing.Point(68, 39);
             this.tbModLengthMin.Name = "tbModLengthMin";
-            this.tbModLengthMin.ReadOnly = true;
             this.tbModLengthMin.Size = new System.Drawing.Size(39, 20);
             this.tbModLengthMin.TabIndex = 14;
             // 
             // tbOptionsGenerated
             // 
             this.tbOptionsGenerated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbOptionsGenerated.Location = new System.Drawing.Point(347, 602);
+            this.tbOptionsGenerated.Location = new System.Drawing.Point(153, 50);
             this.tbOptionsGenerated.Name = "tbOptionsGenerated";
             this.tbOptionsGenerated.ReadOnly = true;
             this.tbOptionsGenerated.Size = new System.Drawing.Size(39, 20);
@@ -741,32 +684,120 @@ namespace Stacker.Commands
             // 
             // cbTotalIterations
             // 
+            this.cbTotalIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbTotalIterations.AutoSize = true;
             this.cbTotalIterations.Checked = true;
             this.cbTotalIterations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbTotalIterations.Location = new System.Drawing.Point(80, 563);
+            this.cbTotalIterations.Location = new System.Drawing.Point(18, 26);
             this.cbTotalIterations.Name = "cbTotalIterations";
-            this.cbTotalIterations.Size = new System.Drawing.Size(120, 17);
+            this.cbTotalIterations.Size = new System.Drawing.Size(123, 17);
             this.cbTotalIterations.TabIndex = 21;
-            this.cbTotalIterations.Text = "Limit Total Iterations";
+            this.cbTotalIterations.Text = "Limit Total Iterations:";
             this.cbTotalIterations.UseVisualStyleBackColor = true;
             // 
             // tbLimitIterations
             // 
-            this.tbLimitIterations.Location = new System.Drawing.Point(214, 561);
+            this.tbLimitIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbLimitIterations.Location = new System.Drawing.Point(153, 24);
             this.tbLimitIterations.Name = "tbLimitIterations";
             this.tbLimitIterations.Size = new System.Drawing.Size(39, 20);
             this.tbLimitIterations.TabIndex = 21;
             this.tbLimitIterations.Text = "1";
             // 
+            // btnPrevious
+            // 
+            this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPrevious.Location = new System.Drawing.Point(253, 113);
+            this.btnPrevious.Name = "btnPrevious";
+            this.btnPrevious.Size = new System.Drawing.Size(57, 30);
+            this.btnPrevious.TabIndex = 19;
+            this.btnPrevious.Text = "<< Prev.";
+            this.btnPrevious.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.label14);
+            this.groupBox2.Controls.Add(this.cbTotalIterations);
+            this.groupBox2.Controls.Add(this.tbOptionsGenerated);
+            this.groupBox2.Controls.Add(this.tbLimitIterations);
+            this.groupBox2.Location = new System.Drawing.Point(400, 203);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(205, 149);
+            this.groupBox2.TabIndex = 85;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Optimization Iteration Setting";
+            // 
+            // label14
+            // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(17, 53);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(126, 13);
+            this.label14.TabIndex = 13;
+            this.label14.Text = "Total Options Generated:";
+            // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(157, 22);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(100, 13);
+            this.label15.TabIndex = 21;
+            this.label15.Text = "Layout Type Priority";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Any Studio"});
+            this.comboBox1.Location = new System.Drawing.Point(118, 39);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(178, 21);
+            this.comboBox1.TabIndex = 22;
+            this.comboBox1.Text = "Any Studio";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "Any 1-Bed"});
+            this.comboBox2.Location = new System.Drawing.Point(118, 66);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(178, 21);
+            this.comboBox2.TabIndex = 23;
+            this.comboBox2.Text = "Any 1-Bed";
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "Any 2-Bed"});
+            this.comboBox3.Location = new System.Drawing.Point(118, 94);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(178, 21);
+            this.comboBox3.TabIndex = 24;
+            this.comboBox3.Text = "Any 2-Bed";
+            // 
+            // btnAddInteriorLayout
+            // 
+            this.btnAddInteriorLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddInteriorLayout.Location = new System.Drawing.Point(253, 77);
+            this.btnAddInteriorLayout.Name = "btnAddInteriorLayout";
+            this.btnAddInteriorLayout.Size = new System.Drawing.Size(116, 30);
+            this.btnAddInteriorLayout.TabIndex = 20;
+            this.btnAddInteriorLayout.Text = "Add Interior Layout";
+            this.btnAddInteriorLayout.UseVisualStyleBackColor = true;
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 635);
-            this.Controls.Add(this.tbLimitIterations);
-            this.Controls.Add(this.cbTotalIterations);
-            this.Controls.Add(this.tbOptionsGenerated);
+            this.ClientSize = new System.Drawing.Size(616, 572);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.gbModLimitations);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.groupBox1);
@@ -774,6 +805,7 @@ namespace Stacker.Commands
             this.Controls.Add(this.gbUnitConfig);
             this.Controls.Add(this.gbFloorDimension);
             this.Controls.Add(this.btnBuildLayout);
+            this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -789,6 +821,8 @@ namespace Stacker.Commands
             this.groupBox1.PerformLayout();
             this.gbModLimitations.ResumeLayout(false);
             this.gbModLimitations.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -805,15 +839,12 @@ namespace Stacker.Commands
         private System.Windows.Forms.GroupBox gbFloorDimension;
         private System.Windows.Forms.GroupBox gbUnitConfig;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cbStudioPriority;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnLoadDataFile;
         private System.Windows.Forms.TextBox tbTotalSquareFootage;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnApplyFlrDim;
-        private System.Windows.Forms.ComboBox cb2BedPriority;
-        private System.Windows.Forms.ComboBox cb1BedPriority;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox tb2BedCount;
         private System.Windows.Forms.TextBox tb1BedCount;
@@ -825,8 +856,6 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox tbHallwayWidth;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox4;
@@ -857,5 +886,13 @@ namespace Stacker.Commands
         private System.Windows.Forms.CheckBox cbDrawInteriorLAyout;
         private System.Windows.Forms.CheckBox cbTotalIterations;
         private System.Windows.Forms.TextBox tbLimitIterations;
+        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button btnAddInteriorLayout;
+        private System.Windows.Forms.Button btnPrevious;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label14;
     }
 }

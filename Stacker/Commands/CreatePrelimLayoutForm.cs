@@ -87,15 +87,9 @@ namespace Stacker.Commands
 
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnApplyUnitPriority_Click(object sender, EventArgs e)
-        {
 
-        }
+
+
 
 
 
@@ -132,6 +126,9 @@ namespace Stacker.Commands
         }
 
 
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -145,18 +142,18 @@ namespace Stacker.Commands
                 FloorOverallWidth = Convert.ToDouble(tbWidth.Text);
                 FloorHallwayWidth = Convert.ToDouble(tbHallwayWidth.Text);
 
-
                 PercentageStudio = Convert.ToDouble(tbPercentageStudio.Text);
                 Percentage1Bed = Convert.ToDouble(tbPercentage1Bed.Text);
                 Percentage2Bed = Convert.ToDouble(tbPercentage2Bed.Text);
 
+                PodLengthMin = Convert.ToDouble(tbModLengthMin.Text);
+                PodLengthMax = Convert.ToDouble(tbModLengthMax.Text);
+                PodWidthMin = Convert.ToDouble(tbModWidthMin.Text);
+                PodWidthMax = Convert.ToDouble(tbModWidthMax.Text);
+
 
                 double maxFloorLength = Convert.ToDouble(tbLength.Text) + 50;
 
-
-                PriorityStudio = cbStudioPriority.SelectedIndex;
-                Priority1Bed = cb1BedPriority.SelectedIndex;
-                Priority2Bed = cb2BedPriority.SelectedIndex;
 
                 double totalSF = FloorOverallSquareFootage;
                 double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
@@ -179,6 +176,10 @@ namespace Stacker.Commands
                 int totalOptionsGenerated = 0;
                 tbOptionsGenerated.Text = totalOptionsGenerated.ToString();
 
+
+
+
+                ///Start Optimization Process
                 while (FloorOverallLength <= maxFloorLength)
                 {
 
@@ -306,8 +307,11 @@ namespace Stacker.Commands
 
 
 
+
+                    //
                     //
                     //Start processing floor layout options.
+                    //
                     //
                     double currentModWidth = new Double();
                     currentModWidth = PodWidthMin;
@@ -946,6 +950,7 @@ namespace Stacker.Commands
                             if (v.ViewId == vplan.Id)
                             {
                                 //v.ZoomToFit();
+                                _uidoc.ActiveView = vplan;
                                 v.ZoomAndCenterRectangle(new XYZ(-25, -25, 0), new XYZ(150, 150, 0));
                             }
                         }
