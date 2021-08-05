@@ -8,3 +8,6 @@ C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.C
 C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.dll
 C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.pdb
 C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csprojAssemblyReference.cache
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Newtonsoft.Json.dll
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Newtonsoft.Json.xml
+C:\Users\hdoshi\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.CopyComplete

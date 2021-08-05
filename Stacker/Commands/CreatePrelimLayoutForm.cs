@@ -63,6 +63,19 @@ namespace Stacker.Commands
 
             FloorLayoutOptions = new List<FloorLayout>();
 
+            cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPA");
+            cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS1");
+            cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS2");
+            cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS3");
+
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA");
+
+            cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPA");
+            cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB1");
+            cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB2");
+            cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB3");
+
+
         }
 
 
@@ -103,7 +116,7 @@ namespace Stacker.Commands
 
             if (elementsBuilt.Count > 0)
             {
-                using (var transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
+                using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
                 {
                     transDeleteOldMods.Start();
 
@@ -190,7 +203,7 @@ namespace Stacker.Commands
 
                     if (!levelBuilt)
                     {
-                        using (var transBuildLevels = new Transaction(_doc, "Mod: Build Levels"))
+                        using (Transaction transBuildLevels = new Transaction(_doc, "Mod: Build Levels"))
                         {
                             transBuildLevels.Start();
 
@@ -218,6 +231,7 @@ namespace Stacker.Commands
                     if (_doc.ActiveView != vplan)
                     {
                         _uidoc.ActiveView = vplan;
+                        _uidoc.RefreshActiveView();
                     }
 
 
@@ -225,7 +239,7 @@ namespace Stacker.Commands
 
                     if (elementsBuilt.Count > 0)
                     {
-                        using (var transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
+                        using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
                         {
                             transDeleteOldMods.Start();
 
@@ -325,7 +339,7 @@ namespace Stacker.Commands
 
                         if (elementsBuilt.Count > 0)
                         {
-                            using (var transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
+                            using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
                             {
                                 transDeleteOldMods.Start();
 
@@ -427,7 +441,7 @@ namespace Stacker.Commands
                         List<Line> actualFloorExtentLines = new List<Line>();
                         CurveArray revisedfloorEdgeCurveArray = createCurves(actualFloorExtentPts, elevation, out actualFloorExtentLines);
 
-                        using (var transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
+                        using (Transaction transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
                         {
                             transCreateFloorView.Start();
 
@@ -463,7 +477,7 @@ namespace Stacker.Commands
 
                         if (cbDrawOutlineWalls.Checked)
                         {
-                            using (var transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
+                            using (Transaction transCreatewalls = new Transaction(_doc, "Mod: Create Walls"))
                             {
                                 transCreatewalls.Start();
 
@@ -607,9 +621,14 @@ namespace Stacker.Commands
 
 
 
-                        using (var createRegion = new Transaction(_doc, "Mod: Create Region"))
+                        using (Transaction transCreateRegion = new Transaction(_doc, "Mod: Create Region"))
                         {
-                            createRegion.Start();
+                            transCreateRegion.Start();
+
+                            FailureHandlingOptions failOpt = transCreateRegion.GetFailureHandlingOptions();
+                            failOpt.SetFailuresPreprocessor(new WarningSwallower());
+                            transCreateRegion.SetFailureHandlingOptions(failOpt);
+
 
                             FilteredElementCollector fillRegionTypes = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
 
@@ -927,11 +946,10 @@ namespace Stacker.Commands
                                     }
 
 
-
-                                    Line lineA = Line.CreateBound(new XYZ(pt2.X, pt2.Y, elevation), new XYZ(pt2.X + 10, pt2.Y + 10, elevation));
-                                    ModelLine line = _doc.Create.NewModelCurve(lineA, vplan.SketchPlane) as ModelLine;
-
-                                    elementsBuilt[$"Temp Line"].Add(line.Id);
+                                    ////Draw temp line at mod top left corner
+                                    //Line lineA = Line.CreateBound(new XYZ(pt2.X, pt2.Y, elevation), new XYZ(pt2.X + 10, pt2.Y + 10, elevation));
+                                    //ModelLine line = _doc.Create.NewModelCurve(lineA, vplan.SketchPlane) as ModelLine;
+                                    //elementsBuilt[$"Temp Line"].Add(line.Id);
 
                                     if(filledRegion != null)
                                         regionsBuilt.Add(filledRegion.Id);
@@ -941,7 +959,7 @@ namespace Stacker.Commands
                             elementsBuilt["Mod Regions"] = regionsBuilt;
 
                             _doc.Regenerate();
-                            createRegion.Commit();
+                            transCreateRegion.Commit();
                         }
 
                         List<UIView> openViews = _uidoc.GetOpenUIViews().ToList();
@@ -1204,5 +1222,51 @@ namespace Stacker.Commands
         {
 
         }
+
+
+
+        /// <summary>
+        /// Suppress warnings and errors from user. 
+        /// </summary>
+        public class WarningSwallower : IFailuresPreprocessor
+        {
+            public FailureProcessingResult PreprocessFailures(FailuresAccessor a)
+            {
+                IList<FailureMessageAccessor> failures = a.GetFailureMessages();
+
+                foreach (FailureMessageAccessor f in failures)
+                {
+                    FailureDefinitionId id = f.GetFailureDefinitionId();
+
+                    FailureSeverity failureSeverity = a.GetSeverity();
+
+                    if (failureSeverity == FailureSeverity.Warning)
+                    {
+                        a.DeleteWarning(f);
+                    }
+                    else if (failureSeverity == FailureSeverity.Error)
+                    {
+
+                        List<ElementId> failingElementIds = f.GetFailingElementIds().ToList();
+                        FailureHandlingOptions failureHandOptions = a.GetFailureHandlingOptions();
+                        List<FailureResolutionType> resolutionTypes = a.GetAttemptedResolutionTypes(f).ToList();
+
+                        a.ResolveFailure(f);
+
+                        return FailureProcessingResult.ProceedWithCommit;
+
+                    }
+                    else
+                    {
+                        return FailureProcessingResult.ProceedWithRollBack;
+                    }
+                }
+                return FailureProcessingResult.Continue;
+            }
+        }
+
+
+
+
     }
 }

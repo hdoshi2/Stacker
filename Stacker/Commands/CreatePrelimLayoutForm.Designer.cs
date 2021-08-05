@@ -90,9 +90,9 @@ namespace Stacker.Commands
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.cbOptionsStudio = new System.Windows.Forms.ComboBox();
+            this.cbOptions1Bed = new System.Windows.Forms.ComboBox();
+            this.cbOptions2Bed = new System.Windows.Forms.ComboBox();
             this.btnAddInteriorLayout = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
@@ -280,9 +280,9 @@ namespace Stacker.Commands
             // 
             this.gbUnitConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbUnitConfig.Controls.Add(this.comboBox3);
-            this.gbUnitConfig.Controls.Add(this.comboBox2);
-            this.gbUnitConfig.Controls.Add(this.comboBox1);
+            this.gbUnitConfig.Controls.Add(this.cbOptions2Bed);
+            this.gbUnitConfig.Controls.Add(this.cbOptions1Bed);
+            this.gbUnitConfig.Controls.Add(this.cbOptionsStudio);
             this.gbUnitConfig.Controls.Add(this.label15);
             this.gbUnitConfig.Controls.Add(this.tbPercentage2Bed);
             this.gbUnitConfig.Controls.Add(this.tbPercentage1Bed);
@@ -581,9 +581,9 @@ namespace Stacker.Commands
             this.gbModLimitations.Controls.Add(this.label16);
             this.gbModLimitations.Controls.Add(this.tbModLengthMax);
             this.gbModLimitations.Controls.Add(this.tbModLengthMin);
-            this.gbModLimitations.Location = new System.Drawing.Point(400, 61);
+            this.gbModLimitations.Location = new System.Drawing.Point(400, 53);
             this.gbModLimitations.Name = "gbModLimitations";
-            this.gbModLimitations.Size = new System.Drawing.Size(204, 136);
+            this.gbModLimitations.Size = new System.Drawing.Size(204, 144);
             this.gbModLimitations.TabIndex = 84;
             this.gbModLimitations.TabStop = false;
             this.gbModLimitations.Text = "Modular Limitations";
@@ -591,7 +591,7 @@ namespace Stacker.Commands
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(8, 104);
+            this.label20.Location = new System.Drawing.Point(8, 107);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(72, 13);
             this.label20.TabIndex = 12;
@@ -599,7 +599,7 @@ namespace Stacker.Commands
             // 
             // tbFixedWidth
             // 
-            this.tbFixedWidth.Location = new System.Drawing.Point(89, 101);
+            this.tbFixedWidth.Location = new System.Drawing.Point(89, 104);
             this.tbFixedWidth.Name = "tbFixedWidth";
             this.tbFixedWidth.Size = new System.Drawing.Size(39, 20);
             this.tbFixedWidth.TabIndex = 11;
@@ -607,14 +607,14 @@ namespace Stacker.Commands
             // 
             // tbModWidthMax
             // 
-            this.tbModWidthMax.Location = new System.Drawing.Point(127, 69);
+            this.tbModWidthMax.Location = new System.Drawing.Point(127, 72);
             this.tbModWidthMax.Name = "tbModWidthMax";
             this.tbModWidthMax.Size = new System.Drawing.Size(39, 20);
             this.tbModWidthMax.TabIndex = 20;
             // 
             // tbModWidthMin
             // 
-            this.tbModWidthMin.Location = new System.Drawing.Point(68, 69);
+            this.tbModWidthMin.Location = new System.Drawing.Point(68, 72);
             this.tbModWidthMin.Name = "tbModWidthMin";
             this.tbModWidthMin.Size = new System.Drawing.Size(39, 20);
             this.tbModWidthMin.TabIndex = 19;
@@ -622,7 +622,7 @@ namespace Stacker.Commands
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(8, 72);
+            this.label19.Location = new System.Drawing.Point(8, 75);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(53, 13);
             this.label19.TabIndex = 18;
@@ -633,7 +633,7 @@ namespace Stacker.Commands
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(132, 22);
+            this.label17.Location = new System.Drawing.Point(132, 19);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(30, 13);
             this.label17.TabIndex = 17;
@@ -644,7 +644,7 @@ namespace Stacker.Commands
             this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(73, 22);
+            this.label18.Location = new System.Drawing.Point(73, 19);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(27, 13);
             this.label18.TabIndex = 16;
@@ -653,7 +653,7 @@ namespace Stacker.Commands
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(7, 42);
+            this.label16.Location = new System.Drawing.Point(7, 44);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(58, 13);
             this.label16.TabIndex = 11;
@@ -661,14 +661,14 @@ namespace Stacker.Commands
             // 
             // tbModLengthMax
             // 
-            this.tbModLengthMax.Location = new System.Drawing.Point(127, 39);
+            this.tbModLengthMax.Location = new System.Drawing.Point(127, 41);
             this.tbModLengthMax.Name = "tbModLengthMax";
             this.tbModLengthMax.Size = new System.Drawing.Size(39, 20);
             this.tbModLengthMax.TabIndex = 15;
             // 
             // tbModLengthMin
             // 
-            this.tbModLengthMin.Location = new System.Drawing.Point(68, 39);
+            this.tbModLengthMin.Location = new System.Drawing.Point(68, 41);
             this.tbModLengthMin.Name = "tbModLengthMin";
             this.tbModLengthMin.Size = new System.Drawing.Size(39, 20);
             this.tbModLengthMin.TabIndex = 14;
@@ -749,38 +749,38 @@ namespace Stacker.Commands
             this.label15.TabIndex = 21;
             this.label15.Text = "Layout Type Priority";
             // 
-            // comboBox1
+            // cbOptionsStudio
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.cbOptionsStudio.FormattingEnabled = true;
+            this.cbOptionsStudio.Items.AddRange(new object[] {
             "Any Studio"});
-            this.comboBox1.Location = new System.Drawing.Point(118, 39);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(178, 21);
-            this.comboBox1.TabIndex = 22;
-            this.comboBox1.Text = "Any Studio";
+            this.cbOptionsStudio.Location = new System.Drawing.Point(118, 39);
+            this.cbOptionsStudio.Name = "cbOptionsStudio";
+            this.cbOptionsStudio.Size = new System.Drawing.Size(178, 21);
+            this.cbOptionsStudio.TabIndex = 22;
+            this.cbOptionsStudio.Text = "Any Studio";
             // 
-            // comboBox2
+            // cbOptions1Bed
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.cbOptions1Bed.FormattingEnabled = true;
+            this.cbOptions1Bed.Items.AddRange(new object[] {
             "Any 1-Bed"});
-            this.comboBox2.Location = new System.Drawing.Point(118, 66);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(178, 21);
-            this.comboBox2.TabIndex = 23;
-            this.comboBox2.Text = "Any 1-Bed";
+            this.cbOptions1Bed.Location = new System.Drawing.Point(118, 66);
+            this.cbOptions1Bed.Name = "cbOptions1Bed";
+            this.cbOptions1Bed.Size = new System.Drawing.Size(178, 21);
+            this.cbOptions1Bed.TabIndex = 23;
+            this.cbOptions1Bed.Text = "Any 1-Bed";
             // 
-            // comboBox3
+            // cbOptions2Bed
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
+            this.cbOptions2Bed.FormattingEnabled = true;
+            this.cbOptions2Bed.Items.AddRange(new object[] {
             "Any 2-Bed"});
-            this.comboBox3.Location = new System.Drawing.Point(118, 94);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(178, 21);
-            this.comboBox3.TabIndex = 24;
-            this.comboBox3.Text = "Any 2-Bed";
+            this.cbOptions2Bed.Location = new System.Drawing.Point(118, 94);
+            this.cbOptions2Bed.Name = "cbOptions2Bed";
+            this.cbOptions2Bed.Size = new System.Drawing.Size(178, 21);
+            this.cbOptions2Bed.TabIndex = 24;
+            this.cbOptions2Bed.Text = "Any 2-Bed";
             // 
             // btnAddInteriorLayout
             // 
@@ -886,9 +886,9 @@ namespace Stacker.Commands
         private System.Windows.Forms.CheckBox cbDrawInteriorLAyout;
         private System.Windows.Forms.CheckBox cbTotalIterations;
         private System.Windows.Forms.TextBox tbLimitIterations;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbOptions2Bed;
+        private System.Windows.Forms.ComboBox cbOptions1Bed;
+        private System.Windows.Forms.ComboBox cbOptionsStudio;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button btnAddInteriorLayout;
         private System.Windows.Forms.Button btnPrevious;
