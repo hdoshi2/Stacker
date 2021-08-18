@@ -14,6 +14,7 @@ using Autodesk.Revit.DB.Structure;
 using Stacker.Commands;
 using System.IO;
 using Stacker.ModClasses;
+using Newtonsoft.Json;
 
 namespace Stacker.Commands
 {
@@ -1200,13 +1201,17 @@ namespace Stacker.Commands
         {
             try
             {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "Excel Files (*.xls; *.xlsx *.xlsm)|*.xls;*.xlsx;*.xlsm" })
+                using (OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "Json files (*.json)|*.json|Text files (*.txt)|*.txt" })
                 {
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         if (openFileDialog.FileName != null)
                         {
+                            string content = File.ReadAllText(openFileDialog.FileName);
 
+                            //Parse JSON and return value
+                            var jsonContentObj = Newtonsoft.Json.Linq.JObject.Parse(content);
+                            var jsonContentArray = Newtonsoft.Json.Linq.JArray.Parse(content);
 
                         }
                     }

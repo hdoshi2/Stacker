@@ -25,7 +25,7 @@ namespace Stacker
             
             RibbonPanel panel = application.CreateRibbonPanel("Mod Labs", "Build Model");
 
-            Uri imagePath = new Uri(@"C:\Users\hdoshi\Desktop\Modular\Repos\building_Crane32.png");
+            Uri imagePath = new Uri(@"C:\Users\hdosh\Desktop\Modular\Repos\building_Crane32.png");
             BitmapImage image = new BitmapImage(imagePath);
 
 
