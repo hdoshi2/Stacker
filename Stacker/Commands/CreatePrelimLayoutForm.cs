@@ -15,6 +15,7 @@ using Stacker.Commands;
 using System.IO;
 using Stacker.ModClasses;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Stacker.Commands
 {
@@ -1210,8 +1211,103 @@ namespace Stacker.Commands
                             string content = File.ReadAllText(openFileDialog.FileName);
 
                             //Parse JSON and return value
-                            var jsonContentObj = Newtonsoft.Json.Linq.JObject.Parse(content);
-                            var jsonContentArray = Newtonsoft.Json.Linq.JArray.Parse(content);
+                            JObject jsonContentObj = Newtonsoft.Json.Linq.JObject.Parse(content);
+                            var deserializeObject = Newtonsoft.Json.JsonConvert.DeserializeObject(content);
+                            JObject json = JObject.Parse(content);
+
+                            Dictionary<string, string> dictJSON = new Dictionary<string, string>();
+                            List<string> keys = new List<string>();
+                            List<string> values = new List<string>();
+
+                            foreach (var x in jsonContentObj)
+                            {
+                                string name = x.Key;
+                                JToken value = x.Value;
+
+                                while (value.HasValues)
+                                {
+                                    Type t = value.GetType();
+
+
+                                    //
+                                    //If item is an Array
+                                    //
+                                    if (t.Name == "JArray")
+                                    {
+                                        var arr = value.ToArray();
+
+                                        foreach (JToken x1 in arr)
+                                        {
+                                            
+                                            if (x1.GetType().Name == "JObject")
+                                            {
+                                                var obj = x1.ToObject<JObject>();
+
+                                                foreach (var x2 in obj)
+                                                {
+                                                    string name1 = x2.Key;
+                                                    JToken value1 = x2.Value;
+
+                                                    if (value1.HasValues)
+                                                    {
+                                                        value = value1;
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        keys.Add(name1);
+                                                        values.Add(value1.ToString());
+                                                        dictJSON[name1] = value1.ToString();
+                                                    }
+                                                }
+
+                                            }
+                                        }
+
+                                        break;
+
+                                    }
+                                    //
+                                    //If item is an object
+                                    //
+                                    else if (t == typeof(Object))
+                                    {
+
+                                        var obj = value.ToObject<JObject>();
+
+                                        foreach (var x1 in obj)
+                                        {
+                                            string name1 = x1.Key;
+                                            JToken value1 = x1.Value;
+
+                                            if (value1.HasValues)
+                                            {
+                                                value = value1;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                keys.Add(name1);
+                                                values.Add(value1.ToString());
+                                                dictJSON[name1] = value1.ToString();
+                                            }
+                                        }
+
+                                        break;
+
+                                    }
+
+                                }
+
+                                if (!value.HasValues)
+                                {
+                                    keys.Add(name);
+                                    values.Add(value.ToString());
+                                    dictJSON[name] = value.ToString();
+                                }
+
+
+                            }
 
                         }
                     }
