@@ -128,6 +128,16 @@
         RU5ErkJggg==
 </value>
   </data>
+  <data name="btnViewJSON.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAOpJREFUOE+d
+        kmsRwkAMhCsBCUhAEk7AAUjAATgAB1QCDsAB7Jd2O+FI+4Od2Zm7PC67absCa/Eg3sX3SM7EyC3iKLrp
+        Iu5Hcnach0r0IgU0rAg0IEaOGhR9wZO3cVsGNdTSE8CXJwMmXcVN3Aa0MSuJnXi6ZZ9E7k+RBuJe6EME
+        xLiHCryzJIOk98Ejbn6JWRU9sQuSlm/kR6pmYBuzD3gytJ2M6YHKQpad7bQWyM0u0bKznXKJ1We8iXla
+        G7P86de2ir9+JMMyd6LtZBAjR014r2Al8CzSADk7/jO5Bb4osiLImdjkeUDXfQCJFGV+lo/6cAAAAABJ
+        RU5ErkJggg==
+</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAgIAAAAEAIAAoCAEAFgAAACgAAACAAAAAAAEAAAEAIAAAAAAAAAABABILAAASCwAAAAAAAAAA

@@ -67,6 +67,12 @@
     <Compile Include="Commands\CreatePrelimLayoutForm.Designer.cs">
       <DependentUpon>CreatePrelimLayoutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Commands\FormViewJsonData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\FormViewJsonData.Designer.cs">
+      <DependentUpon>FormViewJsonData.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExternalApplication.cs" />
     <Compile Include="ModClasses\FloorLayout.cs" />
     <Compile Include="ModClasses\FloorLayoutOption.cs" />
@@ -91,6 +97,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Commands\CreatePrelimLayoutForm.resx">
       <DependentUpon>CreatePrelimLayoutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\FormViewJsonData.resx">
+      <DependentUpon>FormViewJsonData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

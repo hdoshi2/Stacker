@@ -46,6 +46,7 @@ namespace Stacker.Commands
 
         List<FloorLayout> FloorLayoutOptions;
 
+        Dictionary<string, string> DictJSON;
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
@@ -64,6 +65,7 @@ namespace Stacker.Commands
             tbModWidthMax.Text = PodWidthMax.ToString();
 
             FloorLayoutOptions = new List<FloorLayout>();
+            DictJSON = new Dictionary<string, string>();
 
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPA");
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS1");
@@ -1215,7 +1217,7 @@ namespace Stacker.Commands
                             var deserializeObject = Newtonsoft.Json.JsonConvert.DeserializeObject(content);
                             JObject json = JObject.Parse(content);
 
-                            Dictionary<string, string> dictJSON = new Dictionary<string, string>();
+                            DictJSON = new Dictionary<string, string>();
                             List<string> keys = new List<string>();
                             List<string> values = new List<string>();
 
@@ -1257,7 +1259,7 @@ namespace Stacker.Commands
                                                     {
                                                         keys.Add(name1);
                                                         values.Add(value1.ToString());
-                                                        dictJSON[name1] = value1.ToString();
+                                                        DictJSON[name1] = value1.ToString();
                                                     }
                                                 }
 
@@ -1270,7 +1272,7 @@ namespace Stacker.Commands
                                     //
                                     //If item is an object
                                     //
-                                    else if (t == typeof(Object))
+                                    else if (t.Name == "JObject")
                                     {
 
                                         var obj = value.ToObject<JObject>();
@@ -1289,7 +1291,7 @@ namespace Stacker.Commands
                                             {
                                                 keys.Add(name1);
                                                 values.Add(value1.ToString());
-                                                dictJSON[name1] = value1.ToString();
+                                                DictJSON[name1] = value1.ToString();
                                             }
                                         }
 
@@ -1303,7 +1305,7 @@ namespace Stacker.Commands
                                 {
                                     keys.Add(name);
                                     values.Add(value.ToString());
-                                    dictJSON[name] = value.ToString();
+                                    DictJSON[name] = value.ToString();
                                 }
 
 
@@ -1324,7 +1326,15 @@ namespace Stacker.Commands
 
         }
 
+        private void btnViewJSON_Click(object sender, EventArgs e)
+        {
+            if (DictJSON.Count == 0)
+                TaskDialog.Show("JSON", "JSON data empty.");
 
+            Stacker.Commands.FormViewJsonData frmJsonViewer = new FormViewJsonData(DictJSON);
+            frmJsonViewer.ShowDialog();
+
+        }
 
         /// <summary>
         /// Suppress warnings and errors from user. 
@@ -1365,8 +1375,6 @@ namespace Stacker.Commands
                 return FailureProcessingResult.Continue;
             }
         }
-
-
 
 
     }

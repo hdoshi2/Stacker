@@ -24,3 +24,4 @@ C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.Co
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.CopyComplete
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.dll
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.pdb
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.FormViewJsonData.resources
