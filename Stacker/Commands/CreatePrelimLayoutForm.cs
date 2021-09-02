@@ -47,6 +47,9 @@ namespace Stacker.Commands
         List<FloorLayout> FloorLayoutOptions;
 
         Dictionary<string, string> DictJSON;
+
+        public bool formClosed = false;
+
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
@@ -110,21 +113,24 @@ namespace Stacker.Commands
 
 
 
-        bool levelBuilt = false;
-        Dictionary<string, List<ElementId>> elementsBuilt = new Dictionary<string, List<ElementId>>();
-        Level level = null;
-        ViewPlan vplan = null;
+        bool LevelBuilt = false;
+        Dictionary<string, List<ElementId>> ElementsBuilt = new Dictionary<string, List<ElementId>>();
+        Level Level = null;
+        Level Level2 = null;
+
+        ViewPlan VPlan = null;
+        ViewPlan VPlan2 = null;
 
         private void btnDeleteGeom_Click(object sender, EventArgs e)
         {
 
-            if (elementsBuilt.Count > 0)
+            if (ElementsBuilt.Count > 0)
             {
                 using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
                 {
                     transDeleteOldMods.Start();
 
-                    foreach (var elemCat in elementsBuilt)
+                    foreach (var elemCat in ElementsBuilt)
                     {
                         foreach (var elem in elemCat.Value)
                         {
@@ -135,7 +141,7 @@ namespace Stacker.Commands
                         }
                     }
 
-                    elementsBuilt = new Dictionary<string, List<ElementId>>();
+                    ElementsBuilt = new Dictionary<string, List<ElementId>>();
 
                     transDeleteOldMods.Commit();
                 }
@@ -205,25 +211,44 @@ namespace Stacker.Commands
                         break;
 
 
-                    if (!levelBuilt)
+                    if (!LevelBuilt)
                     {
                         using (Transaction transBuildLevels = new Transaction(_doc, "Mod: Build Levels"))
                         {
                             transBuildLevels.Start();
 
-                            level = Level.Create(_doc, elevation);
+                            Level = Level.Create(_doc, elevation);
 
-                            if (null == level)
+                            if (null == Level)
                                 throw new Exception("Create a new level failed.");
 
                             // Change the level name
-                            level.Name = "Mod Level 1";
+                            Level.Name = "Mod Level 1";
 
                             //Create a New View
-                            vplan = ViewPlan.Create(_doc, structuralvft.Id, level.Id);
-                            vplan.Name = level.Name + " - TEST";
+                            VPlan = ViewPlan.Create(_doc, structuralvft.Id, Level.Id);
+                            VPlan.Name = Level.Name + " - TEST";
 
-                            levelBuilt = true;
+                            //
+                            //
+                            //
+
+                            Level2 = Level.Create(_doc, elevation * 2);
+
+                            if (null == Level2)
+                                throw new Exception("Create a new level failed.");
+
+                            // Change the level name
+                            Level2.Name = "Mod Level 2";
+
+                            //Create a New View
+                            VPlan2 = ViewPlan.Create(_doc, structuralvft.Id, Level2.Id);
+                            VPlan2.Name = Level2.Name + " - TEST";
+
+                            //
+                            //
+
+                            LevelBuilt = true;
 
 
 
@@ -232,22 +257,22 @@ namespace Stacker.Commands
                     }
 
 
-                    if (_doc.ActiveView != vplan)
+                    if (_doc.ActiveView != VPlan)
                     {
-                        _uidoc.ActiveView = vplan;
+                        _uidoc.ActiveView = VPlan;
                         _uidoc.RefreshActiveView();
                     }
 
 
 
 
-                    if (elementsBuilt.Count > 0)
+                    if (ElementsBuilt.Count > 0)
                     {
                         using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
                         {
                             transDeleteOldMods.Start();
 
-                            foreach (var elemCat in elementsBuilt)
+                            foreach (var elemCat in ElementsBuilt)
                             {
                                 foreach (var elem in elemCat.Value)
                                 {
@@ -258,7 +283,7 @@ namespace Stacker.Commands
                                 }
                             }
 
-                            elementsBuilt = new Dictionary<string, List<ElementId>>();
+                            ElementsBuilt = new Dictionary<string, List<ElementId>>();
 
                             transDeleteOldMods.Commit();
                         }
@@ -341,13 +366,13 @@ namespace Stacker.Commands
                             break;
 
 
-                        if (elementsBuilt.Count > 0)
+                        if (ElementsBuilt.Count > 0)
                         {
                             using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
                             {
                                 transDeleteOldMods.Start();
 
-                                foreach (var elemCat in elementsBuilt)
+                                foreach (var elemCat in ElementsBuilt)
                                 {
                                     foreach (var elem in elemCat.Value)
                                     {
@@ -358,7 +383,7 @@ namespace Stacker.Commands
                                     }
                                 }
 
-                                elementsBuilt = new Dictionary<string, List<ElementId>>();
+                                ElementsBuilt = new Dictionary<string, List<ElementId>>();
 
                                 transDeleteOldMods.Commit();
                             }
@@ -459,8 +484,8 @@ namespace Stacker.Commands
                             // The normal vector (0,0,1) that must be perpendicular to the profile.
                             XYZ normal = XYZ.BasisZ;
 
-                            Floor newFloor = _doc.Create.NewFloor(revisedfloorEdgeCurveArray, floorType, level, true, normal);
-                            elementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
+                            Floor newFloor = _doc.Create.NewFloor(revisedfloorEdgeCurveArray, floorType, Level, true, normal);
+                            ElementsBuilt["Floor"] = new List<ElementId>() { newFloor.Id };
 
                             transCreateFloorView.Commit();
                         }
@@ -493,7 +518,7 @@ namespace Stacker.Commands
 
                                 foreach (var line in hallwayLines)
                                 {
-                                    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                                    var wall = Wall.Create(_doc, line, wType.Id, Level.Id, 10, 0, false, true);
                                     wall.WallType = wType;
 
                                     wallsBuilt.Add(wall.Id);
@@ -501,12 +526,12 @@ namespace Stacker.Commands
 
                                 foreach (var line in actualFloorExtentLines)
                                 {
-                                    var wall = Wall.Create(_doc, line, wType.Id, level.Id, 10, 0, false, true);
+                                    var wall = Wall.Create(_doc, line, wType.Id, Level.Id, 10, 0, false, true);
 
                                     wallsBuilt.Add(wall.Id);
                                 }
 
-                                elementsBuilt["Walls - Primary"] = wallsBuilt;
+                                ElementsBuilt["Walls - Primary"] = wallsBuilt;
 
 
                                 transCreatewalls.Commit();
@@ -650,8 +675,8 @@ namespace Stacker.Commands
 
 
                             var regionsBuilt = new List<ElementId>();
-                            elementsBuilt[$"Temp Line"] = new List<ElementId>();
-                            elementsBuilt[$"Room Elements"] = new List<ElementId>();
+                            ElementsBuilt[$"Temp Line"] = new List<ElementId>();
+                            ElementsBuilt[$"Room Elements"] = new List<ElementId>();
 
 
 
@@ -699,7 +724,7 @@ namespace Stacker.Commands
                                     if (currentMod.TotalMods == 3)
                                     {
 
-                                        filledRegion = FilledRegion.Create(_doc, newPattern2.Id, vplan.Id, profilelps);
+                                        filledRegion = FilledRegion.Create(_doc, newPattern2.Id, VPlan.Id, profilelps);
 
 
                                         if (cbDrawInteriorLAyout.Checked)
@@ -739,7 +764,7 @@ namespace Stacker.Commands
                                             options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
 
 
-                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab2BDTYPA, vplan, Transform.Identity, options);
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab2BDTYPA, VPlan, Transform.Identity, options);
 
                                             if (j == 0)
                                             {
@@ -774,7 +799,7 @@ namespace Stacker.Commands
                                                 ElementTransformUtils.MoveElement(_doc, wallToMoveModLab2BDTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
 
 
-                                            elementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+                                            ElementsBuilt[$"Room Elements"].AddRange(elementsAdded);
 
                                         }
 
@@ -783,7 +808,7 @@ namespace Stacker.Commands
                                     else if (currentMod.TotalMods == 2)
                                     {
 
-                                        filledRegion = FilledRegion.Create(_doc, newPattern1.Id, vplan.Id, profilelps);
+                                        filledRegion = FilledRegion.Create(_doc, newPattern1.Id, VPlan.Id, profilelps);
 
 
                                         if (cbDrawInteriorLAyout.Checked)
@@ -822,7 +847,7 @@ namespace Stacker.Commands
                                             options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
 
 
-                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab1BDTYPA, vplan, Transform.Identity, options);
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab1BDTYPA, VPlan, Transform.Identity, options);
 
                                             if (j == 0)
                                             {
@@ -853,7 +878,7 @@ namespace Stacker.Commands
                                             if (wallMoved_Y)
                                                 ElementTransformUtils.MoveElement(_doc, wallToMoveModLab1BDTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
 
-                                            elementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+                                            ElementsBuilt[$"Room Elements"].AddRange(elementsAdded);
                                         }
 
 
@@ -863,7 +888,7 @@ namespace Stacker.Commands
                                     else
                                     {
 
-                                        filledRegion = FilledRegion.Create(_doc, newPattern0.Id, vplan.Id, profilelps);
+                                        filledRegion = FilledRegion.Create(_doc, newPattern0.Id, VPlan.Id, profilelps);
 
 
 
@@ -906,7 +931,7 @@ namespace Stacker.Commands
                                             options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
 
 
-                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab0BDTYPA, vplan, Transform.Identity, options);
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLab0BDTYPA, VPlan, Transform.Identity, options);
 
                                             if (j == 0)
                                             {
@@ -943,7 +968,7 @@ namespace Stacker.Commands
                                                 ElementTransformUtils.MoveElement(_doc, wallToMoveModLab0BDTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
 
 
-                                            elementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+                                            ElementsBuilt[$"Room Elements"].AddRange(elementsAdded);
                                         }
 
                                         
@@ -960,7 +985,7 @@ namespace Stacker.Commands
                                 }
                             }
 
-                            elementsBuilt["Mod Regions"] = regionsBuilt;
+                            ElementsBuilt["Mod Regions"] = regionsBuilt;
 
                             _doc.Regenerate();
                             transCreateRegion.Commit();
@@ -969,10 +994,10 @@ namespace Stacker.Commands
                         List<UIView> openViews = _uidoc.GetOpenUIViews().ToList();
                         foreach (var v in openViews)
                         {
-                            if (v.ViewId == vplan.Id)
+                            if (v.ViewId == VPlan.Id)
                             {
                                 //v.ZoomToFit();
-                                _uidoc.ActiveView = vplan;
+                                _uidoc.ActiveView = VPlan;
                                 v.ZoomAndCenterRectangle(new XYZ(-25, -25, 0), new XYZ(150, 150, 0));
                             }
                         }
@@ -1190,7 +1215,7 @@ namespace Stacker.Commands
         /// <param name="e"></param>
         private void btnClose_Click(object sender, EventArgs e)
         {
-            CreatePrelimLayoutForm.ActiveForm.Close();
+            formClosed = true;
         }
 
 
@@ -1329,10 +1354,26 @@ namespace Stacker.Commands
         private void btnViewJSON_Click(object sender, EventArgs e)
         {
             if (DictJSON.Count == 0)
+            {
                 TaskDialog.Show("JSON", "JSON data empty.");
+                return;
+            }
 
-            Stacker.Commands.FormViewJsonData frmJsonViewer = new FormViewJsonData(DictJSON);
-            frmJsonViewer.ShowDialog();
+            try
+            {
+
+                //Pop-out new form to display beam list
+                using (Stacker.Commands.FormViewJsonData frmJsonViewer = new FormViewJsonData(DictJSON))
+                {
+                    frmJsonViewer.ShowDialog();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("ERROR", ex.Message);
+            }
+
 
         }
 

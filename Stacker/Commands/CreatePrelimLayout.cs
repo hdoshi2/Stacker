@@ -25,9 +25,14 @@ namespace Stacker
             try
             {
 
-                CreatePrelimLayoutForm layoutForm = new CreatePrelimLayoutForm(_doc, _uidoc);
-
-                layoutForm.ShowDialog();
+                using (CreatePrelimLayoutForm layoutForm = new CreatePrelimLayoutForm(_doc, _uidoc))
+                {
+                    while(layoutForm.formClosed == false)
+                    {
+                        layoutForm.ShowDialog();
+                    }
+                    
+                }
 
                 return Result.Succeeded;
 

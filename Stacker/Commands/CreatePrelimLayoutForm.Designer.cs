@@ -107,7 +107,7 @@ namespace Stacker.Commands
             // 
             this.btnBuildLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnBuildLayout.Location = new System.Drawing.Point(326, 1013);
-            this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
+            this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(12);
             this.btnBuildLayout.Name = "btnBuildLayout";
             this.btnBuildLayout.Size = new System.Drawing.Size(268, 58);
             this.btnBuildLayout.TabIndex = 0;
@@ -122,7 +122,7 @@ namespace Stacker.Commands
             this.pictureBox1.Image = global::Stacker.Properties.Resources.floorStack_32;
             this.pictureBox1.InitialImage = global::Stacker.Properties.Resources.floorStack_128;
             this.pictureBox1.Location = new System.Drawing.Point(1144, 29);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(6);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -132,7 +132,7 @@ namespace Stacker.Commands
             // tbLength
             // 
             this.tbLength.Location = new System.Drawing.Point(142, 50);
-            this.tbLength.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbLength.Margin = new System.Windows.Forms.Padding(6);
             this.tbLength.Name = "tbLength";
             this.tbLength.Size = new System.Drawing.Size(74, 31);
             this.tbLength.TabIndex = 1;
@@ -151,7 +151,7 @@ namespace Stacker.Commands
             // tbWidth
             // 
             this.tbWidth.Location = new System.Drawing.Point(362, 50);
-            this.tbWidth.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbWidth.Margin = new System.Windows.Forms.Padding(6);
             this.tbWidth.Name = "tbWidth";
             this.tbWidth.Size = new System.Drawing.Size(74, 31);
             this.tbWidth.TabIndex = 3;
@@ -185,9 +185,9 @@ namespace Stacker.Commands
             this.gbFloorDimension.Controls.Add(this.lblLength);
             this.gbFloorDimension.Controls.Add(this.tbLength);
             this.gbFloorDimension.Location = new System.Drawing.Point(24, 104);
-            this.gbFloorDimension.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gbFloorDimension.Margin = new System.Windows.Forms.Padding(6);
             this.gbFloorDimension.Name = "gbFloorDimension";
-            this.gbFloorDimension.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gbFloorDimension.Padding = new System.Windows.Forms.Padding(6);
             this.gbFloorDimension.Size = new System.Drawing.Size(764, 275);
             this.gbFloorDimension.TabIndex = 1;
             this.gbFloorDimension.TabStop = false;
@@ -197,7 +197,7 @@ namespace Stacker.Commands
             // 
             this.cbDrawInteriorLAyout.AutoSize = true;
             this.cbDrawInteriorLAyout.Location = new System.Drawing.Point(148, 167);
-            this.cbDrawInteriorLAyout.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbDrawInteriorLAyout.Margin = new System.Windows.Forms.Padding(6);
             this.cbDrawInteriorLAyout.Name = "cbDrawInteriorLAyout";
             this.cbDrawInteriorLAyout.Size = new System.Drawing.Size(236, 29);
             this.cbDrawInteriorLAyout.TabIndex = 12;
@@ -208,7 +208,7 @@ namespace Stacker.Commands
             // 
             this.cbDrawOutlineWalls.AutoSize = true;
             this.cbDrawOutlineWalls.Location = new System.Drawing.Point(148, 212);
-            this.cbDrawOutlineWalls.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbDrawOutlineWalls.Margin = new System.Windows.Forms.Padding(6);
             this.cbDrawOutlineWalls.Name = "cbDrawOutlineWalls";
             this.cbDrawOutlineWalls.Size = new System.Drawing.Size(226, 29);
             this.cbDrawOutlineWalls.TabIndex = 11;
@@ -223,7 +223,7 @@ namespace Stacker.Commands
             "Length",
             "Width"});
             this.cbHallwayAlignment.Location = new System.Drawing.Point(448, 100);
-            this.cbHallwayAlignment.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbHallwayAlignment.Margin = new System.Windows.Forms.Padding(6);
             this.cbHallwayAlignment.Name = "cbHallwayAlignment";
             this.cbHallwayAlignment.Size = new System.Drawing.Size(248, 33);
             this.cbHallwayAlignment.TabIndex = 10;
@@ -252,7 +252,7 @@ namespace Stacker.Commands
             // tbHallwayWidth
             // 
             this.tbHallwayWidth.Location = new System.Drawing.Point(142, 100);
-            this.tbHallwayWidth.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbHallwayWidth.Margin = new System.Windows.Forms.Padding(6);
             this.tbHallwayWidth.Name = "tbHallwayWidth";
             this.tbHallwayWidth.ReadOnly = true;
             this.tbHallwayWidth.Size = new System.Drawing.Size(74, 31);
@@ -263,7 +263,7 @@ namespace Stacker.Commands
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbTotalSquareFootage.Location = new System.Drawing.Point(660, 208);
-            this.tbTotalSquareFootage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbTotalSquareFootage.Margin = new System.Windows.Forms.Padding(6);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(74, 31);
@@ -283,9 +283,9 @@ namespace Stacker.Commands
             // btnApplyFlrDim
             // 
             this.btnApplyFlrDim.Location = new System.Drawing.Point(20, 175);
-            this.btnApplyFlrDim.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
+            this.btnApplyFlrDim.Margin = new System.Windows.Forms.Padding(12);
             this.btnApplyFlrDim.Name = "btnApplyFlrDim";
-            this.btnApplyFlrDim.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnApplyFlrDim.Padding = new System.Windows.Forms.Padding(6);
             this.btnApplyFlrDim.Size = new System.Drawing.Size(110, 58);
             this.btnApplyFlrDim.TabIndex = 4;
             this.btnApplyFlrDim.Text = "Apply";
@@ -308,9 +308,9 @@ namespace Stacker.Commands
             this.gbUnitConfig.Controls.Add(this.label3);
             this.gbUnitConfig.Controls.Add(this.label2);
             this.gbUnitConfig.Location = new System.Drawing.Point(24, 390);
-            this.gbUnitConfig.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gbUnitConfig.Margin = new System.Windows.Forms.Padding(6);
             this.gbUnitConfig.Name = "gbUnitConfig";
-            this.gbUnitConfig.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gbUnitConfig.Padding = new System.Windows.Forms.Padding(6);
             this.gbUnitConfig.Size = new System.Drawing.Size(764, 287);
             this.gbUnitConfig.TabIndex = 2;
             this.gbUnitConfig.TabStop = false;
@@ -322,7 +322,7 @@ namespace Stacker.Commands
             this.cbOptions2Bed.Items.AddRange(new object[] {
             "Any 2-Bed"});
             this.cbOptions2Bed.Location = new System.Drawing.Point(236, 181);
-            this.cbOptions2Bed.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbOptions2Bed.Margin = new System.Windows.Forms.Padding(6);
             this.cbOptions2Bed.Name = "cbOptions2Bed";
             this.cbOptions2Bed.Size = new System.Drawing.Size(352, 33);
             this.cbOptions2Bed.TabIndex = 24;
@@ -334,7 +334,7 @@ namespace Stacker.Commands
             this.cbOptions1Bed.Items.AddRange(new object[] {
             "Any 1-Bed"});
             this.cbOptions1Bed.Location = new System.Drawing.Point(236, 127);
-            this.cbOptions1Bed.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbOptions1Bed.Margin = new System.Windows.Forms.Padding(6);
             this.cbOptions1Bed.Name = "cbOptions1Bed";
             this.cbOptions1Bed.Size = new System.Drawing.Size(352, 33);
             this.cbOptions1Bed.TabIndex = 23;
@@ -346,7 +346,7 @@ namespace Stacker.Commands
             this.cbOptionsStudio.Items.AddRange(new object[] {
             "Any Studio"});
             this.cbOptionsStudio.Location = new System.Drawing.Point(236, 75);
-            this.cbOptionsStudio.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbOptionsStudio.Margin = new System.Windows.Forms.Padding(6);
             this.cbOptionsStudio.Name = "cbOptionsStudio";
             this.cbOptionsStudio.Size = new System.Drawing.Size(352, 33);
             this.cbOptionsStudio.TabIndex = 22;
@@ -367,7 +367,7 @@ namespace Stacker.Commands
             // tbPercentage2Bed
             // 
             this.tbPercentage2Bed.Location = new System.Drawing.Point(112, 181);
-            this.tbPercentage2Bed.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbPercentage2Bed.Margin = new System.Windows.Forms.Padding(6);
             this.tbPercentage2Bed.Name = "tbPercentage2Bed";
             this.tbPercentage2Bed.Size = new System.Drawing.Size(86, 31);
             this.tbPercentage2Bed.TabIndex = 20;
@@ -376,7 +376,7 @@ namespace Stacker.Commands
             // tbPercentage1Bed
             // 
             this.tbPercentage1Bed.Location = new System.Drawing.Point(112, 127);
-            this.tbPercentage1Bed.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbPercentage1Bed.Margin = new System.Windows.Forms.Padding(6);
             this.tbPercentage1Bed.Name = "tbPercentage1Bed";
             this.tbPercentage1Bed.Size = new System.Drawing.Size(86, 31);
             this.tbPercentage1Bed.TabIndex = 19;
@@ -397,7 +397,7 @@ namespace Stacker.Commands
             // tbPercentageStudio
             // 
             this.tbPercentageStudio.Location = new System.Drawing.Point(112, 75);
-            this.tbPercentageStudio.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbPercentageStudio.Margin = new System.Windows.Forms.Padding(6);
             this.tbPercentageStudio.Name = "tbPercentageStudio";
             this.tbPercentageStudio.Size = new System.Drawing.Size(86, 31);
             this.tbPercentageStudio.TabIndex = 12;
@@ -443,9 +443,9 @@ namespace Stacker.Commands
             // 
             this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnLoadDataFile.Location = new System.Drawing.Point(466, 29);
-            this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(12, 12, 12, 12);
+            this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(12);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
-            this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Size = new System.Drawing.Size(310, 58);
             this.btnLoadDataFile.TabIndex = 3;
             this.btnLoadDataFile.Text = "Load JSON Data File";
@@ -474,9 +474,9 @@ namespace Stacker.Commands
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Location = new System.Drawing.Point(24, 688);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
             this.groupBox1.Size = new System.Drawing.Size(764, 302);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
@@ -486,7 +486,7 @@ namespace Stacker.Commands
             // 
             this.btnAddInteriorLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddInteriorLayout.Location = new System.Drawing.Point(506, 148);
-            this.btnAddInteriorLayout.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnAddInteriorLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnAddInteriorLayout.Name = "btnAddInteriorLayout";
             this.btnAddInteriorLayout.Size = new System.Drawing.Size(232, 58);
             this.btnAddInteriorLayout.TabIndex = 20;
@@ -497,7 +497,7 @@ namespace Stacker.Commands
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrevious.Location = new System.Drawing.Point(506, 217);
-            this.btnPrevious.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnPrevious.Margin = new System.Windows.Forms.Padding(6);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(114, 58);
             this.btnPrevious.TabIndex = 19;
@@ -508,7 +508,7 @@ namespace Stacker.Commands
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnNext.Location = new System.Drawing.Point(628, 217);
-            this.btnNext.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnNext.Margin = new System.Windows.Forms.Padding(6);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(114, 58);
             this.btnNext.TabIndex = 18;
@@ -520,7 +520,7 @@ namespace Stacker.Commands
             // 
             this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteGeom.Location = new System.Drawing.Point(628, 31);
-            this.btnDeleteGeom.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnDeleteGeom.Margin = new System.Windows.Forms.Padding(6);
             this.btnDeleteGeom.Name = "btnDeleteGeom";
             this.btnDeleteGeom.Size = new System.Drawing.Size(114, 58);
             this.btnDeleteGeom.TabIndex = 17;
@@ -543,7 +543,7 @@ namespace Stacker.Commands
             // textBox3
             // 
             this.textBox3.Location = new System.Drawing.Point(236, 181);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(6);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(74, 31);
@@ -552,7 +552,7 @@ namespace Stacker.Commands
             // textBox4
             // 
             this.textBox4.Location = new System.Drawing.Point(236, 125);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(6);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(74, 31);
@@ -561,7 +561,7 @@ namespace Stacker.Commands
             // textBox5
             // 
             this.textBox5.Location = new System.Drawing.Point(236, 71);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(6);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(74, 31);
@@ -583,7 +583,7 @@ namespace Stacker.Commands
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox2.Location = new System.Drawing.Point(376, 235);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(74, 31);
@@ -603,7 +603,7 @@ namespace Stacker.Commands
             // tb2BedCount
             // 
             this.tb2BedCount.Location = new System.Drawing.Point(136, 181);
-            this.tb2BedCount.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tb2BedCount.Margin = new System.Windows.Forms.Padding(6);
             this.tb2BedCount.Name = "tb2BedCount";
             this.tb2BedCount.ReadOnly = true;
             this.tb2BedCount.Size = new System.Drawing.Size(74, 31);
@@ -612,7 +612,7 @@ namespace Stacker.Commands
             // tb1BedCount
             // 
             this.tb1BedCount.Location = new System.Drawing.Point(136, 125);
-            this.tb1BedCount.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tb1BedCount.Margin = new System.Windows.Forms.Padding(6);
             this.tb1BedCount.Name = "tb1BedCount";
             this.tb1BedCount.ReadOnly = true;
             this.tb1BedCount.Size = new System.Drawing.Size(74, 31);
@@ -621,7 +621,7 @@ namespace Stacker.Commands
             // tbStudioCount
             // 
             this.tbStudioCount.Location = new System.Drawing.Point(136, 71);
-            this.tbStudioCount.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbStudioCount.Margin = new System.Windows.Forms.Padding(6);
             this.tbStudioCount.Name = "tbStudioCount";
             this.tbStudioCount.ReadOnly = true;
             this.tbStudioCount.Size = new System.Drawing.Size(74, 31);
@@ -672,7 +672,7 @@ namespace Stacker.Commands
             this.btnClose.Location = new System.Drawing.Point(642, 1013);
             this.btnClose.Margin = new System.Windows.Forms.Padding(12, 0, 6, 0);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnClose.Padding = new System.Windows.Forms.Padding(4);
             this.btnClose.Size = new System.Drawing.Size(184, 58);
             this.btnClose.TabIndex = 83;
             this.btnClose.Text = "Close";
@@ -694,9 +694,9 @@ namespace Stacker.Commands
             this.gbModLimitations.Controls.Add(this.tbModLengthMax);
             this.gbModLimitations.Controls.Add(this.tbModLengthMin);
             this.gbModLimitations.Location = new System.Drawing.Point(800, 102);
-            this.gbModLimitations.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gbModLimitations.Margin = new System.Windows.Forms.Padding(6);
             this.gbModLimitations.Name = "gbModLimitations";
-            this.gbModLimitations.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gbModLimitations.Padding = new System.Windows.Forms.Padding(6);
             this.gbModLimitations.Size = new System.Drawing.Size(408, 277);
             this.gbModLimitations.TabIndex = 84;
             this.gbModLimitations.TabStop = false;
@@ -715,7 +715,7 @@ namespace Stacker.Commands
             // tbFixedWidth
             // 
             this.tbFixedWidth.Location = new System.Drawing.Point(178, 200);
-            this.tbFixedWidth.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbFixedWidth.Margin = new System.Windows.Forms.Padding(6);
             this.tbFixedWidth.Name = "tbFixedWidth";
             this.tbFixedWidth.Size = new System.Drawing.Size(74, 31);
             this.tbFixedWidth.TabIndex = 11;
@@ -724,7 +724,7 @@ namespace Stacker.Commands
             // tbModWidthMax
             // 
             this.tbModWidthMax.Location = new System.Drawing.Point(254, 138);
-            this.tbModWidthMax.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbModWidthMax.Margin = new System.Windows.Forms.Padding(6);
             this.tbModWidthMax.Name = "tbModWidthMax";
             this.tbModWidthMax.Size = new System.Drawing.Size(74, 31);
             this.tbModWidthMax.TabIndex = 20;
@@ -732,7 +732,7 @@ namespace Stacker.Commands
             // tbModWidthMin
             // 
             this.tbModWidthMin.Location = new System.Drawing.Point(136, 138);
-            this.tbModWidthMin.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbModWidthMin.Margin = new System.Windows.Forms.Padding(6);
             this.tbModWidthMin.Name = "tbModWidthMin";
             this.tbModWidthMin.Size = new System.Drawing.Size(74, 31);
             this.tbModWidthMin.TabIndex = 19;
@@ -784,7 +784,7 @@ namespace Stacker.Commands
             // tbModLengthMax
             // 
             this.tbModLengthMax.Location = new System.Drawing.Point(254, 79);
-            this.tbModLengthMax.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbModLengthMax.Margin = new System.Windows.Forms.Padding(6);
             this.tbModLengthMax.Name = "tbModLengthMax";
             this.tbModLengthMax.Size = new System.Drawing.Size(74, 31);
             this.tbModLengthMax.TabIndex = 15;
@@ -792,7 +792,7 @@ namespace Stacker.Commands
             // tbModLengthMin
             // 
             this.tbModLengthMin.Location = new System.Drawing.Point(136, 79);
-            this.tbModLengthMin.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbModLengthMin.Margin = new System.Windows.Forms.Padding(6);
             this.tbModLengthMin.Name = "tbModLengthMin";
             this.tbModLengthMin.Size = new System.Drawing.Size(74, 31);
             this.tbModLengthMin.TabIndex = 14;
@@ -801,7 +801,7 @@ namespace Stacker.Commands
             // 
             this.tbOptionsGenerated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.tbOptionsGenerated.Location = new System.Drawing.Point(306, 96);
-            this.tbOptionsGenerated.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbOptionsGenerated.Margin = new System.Windows.Forms.Padding(6);
             this.tbOptionsGenerated.Name = "tbOptionsGenerated";
             this.tbOptionsGenerated.ReadOnly = true;
             this.tbOptionsGenerated.Size = new System.Drawing.Size(74, 31);
@@ -814,7 +814,7 @@ namespace Stacker.Commands
             this.cbTotalIterations.Checked = true;
             this.cbTotalIterations.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbTotalIterations.Location = new System.Drawing.Point(39, 54);
-            this.cbTotalIterations.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cbTotalIterations.Margin = new System.Windows.Forms.Padding(6);
             this.cbTotalIterations.Name = "cbTotalIterations";
             this.cbTotalIterations.Size = new System.Drawing.Size(243, 29);
             this.cbTotalIterations.TabIndex = 21;
@@ -825,7 +825,7 @@ namespace Stacker.Commands
             // 
             this.tbLimitIterations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.tbLimitIterations.Location = new System.Drawing.Point(306, 46);
-            this.tbLimitIterations.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tbLimitIterations.Margin = new System.Windows.Forms.Padding(6);
             this.tbLimitIterations.Name = "tbLimitIterations";
             this.tbLimitIterations.Size = new System.Drawing.Size(74, 31);
             this.tbLimitIterations.TabIndex = 21;
@@ -839,9 +839,9 @@ namespace Stacker.Commands
             this.groupBox2.Controls.Add(this.tbOptionsGenerated);
             this.groupBox2.Controls.Add(this.tbLimitIterations);
             this.groupBox2.Location = new System.Drawing.Point(800, 390);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
             this.groupBox2.Size = new System.Drawing.Size(410, 287);
             this.groupBox2.TabIndex = 85;
             this.groupBox2.TabStop = false;
@@ -879,6 +879,7 @@ namespace Stacker.Commands
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(1232, 1100);
             this.Controls.Add(this.btnViewJSON);
             this.Controls.Add(this.groupBox2);
@@ -892,7 +893,7 @@ namespace Stacker.Commands
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.Name = "CreatePrelimLayoutForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
