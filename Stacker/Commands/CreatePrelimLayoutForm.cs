@@ -121,6 +121,8 @@ namespace Stacker.Commands
         ViewPlan VPlan = null;
         ViewPlan VPlan2 = null;
 
+        double elevation = 20.0;
+
         private void btnDeleteGeom_Click(object sender, EventArgs e)
         {
 
@@ -153,7 +155,7 @@ namespace Stacker.Commands
 
 
         /// <summary>
-        /// 
+        /// Entire process of building floor layouts
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -184,8 +186,7 @@ namespace Stacker.Commands
 
                 double fixedModWidth = Convert.ToDouble(tbFixedWidth.Text);
 
-                // The elevation to apply to the new level
-                double elevation = 20.0;
+
 
                 // Begin to create a level
                 List<Level> levels = new FilteredElementCollector(_doc).OfClass(typeof(Level)).Cast<Level>().ToList();
@@ -217,6 +218,9 @@ namespace Stacker.Commands
                         {
                             transBuildLevels.Start();
 
+                            //
+                            //First FLoor
+                            //
                             Level = Level.Create(_doc, elevation);
 
                             if (null == Level)
@@ -230,9 +234,8 @@ namespace Stacker.Commands
                             VPlan.Name = Level.Name + " - TEST";
 
                             //
+                            //Second FLoor
                             //
-                            //
-
                             Level2 = Level.Create(_doc, elevation * 2);
 
                             if (null == Level2)
@@ -245,12 +248,12 @@ namespace Stacker.Commands
                             VPlan2 = ViewPlan.Create(_doc, structuralvft.Id, Level2.Id);
                             VPlan2.Name = Level2.Name + " - TEST";
 
+
+                            //
                             //
                             //
 
                             LevelBuilt = true;
-
-
 
                             transBuildLevels.Commit();
                         }
@@ -266,6 +269,10 @@ namespace Stacker.Commands
 
 
 
+
+                    //
+                    //Delete all old elements, if they exist
+                    //
                     if (ElementsBuilt.Count > 0)
                     {
                         using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
@@ -289,9 +296,17 @@ namespace Stacker.Commands
                         }
                     }
                     
+
+
+
+
+
+
+
+
                     //
                     //
-                    //Initialize Floor Layout
+                    //Initialize Floor Layout Class
                     //
                     //
                     FloorLayout floorLayout = new FloorLayout(FloorOverallLength, FloorOverallWidth, FloorHallwayWidth);
@@ -322,7 +337,6 @@ namespace Stacker.Commands
                     //
                     //Create Base Mod Options
                     //
-
                     ModBase modBaseStudio = new ModBase("Studio", 1, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
                     ModBase modBaseOneBed = new ModBase("OneBed", 2, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
                     ModBase modBaseTwoBed = new ModBase("TwoBed", 3, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
@@ -366,6 +380,10 @@ namespace Stacker.Commands
                             break;
 
 
+
+                        //
+                        //Delete all previously created elements, if they exist
+                        //
                         if (ElementsBuilt.Count > 0)
                         {
                             using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
@@ -391,6 +409,11 @@ namespace Stacker.Commands
 
 
 
+
+
+                        //
+                        //Create unit mix
+                        //
                         List<FloorModBlock> floorBlockOptions = new List<FloorModBlock>();
                         int floorBlockCount = 0;
 
@@ -416,7 +439,7 @@ namespace Stacker.Commands
                             int num2 = rnd.Next(3, 6);
                             decimal randomDec2 = (decimal)num2 / 10;
 
-
+                            //Fill block with two bed options
                             while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(randomDec)))
                             {
                                 currentBlockOption.AddModToBlock(optionsTwoBed[currentModWidth]);
@@ -425,6 +448,7 @@ namespace Stacker.Commands
                                 modsAdded++;
                             }
 
+                            //Fill block with one bed options
                             while (currentBlockOption.ValidateBlockAdd(optionsOneBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(randomDec2)))
                             {
                                 currentBlockOption.AddModToBlock(optionsOneBed[currentModWidth]);
@@ -433,6 +457,7 @@ namespace Stacker.Commands
                                 modsAdded++;
                             }
 
+                            //Fill remaining block with studio options
                             while (currentBlockOption.ValidateBlockAdd(optionsStudio[currentModWidth]))
                             {
                                 currentBlockOption.AddModToBlock(optionsStudio[currentModWidth]);
@@ -447,6 +472,11 @@ namespace Stacker.Commands
 
                         }
 
+
+
+                        //
+                        //Initialize FloorLayoutOption Class
+                        //
 
                         FloorLayoutOption floorLayoutOptions = new FloorLayoutOption();
                         foreach (FloorModBlock option in floorBlockOptions)
@@ -463,8 +493,6 @@ namespace Stacker.Commands
                         //
                         //Draw
                         //
-
-
 
                         List<XYPosition> actualFloorExtentPts = floorLayoutOptions.FloorOverallExtents.getXYPositions();
                         List<Line> actualFloorExtentLines = new List<Line>();
@@ -986,6 +1014,58 @@ namespace Stacker.Commands
                             }
 
                             ElementsBuilt["Mod Regions"] = regionsBuilt;
+
+
+
+                            //
+                            //Replicate floor to next floor
+                            //
+                            bool addMultiplefloors = true;
+                            Dictionary<string, List<ElementId>> copiedElements = new Dictionary<string, List<ElementId>>();
+
+                            foreach (var i in ElementsBuilt)
+                            {
+                                string elemType = i.Key;
+                                List<ElementId> elemList = i.Value;
+
+                                if (!addMultiplefloors)
+                                    continue;
+
+                                if (elemList.Count == 0)
+                                    continue;
+
+                                ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, elemList, VPlan2, null, null);
+
+                                copiedElements[elemType + "_2"] = elemIds.ToList();
+
+                            }
+
+
+                            foreach(var i in copiedElements)
+                            {
+                                ElementsBuilt.Add(i.Key, i.Value);
+                            }
+
+                            
+
+
+
+
+                            foreach(var elemList in ElementsBuilt.Values)
+                            {
+                                foreach (var elemId in elemList)
+                                {
+                                    var element = _doc.GetElement(elemId);
+                                    if(element.Category.Name == "Walls")
+                                    {
+                                        var par = element.LookupParameter("Top Offset");
+
+                                        if (par != null)
+                                            par.Set(elevation);
+                                    }
+                                }
+                            }
+
 
                             _doc.Regenerate();
                             transCreateRegion.Commit();
