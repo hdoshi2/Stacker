@@ -44,7 +44,7 @@ namespace Stacker.Commands
         private Document _doc;
         private UIDocument _uidoc;
 
-        List<FloorLayout> FloorLayoutOptions;
+        List<FloorLayout> FloorLayoutOptions { get; set; }
 
         Dictionary<string, string> DictJSON;
 
@@ -97,7 +97,10 @@ namespace Stacker.Commands
             double flrHeight = Convert.ToDouble(tbTypStoryHeight.Text);
             double bldgHeight = Convert.ToDouble(tbTotalBuildingHeight.Text);
 
-            tbMaxFloors.Text = Convert.ToString(calculateTotalFloors(flrHeight, bldgHeight));
+            string maxFloors = Convert.ToString(calculateTotalFloors(flrHeight, bldgHeight));
+            tbMaxFloors.Text = maxFloors;
+            tbTotalFloorsOverwrite.Text = maxFloors;
+
             TypFloorHeight = flrHeight;
 
         }
@@ -1503,19 +1506,22 @@ namespace Stacker.Commands
 
 
 
-
+        /// <summary>
+        /// Round down to nearest integer to calculate total floors. 
+        /// </summary>
+        /// <param name="floorHeight"></param>
+        /// <param name="totalBldgHeight"></param>
+        /// <returns></returns>
         private int calculateTotalFloors(double floorHeight, double totalBldgHeight)
         {
-            double flrHeight = floorHeight;
-            double bldgHeight = totalBldgHeight;
-            int totalFloors = Convert.ToInt32(Math.Floor(bldgHeight / flrHeight));
+            int totalFloors = Convert.ToInt32(Math.Floor(totalBldgHeight / floorHeight));
 
             return totalFloors;
         }
 
 
         /// <summary>
-        /// Validation of the beam length text input value
+        /// Input values validation. 
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns>Bool: true text value is valid.</returns>
@@ -1559,6 +1565,11 @@ namespace Stacker.Commands
             return textValid;
         }
 
+
+        /// <summary>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tbTypStoryHeight_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Verify that the pressed key isn't CTRL or any non-numeric digit
@@ -1568,6 +1579,11 @@ namespace Stacker.Commands
             }
         }
 
+        /// <summary>
+        /// Avoid entering non numeric info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tbTotalBuildingHeight_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Verify that the pressed key isn't CTRL or any non-numeric digit
@@ -1577,6 +1593,12 @@ namespace Stacker.Commands
             }
         }
 
+
+        /// <summary>
+        /// Avoid entering non numeric info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tbTotalFloors_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Verify that the pressed key isn't CTRL or any non-numeric digit
@@ -1587,7 +1609,11 @@ namespace Stacker.Commands
         }
 
 
-
+        /// <summary>
+        /// Calculate total stories
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnApplyFloorChanges_Click(object sender, EventArgs e)
         {
             string error1 = "";
@@ -1604,11 +1630,20 @@ namespace Stacker.Commands
                 int totalFloors = calculateTotalFloors(flrHeight, bldgHeight);
 
                 tbMaxFloors.Text = Convert.ToString(totalFloors);
+
+                if (!cbTotalFloors.Checked)
+                    tbTotalFloorsOverwrite.Text = tbMaxFloors.Text;
             }
 
 
         }
 
+
+        /// <summary>
+        /// Logic to overwrite total floors in the building. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cbTotalFloors_CheckedChanged(object sender, EventArgs e)
         {
             if (cbTotalFloors.Checked)
