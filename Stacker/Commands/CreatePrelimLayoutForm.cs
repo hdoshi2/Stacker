@@ -50,6 +50,18 @@ namespace Stacker.Commands
 
         public bool formClosed = false;
 
+
+        public bool LevelBuilt = false;
+        public Dictionary<string, List<ElementId>> ElementsBuilt = new Dictionary<string, List<ElementId>>();
+        Level Level = null;
+        Level Level2 = null;
+
+        ViewPlan VPlan = null;
+        ViewPlan VPlan2 = null;
+
+        double TypFloorHeight = 20.0;
+
+
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
@@ -82,6 +94,11 @@ namespace Stacker.Commands
             cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB2");
             cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB3");
 
+            double flrHeight = Convert.ToDouble(tbTypStoryHeight.Text);
+            double bldgHeight = Convert.ToDouble(tbTotalBuildingHeight.Text);
+
+            tbMaxFloors.Text = Convert.ToString(calculateTotalFloors(flrHeight, bldgHeight));
+            TypFloorHeight = flrHeight;
 
         }
 
@@ -108,20 +125,6 @@ namespace Stacker.Commands
 
 
 
-
-
-
-
-
-        bool LevelBuilt = false;
-        Dictionary<string, List<ElementId>> ElementsBuilt = new Dictionary<string, List<ElementId>>();
-        Level Level = null;
-        Level Level2 = null;
-
-        ViewPlan VPlan = null;
-        ViewPlan VPlan2 = null;
-
-        double elevation = 20.0;
 
         private void btnDeleteGeom_Click(object sender, EventArgs e)
         {
@@ -221,7 +224,7 @@ namespace Stacker.Commands
                             //
                             //First FLoor
                             //
-                            Level = Level.Create(_doc, elevation);
+                            Level = Level.Create(_doc, TypFloorHeight);
 
                             if (null == Level)
                                 throw new Exception("Create a new level failed.");
@@ -236,7 +239,7 @@ namespace Stacker.Commands
                             //
                             //Second FLoor
                             //
-                            Level2 = Level.Create(_doc, elevation * 2);
+                            Level2 = Level.Create(_doc, TypFloorHeight * 2);
 
                             if (null == Level2)
                                 throw new Exception("Create a new level failed.");
@@ -318,7 +321,7 @@ namespace Stacker.Commands
                     FloorLayout.ModStackType floorScheme = floorLayout.FloorModStackScheme;
 
                     List<Line> originalFloorEdgeLines = new List<Line>();
-                    CurveArray originalFloorEdgeCurveArray = createCurves(originalFloorEdgePoints, elevation, out originalFloorEdgeLines);
+                    CurveArray originalFloorEdgeCurveArray = createCurves(originalFloorEdgePoints, TypFloorHeight, out originalFloorEdgeLines);
 
 
 
@@ -496,7 +499,7 @@ namespace Stacker.Commands
 
                         List<XYPosition> actualFloorExtentPts = floorLayoutOptions.FloorOverallExtents.getXYPositions();
                         List<Line> actualFloorExtentLines = new List<Line>();
-                        CurveArray revisedfloorEdgeCurveArray = createCurves(actualFloorExtentPts, elevation, out actualFloorExtentLines);
+                        CurveArray revisedfloorEdgeCurveArray = createCurves(actualFloorExtentPts, TypFloorHeight, out actualFloorExtentLines);
 
                         using (Transaction transCreateFloorView = new Transaction(_doc, "Mod: Create Floor"))
                         {
@@ -526,7 +529,7 @@ namespace Stacker.Commands
                         foreach (List<XYPosition> hallway in floorLayoutOptions.InternalHallwayPoints)
                         {
                             List<Line> hallwayLine = new List<Line>();
-                            createCurves(hallway, elevation, out hallwayLine);
+                            createCurves(hallway, TypFloorHeight, out hallwayLine);
                             hallwayLines.AddRange(hallwayLine);
                         }
 
@@ -740,9 +743,9 @@ namespace Stacker.Commands
                                     XYPosition pt2 = currentModGlobalPoints.TopLeft;
                                     XYPosition pt3 = currentModGlobalPoints.TopRight;
                                     XYPosition pt4 = currentModGlobalPoints.BottomRight;
-                                    XYZ ptMid = new XYZ(pt2.X + (pt3.X - pt2.X) / 2, pt1.Y + (pt2.Y - pt1.Y) / 2, elevation);
+                                    XYZ ptMid = new XYZ(pt2.X + (pt3.X - pt2.X) / 2, pt1.Y + (pt2.Y - pt1.Y) / 2, TypFloorHeight);
 
-                                    CurveLoop profilelp = createCurveLoop(new List<XYPosition>() { pt1, pt2, pt3, pt4 }, elevation, out lines);
+                                    CurveLoop profilelp = createCurveLoop(new List<XYPosition>() { pt1, pt2, pt3, pt4 }, TypFloorHeight, out lines);
                                     profilelps.Add(profilelp);
 
                                     FilledRegion filledRegion = null;
@@ -785,7 +788,7 @@ namespace Stacker.Commands
 
                                             LocationPoint locationPt = (LocationPoint)centralColModLab2BDTYPA.Location;
                                             XYZ point = locationPt.Point;
-                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, elevation);
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, TypFloorHeight);
 
                                             // Set handler to skip the duplicate types dialog
                                             CopyPasteOptions options = new CopyPasteOptions();
@@ -868,7 +871,7 @@ namespace Stacker.Commands
 
                                             LocationPoint locationPt = (LocationPoint)centralColModLab1BDTYPA.Location;
                                             XYZ point = locationPt.Point;
-                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, elevation);
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, TypFloorHeight);
 
                                             // Set handler to skip the duplicate types dialog
                                             CopyPasteOptions options = new CopyPasteOptions();
@@ -952,7 +955,7 @@ namespace Stacker.Commands
 
                                             LocationPoint locationPt = (LocationPoint)centralColModLab0BDTYPA.Location;
                                             XYZ point = locationPt.Point;
-                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, elevation);
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, TypFloorHeight);
 
                                             // Set handler to skip the duplicate types dialog
                                             CopyPasteOptions options = new CopyPasteOptions();
@@ -1046,9 +1049,6 @@ namespace Stacker.Commands
                                 ElementsBuilt.Add(i.Key, i.Value);
                             }
 
-                            
-
-
 
 
                             foreach(var elemList in ElementsBuilt.Values)
@@ -1061,7 +1061,7 @@ namespace Stacker.Commands
                                         var par = element.LookupParameter("Top Offset");
 
                                         if (par != null)
-                                            par.Set(elevation);
+                                            par.Set(TypFloorHeight);
                                     }
                                 }
                             }
@@ -1496,6 +1496,134 @@ namespace Stacker.Commands
                 return FailureProcessingResult.Continue;
             }
         }
+
+
+
+
+
+
+
+
+        private int calculateTotalFloors(double floorHeight, double totalBldgHeight)
+        {
+            double flrHeight = floorHeight;
+            double bldgHeight = totalBldgHeight;
+            int totalFloors = Convert.ToInt32(Math.Floor(bldgHeight / flrHeight));
+
+            return totalFloors;
+        }
+
+
+        /// <summary>
+        /// Validation of the beam length text input value
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        /// <returns>Bool: true text value is valid.</returns>
+        private bool validateInputTextIsNumeric(string value, out string errorMessage)
+        {
+            bool textValid = true;
+            errorMessage = "";
+
+            try
+            {
+
+                if (value == "")
+                {
+                    errorMessage += "Please enter numeric value. \r\n";
+                    textValid = false;
+                }
+
+                if (value == "0")
+                {
+                    errorMessage += "Value has to be greater than 0. \r\n";
+                    textValid = false;
+
+                }
+
+                double distance = Convert.ToDouble(value);
+
+                if (distance < 0)
+                {
+                    errorMessage += "Minimum square footage of openings must be greater than 0. \r\n";
+                    textValid = false;
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                errorMessage += ex.Message;
+            }
+
+            return textValid;
+        }
+
+        private void tbTypStoryHeight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void tbTotalBuildingHeight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void tbTotalFloors_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
+
+
+        private void btnApplyFloorChanges_Click(object sender, EventArgs e)
+        {
+            string error1 = "";
+            string error2 = "";
+
+            bool textValid1 = validateInputTextIsNumeric(tbTypStoryHeight.Text, out error1);
+            bool textValid2 = validateInputTextIsNumeric(tbTotalBuildingHeight.Text, out error2);
+
+            if(textValid1 && textValid2)
+            {
+                double flrHeight = Convert.ToDouble(tbTypStoryHeight.Text);
+                double bldgHeight = Convert.ToDouble(tbTotalBuildingHeight.Text);
+
+                int totalFloors = calculateTotalFloors(flrHeight, bldgHeight);
+
+                tbMaxFloors.Text = Convert.ToString(totalFloors);
+            }
+
+
+        }
+
+        private void cbTotalFloors_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbTotalFloors.Checked)
+            {
+                tbTotalFloorsOverwrite.Enabled = true;
+            }
+            else
+            {
+                tbTotalFloorsOverwrite.Enabled = false;
+                tbTotalFloorsOverwrite.Text = tbMaxFloors.Text;
+            }
+        }
+
+
+
 
 
     }
