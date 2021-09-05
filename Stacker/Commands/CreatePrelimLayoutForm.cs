@@ -53,14 +53,15 @@ namespace Stacker.Commands
 
         public bool LevelBuilt = false;
         public Dictionary<string, List<ElementId>> ElementsBuilt = new Dictionary<string, List<ElementId>>();
-        Level Level = null;
-        Level Level2 = null;
 
-        ViewPlan VPlan = null;
-        ViewPlan VPlan2 = null;
+        public Level Level = null;
+        public ViewPlan VPlan = null;
 
-        double TypFloorHeight = 20.0;
+        public List<Level> allLevels = new List<Level>();
+        public List<ViewPlan> allViewPlans = new List<ViewPlan>();
 
+        double TypFloorHeight = 12.0;
+        int TotalFloors = 1;
 
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
@@ -99,7 +100,7 @@ namespace Stacker.Commands
 
             string maxFloors = Convert.ToString(calculateTotalFloors(flrHeight, bldgHeight));
             tbMaxFloors.Text = maxFloors;
-            tbTotalFloorsOverwrite.Text = maxFloors;
+            tbFloorsTotal.Text = maxFloors;
 
             TypFloorHeight = flrHeight;
 
@@ -182,6 +183,7 @@ namespace Stacker.Commands
                 PodWidthMin = Convert.ToDouble(tbModWidthMin.Text);
                 PodWidthMax = Convert.ToDouble(tbModWidthMax.Text);
 
+                TotalFloors = Convert.ToInt32(tbFloorsTotal.Text);
 
                 double maxFloorLength = Convert.ToDouble(tbLength.Text) + 50;
 
@@ -224,6 +226,9 @@ namespace Stacker.Commands
                         {
                             transBuildLevels.Start();
 
+                            Dictionary<string, Dictionary<Level, ViewPlan>> Level_VPlan_Collection = new Dictionary<string, Dictionary<Level, ViewPlan>>();
+
+
                             //
                             //First FLoor
                             //
@@ -239,25 +244,34 @@ namespace Stacker.Commands
                             VPlan = ViewPlan.Create(_doc, structuralvft.Id, Level.Id);
                             VPlan.Name = Level.Name + " - TEST";
 
-                            //
-                            //Second FLoor
-                            //
-                            Level2 = Level.Create(_doc, TypFloorHeight * 2);
+                            allLevels.Add(Level);
+                            allViewPlans.Add(VPlan);
 
-                            if (null == Level2)
-                                throw new Exception("Create a new level failed.");
+                            double floorElevIncrement = TypFloorHeight;
 
-                            // Change the level name
-                            Level2.Name = "Mod Level 2";
+                            for (var i = 1; i < TotalFloors; i++)
+                            {
+                                //
+                                //Next Floor
+                                //
+                                floorElevIncrement = floorElevIncrement + TypFloorHeight;
 
-                            //Create a New View
-                            VPlan2 = ViewPlan.Create(_doc, structuralvft.Id, Level2.Id);
-                            VPlan2.Name = Level2.Name + " - TEST";
+                                var newLevel = Level.Create(_doc, floorElevIncrement);
 
+                                if (null == newLevel)
+                                    throw new Exception("Create a new level failed.");
 
-                            //
-                            //
-                            //
+                                // Change the level name
+                                newLevel.Name = $"Mod Level {i + 1}";
+
+                                //Create a New View
+                                var newViewPlan = ViewPlan.Create(_doc, structuralvft.Id, newLevel.Id);
+                                newViewPlan.Name = newLevel.Name + " - TEST";
+
+                                allLevels.Add(newLevel);
+                                allViewPlans.Add(newViewPlan);
+                            }
+
 
                             LevelBuilt = true;
 
@@ -1027,29 +1041,39 @@ namespace Stacker.Commands
                             //Replicate floor to next floor
                             //
                             bool addMultiplefloors = true;
-                            Dictionary<string, List<ElementId>> copiedElements = new Dictionary<string, List<ElementId>>();
+                            Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
+                            
 
-                            foreach (var i in ElementsBuilt)
+                            for (var  i = 1; i < allLevels.Count; i++)
                             {
-                                string elemType = i.Key;
-                                List<ElementId> elemList = i.Value;
+                                Level currentLevel = allLevels[i];
+                                ViewPlan currentViewPlan = allViewPlans[i];
 
                                 if (!addMultiplefloors)
                                     continue;
 
-                                if (elemList.Count == 0)
-                                    continue;
+                                Dictionary<string, List<ElementId>> copiedElements = new Dictionary<string, List<ElementId>>();
 
-                                ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, elemList, VPlan2, null, null);
+                                foreach (var j in elementsBuiltFirstFloor)
+                                {
+                                    string elemType = j.Key;
+                                    List<ElementId> elemList = j.Value;
 
-                                copiedElements[elemType + "_2"] = elemIds.ToList();
+                                    if (elemList.Count == 0)
+                                        continue;
 
-                            }
+                                    ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, elemList, currentViewPlan, null, null);
+
+                                    copiedElements[elemType + $"_{i + 1}"] = elemIds.ToList();
+
+                                }
+
+                                foreach (var k in copiedElements)
+                                {
+                                    ElementsBuilt.Add(k.Key, k.Value);
+                                }
 
 
-                            foreach(var i in copiedElements)
-                            {
-                                ElementsBuilt.Add(i.Key, i.Value);
                             }
 
 
@@ -1632,7 +1656,7 @@ namespace Stacker.Commands
                 tbMaxFloors.Text = Convert.ToString(totalFloors);
 
                 if (!cbTotalFloors.Checked)
-                    tbTotalFloorsOverwrite.Text = tbMaxFloors.Text;
+                    tbFloorsTotal.Text = tbMaxFloors.Text;
             }
 
 
@@ -1648,12 +1672,12 @@ namespace Stacker.Commands
         {
             if (cbTotalFloors.Checked)
             {
-                tbTotalFloorsOverwrite.Enabled = true;
+                tbFloorsTotal.Enabled = true;
             }
             else
             {
-                tbTotalFloorsOverwrite.Enabled = false;
-                tbTotalFloorsOverwrite.Text = tbMaxFloors.Text;
+                tbFloorsTotal.Enabled = false;
+                tbFloorsTotal.Text = tbMaxFloors.Text;
             }
         }
 

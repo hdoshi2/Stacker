@@ -100,7 +100,7 @@ namespace Stacker.Commands
             this.cbTotalFloors = new System.Windows.Forms.CheckBox();
             this.label25 = new System.Windows.Forms.Label();
             this.tbMaxFloors = new System.Windows.Forms.TextBox();
-            this.tbTotalFloorsOverwrite = new System.Windows.Forms.TextBox();
+            this.tbFloorsTotal = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.tbTotalBuildingHeight = new System.Windows.Forms.TextBox();
@@ -789,7 +789,7 @@ namespace Stacker.Commands
             this.groupBox2.Controls.Add(this.tbLimitIterations);
             this.groupBox2.Location = new System.Drawing.Point(400, 398);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(205, 115);
+            this.groupBox2.Size = new System.Drawing.Size(205, 117);
             this.groupBox2.TabIndex = 85;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Optimization Iteration Setting";
@@ -828,7 +828,7 @@ namespace Stacker.Commands
             this.groupBox3.Controls.Add(this.cbTotalFloors);
             this.groupBox3.Controls.Add(this.label25);
             this.groupBox3.Controls.Add(this.tbMaxFloors);
-            this.groupBox3.Controls.Add(this.tbTotalFloorsOverwrite);
+            this.groupBox3.Controls.Add(this.tbFloorsTotal);
             this.groupBox3.Controls.Add(this.label23);
             this.groupBox3.Controls.Add(this.label22);
             this.groupBox3.Controls.Add(this.tbTotalBuildingHeight);
@@ -883,15 +883,15 @@ namespace Stacker.Commands
             this.tbMaxFloors.Size = new System.Drawing.Size(39, 20);
             this.tbMaxFloors.TabIndex = 26;
             // 
-            // tbTotalFloorsOverwrite
+            // tbFloorsTotal
             // 
-            this.tbTotalFloorsOverwrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalFloorsOverwrite.Enabled = false;
-            this.tbTotalFloorsOverwrite.Location = new System.Drawing.Point(153, 152);
-            this.tbTotalFloorsOverwrite.Name = "tbTotalFloorsOverwrite";
-            this.tbTotalFloorsOverwrite.Size = new System.Drawing.Size(39, 20);
-            this.tbTotalFloorsOverwrite.TabIndex = 24;
-            this.tbTotalFloorsOverwrite.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTotalFloors_KeyPress);
+            this.tbFloorsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFloorsTotal.Enabled = false;
+            this.tbFloorsTotal.Location = new System.Drawing.Point(153, 152);
+            this.tbFloorsTotal.Name = "tbFloorsTotal";
+            this.tbFloorsTotal.Size = new System.Drawing.Size(39, 20);
+            this.tbFloorsTotal.TabIndex = 24;
+            this.tbFloorsTotal.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTotalFloors_KeyPress);
             // 
             // label23
             // 
@@ -1046,7 +1046,7 @@ namespace Stacker.Commands
         private System.Windows.Forms.TextBox tbTotalBuildingHeight;
         private System.Windows.Forms.TextBox tbTypStoryHeight;
         private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.TextBox tbTotalFloorsOverwrite;
+        private System.Windows.Forms.TextBox tbFloorsTotal;
         private System.Windows.Forms.CheckBox cbTotalFloors;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox tbMaxFloors;
