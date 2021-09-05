@@ -249,20 +249,25 @@ namespace Stacker.Commands
 
                             double floorElevIncrement = TypFloorHeight;
 
-                            for (var i = 1; i < TotalFloors; i++)
+                            //Build additional typical foors and Roof floor
+                            for (var i = 1; i <= TotalFloors; i++)
                             {
                                 //
                                 //Next Floor
                                 //
                                 floorElevIncrement = floorElevIncrement + TypFloorHeight;
 
-                                var newLevel = Level.Create(_doc, floorElevIncrement);
+                                Level newLevel = Level.Create(_doc, floorElevIncrement);
 
                                 if (null == newLevel)
                                     throw new Exception("Create a new level failed.");
 
                                 // Change the level name
-                                newLevel.Name = $"Mod Level {i + 1}";
+                                if(i < TotalFloors)
+                                    newLevel.Name = $"Mod Level {i + 1}";
+                                else
+                                    newLevel.Name = $"Mod Level Roof";
+
 
                                 //Create a New View
                                 var newViewPlan = ViewPlan.Create(_doc, structuralvft.Id, newLevel.Id);
@@ -1043,7 +1048,7 @@ namespace Stacker.Commands
                             bool addMultiplefloors = true;
                             Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
                             
-
+                            //Copy floor elements to all typical floors - Except Roof Floor
                             for (var  i = 1; i < allLevels.Count; i++)
                             {
                                 Level currentLevel = allLevels[i];
@@ -1078,20 +1083,20 @@ namespace Stacker.Commands
 
 
 
-                            foreach(var elemList in ElementsBuilt.Values)
-                            {
-                                foreach (var elemId in elemList)
-                                {
-                                    var element = _doc.GetElement(elemId);
-                                    if(element.Category.Name == "Walls")
-                                    {
-                                        var par = element.LookupParameter("Top Offset");
+                            //foreach(var elemList in ElementsBuilt.Values)
+                            //{
+                            //    foreach (var elemId in elemList)
+                            //    {
+                            //        var element = _doc.GetElement(elemId);
+                            //        if(element.Category.Name == "Walls")
+                            //        {
+                            //            var par = element.LookupParameter("Top Offset");
 
-                                        if (par != null)
-                                            par.Set(TypFloorHeight);
-                                    }
-                                }
-                            }
+                            //            if (par != null)
+                            //                par.Set(TypFloorHeight);
+                            //        }
+                            //    }
+                            //}
 
 
                             _doc.Regenerate();
