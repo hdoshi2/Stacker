@@ -1049,7 +1049,7 @@ namespace Stacker.Commands
                             Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
                             
                             //Copy floor elements to all typical floors - Except Roof Floor
-                            for (var  i = 1; i < allLevels.Count; i++)
+                            for (var  i = 1; i < allLevels.Count - 1; i++)
                             {
                                 Level currentLevel = allLevels[i];
                                 ViewPlan currentViewPlan = allViewPlans[i];
@@ -1083,20 +1083,38 @@ namespace Stacker.Commands
 
 
 
-                            //foreach(var elemList in ElementsBuilt.Values)
-                            //{
-                            //    foreach (var elemId in elemList)
-                            //    {
-                            //        var element = _doc.GetElement(elemId);
-                            //        if(element.Category.Name == "Walls")
-                            //        {
-                            //            var par = element.LookupParameter("Top Offset");
+                            foreach (var elemList in ElementsBuilt.Values)
+                            {
+                                foreach (var elemId in elemList)
+                                {
+                                    var element = _doc.GetElement(elemId);
+                                    if (element.Category.Name == "Walls")
+                                    {
+                                        var par = element.LookupParameter("Top Offset");
 
-                            //            if (par != null)
-                            //                par.Set(TypFloorHeight);
-                            //        }
-                            //    }
-                            //}
+                                        if (par != null)
+                                        {
+                                            var offsetDim = par.AsDouble();
+                                            if(offsetDim != 0)
+                                                par.Set(0);
+                                        }
+                                            
+                                    }
+                                    else if (element.Category.Name == "Floors")
+                                    {
+                                        var par = element.LookupParameter("Height Offset From Level");
+
+                                        if (par != null)
+                                        {
+                                            var offsetDim = par.AsDouble();
+                                            if (offsetDim != 0)
+                                                par.Set(0);
+                                        }
+
+                                    }
+
+                                }
+                            }
 
 
                             _doc.Regenerate();
