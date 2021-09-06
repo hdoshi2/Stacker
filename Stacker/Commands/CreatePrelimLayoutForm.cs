@@ -263,7 +263,7 @@ namespace Stacker.Commands
                                     throw new Exception("Create a new level failed.");
 
                                 // Change the level name
-                                if(i < TotalFloors)
+                                if (i < TotalFloors)
                                     newLevel.Name = $"Mod Level {i + 1}";
                                 else
                                     newLevel.Name = $"Mod Level Roof";
@@ -320,7 +320,7 @@ namespace Stacker.Commands
                             transDeleteOldMods.Commit();
                         }
                     }
-                    
+
 
 
 
@@ -421,7 +421,7 @@ namespace Stacker.Commands
                                     {
                                         Element searchElem = _doc.GetElement(elem);
 
-                                        if(searchElem != null)
+                                        if (searchElem != null)
                                             _doc.Delete(elem);
                                     }
                                 }
@@ -736,7 +736,7 @@ namespace Stacker.Commands
 
                             var viewDrafting = new FilteredElementCollector(_doc).OfClass(typeof(ViewDrafting)).OfType<ViewDrafting>().ToList();
                             List<string> viewDraftingNames = (from v in viewDrafting
-                                                      select v.Name).ToList();
+                                                              select v.Name).ToList();
 
                             var views = new FilteredElementCollector(_doc).OfClass(typeof(Autodesk.Revit.DB.View)).OfType<Autodesk.Revit.DB.View>().ToList();
                             List<string> viewNames = (from v in views
@@ -786,7 +786,7 @@ namespace Stacker.Commands
 
                                             bool wallMoved_X = false;
                                             double width = currentMod.UnitModWidth;
-                                            double dimToMoveX = (width - 10)*currentMod.TotalMods;
+                                            double dimToMoveX = (width - 10) * currentMod.TotalMods;
 
                                             if (wallToMoveModLab2BDTYPA_X != null && dimToMoveX > 0)
                                             {
@@ -914,7 +914,7 @@ namespace Stacker.Commands
 
                                             var elementsAdded = ElementTransformUtils.CopyElements(_doc, elementsAddedToDelete, translationPt);
 
-                                            foreach(ElementId eId in elementsAdded)
+                                            foreach (ElementId eId in elementsAdded)
                                             {
                                                 Element elem = _doc.GetElement(eId);
 
@@ -1025,7 +1025,7 @@ namespace Stacker.Commands
                                             ElementsBuilt[$"Room Elements"].AddRange(elementsAdded);
                                         }
 
-                                        
+
                                     }
 
 
@@ -1034,7 +1034,7 @@ namespace Stacker.Commands
                                     //ModelLine line = _doc.Create.NewModelCurve(lineA, vplan.SketchPlane) as ModelLine;
                                     //elementsBuilt[$"Temp Line"].Add(line.Id);
 
-                                    if(filledRegion != null)
+                                    if (filledRegion != null)
                                         regionsBuilt.Add(filledRegion.Id);
                                 }
                             }
@@ -1053,9 +1053,9 @@ namespace Stacker.Commands
 
                             //Create copy of intially created first floor elements - to be used to copy to other floors. 
                             Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
-                            
+
                             //Copy floor elements to all typical floors - Except Roof Floor
-                            for (var  i = 1; i < allLevels.Count - 1; i++)
+                            for (var i = 1; i < allLevels.Count - 1; i++)
                             {
                                 Level currentLevel = allLevels[i];
                                 ViewPlan currentViewPlan = allViewPlans[i];
@@ -1105,10 +1105,10 @@ namespace Stacker.Commands
                                         if (par != null)
                                         {
                                             var offsetDim = par.AsDouble();
-                                            if(offsetDim != 0)
+                                            if (offsetDim != 0)
                                                 par.Set(0);
                                         }
-                                            
+
                                     }
                                     else if (element.Category.Name == "Floors")
                                     {
@@ -1158,7 +1158,7 @@ namespace Stacker.Commands
 
                 }
 
-                
+
 
             }
             catch (Exception ex)
@@ -1405,7 +1405,7 @@ namespace Stacker.Commands
 
                                         foreach (JToken x1 in arr)
                                         {
-                                            
+
                                             if (x1.GetType().Name == "JObject")
                                             {
                                                 var obj = x1.ToObject<JObject>();
@@ -1639,7 +1639,7 @@ namespace Stacker.Commands
             bool textValid1 = validateInputTextIsNumeric(tbTypStoryHeight.Text, out error1);
             bool textValid2 = validateInputTextIsNumeric(tbTotalBuildingHeight.Text, out error2);
 
-            if(textValid1 && textValid2)
+            if (textValid1 && textValid2)
             {
                 double flrHeight = Convert.ToDouble(tbTypStoryHeight.Text);
                 double bldgHeight = Convert.ToDouble(tbTotalBuildingHeight.Text);
@@ -1752,4 +1752,9 @@ namespace Stacker.Commands
             if (validateKeyPressIsNumeric(e))
                 e.Handled = true;
         }
+
+
+
+
+    }
 }
