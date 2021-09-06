@@ -8,49 +8,59 @@ namespace Stacker.ModClasses
 {
     class FloorModBlock
     {
-        public string Name;
 
-        public FloorLayout FloorLayoutReference;
+        public string Name { get; set; }
 
-        public XYPosition GlobalBasePt;
+        public FloorLayout FloorLayoutReference { get; set; }
 
-        public XYPosition NextAvailableBasePt;
+        private XYPosition GlobalBasePt { get; set; }
 
-        public XYPosition4Corners OuterModBlockPts;
+        public XYPosition NextAvailableBasePt { get; set; }
 
-        public double TotalBlockWidth;
+        public XYPosition4Corners OuterModBlockPts { get; set; }
 
-        public double TotalBlockLength;
+        public double TotalBlockWidth { get; set; }
 
-        public double SFModTotal;
+        public double TotalBlockLength { get; set; }
 
-        public double SFModAvailable;
+        public double SFModTotal { get; set; }
 
-        public double SFModFilled;
+        public double SFModAvailable { get; set; }
 
-        public double BlockLengthAvailable;
+        public double SFModFilled { get; set; }
 
-        public double BlockLengthUsed;
+        public double BlockLengthAvailable { get; set; }
 
+        public double BlockLengthUsed { get; set; }
 
-        public int PlacedModCount;
-
-        public Dictionary<int, ModOption> PlacedMods;
-
-        public Dictionary<int, XYPosition> PlacedModsBasePosition;
-
-        public Dictionary<int, XYPosition4Corners> PlacedModsOuterPosition;
-
-        public Dictionary<int, double> SFBlock;
+        public int PlacedModCount { get; set; }
 
 
+        public Dictionary<int, ModOption> PlacedMods { get; set; }
 
+        public Dictionary<int, XYPosition> PlacedModsBasePosition { get; set; }
+
+        public Dictionary<int, XYPosition4Corners> PlacedModsOuterPosition { get; set; }
+
+        public Dictionary<int, double> SFBlock { get; set; }
+
+
+
+
+        /// <summary>
+        /// Constructor for a block on the floor containing numerous mods (units)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="globalBasePt"></param>
+        /// <param name="totalBlockWidth"></param>
+        /// <param name="totalBlockLength"></param>
+        /// <param name="floorLayout"></param>
         public FloorModBlock(string name, XYPosition globalBasePt, double totalBlockWidth, double totalBlockLength, FloorLayout floorLayout)
         {
             Name = name;
             FloorLayoutReference = floorLayout;
 
-            GlobalBasePt = globalBasePt;
+            GlobalBasePt = new XYPosition(globalBasePt.X, globalBasePt.Y);
             NextAvailableBasePt = globalBasePt;
 
             TotalBlockWidth = totalBlockWidth;
@@ -142,6 +152,59 @@ namespace Stacker.ModClasses
             PlacedModCount++;
 
             return 1;
+        }
+
+
+
+
+
+        public Dictionary<int, ModOption> PlacedMods_Modified { get; set; }
+
+        public Dictionary<int, XYPosition4Corners> PlacedModsOuterPosition_Modified { get; set; }
+
+        public XYPosition NextAvailableBasePt_Modified { get; set; }
+
+
+
+        public void ModifyModPositions()
+        {
+            PlacedMods_Modified = new Dictionary<int, ModOption>();
+            PlacedModsOuterPosition_Modified = new Dictionary<int, XYPosition4Corners>();
+            NextAvailableBasePt_Modified = GlobalBasePt;
+
+            List<ModOption> newModList = PlacedMods.Values.ToList();
+
+            Random rng = new Random();
+            List<ModOption> shuffledMods = newModList.OrderBy(a => rng.Next()).ToList();
+
+            int placedModCount = 0;
+
+            foreach (var modToAdd in shuffledMods)
+            {
+                var modGeometry = modToAdd.Geometry;
+
+                PlacedMods_Modified[placedModCount] = modToAdd;
+
+                XYPosition4Corners modGlobalPoints = new XYPosition4Corners();
+
+                XYPosition origin = new XYPosition(NextAvailableBasePt_Modified.X, NextAvailableBasePt_Modified.Y);
+                XYPosition topLeft = new XYPosition(NextAvailableBasePt_Modified.X, NextAvailableBasePt_Modified.Y + modToAdd.UnitModLength);
+                XYPosition topRight = new XYPosition(NextAvailableBasePt_Modified.X + modToAdd.Geometry.TotalModWidth, NextAvailableBasePt_Modified.Y + modToAdd.Geometry.TotalModLength);
+                XYPosition bottomRight = new XYPosition(NextAvailableBasePt_Modified.X + modToAdd.Geometry.TotalModWidth, NextAvailableBasePt_Modified.Y);
+
+                modGlobalPoints.Add4Points(origin, topLeft, topRight, bottomRight);
+
+                PlacedModsOuterPosition_Modified[placedModCount] = modGlobalPoints;
+
+                NextAvailableBasePt_Modified.X = NextAvailableBasePt_Modified.X + modGeometry.TotalModWidth;
+
+                placedModCount++;
+
+            }
+
+            PlacedMods = PlacedMods_Modified;
+            PlacedModsOuterPosition = PlacedModsOuterPosition_Modified;
+
         }
 
 

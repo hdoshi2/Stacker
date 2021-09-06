@@ -470,7 +470,7 @@ namespace Stacker.Commands
                             //Fill block with two bed options
                             while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && 
                                 (roomAreaFilledRatio <= Convert.ToDecimal(unitLayoutRatio_2Bed)) &&
-                                (Convert.ToDecimal(currentBlockOption.SFModFilled) + Convert.ToDecimal(optionsTwoBed[currentModWidth].OverallModArea) < unitLayoutRatio_2Bed_MaxSF) &&
+                                (Convert.ToDecimal(currentBlockOption.SFModFilled) + Convert.ToDecimal(optionsTwoBed[currentModWidth].OverallModArea) <= unitLayoutRatio_2Bed_MaxSF) &&
                                 Percentage2Bed != 0)
                             {
                                 currentBlockOption.AddModToBlock(optionsTwoBed[currentModWidth]);
@@ -482,7 +482,7 @@ namespace Stacker.Commands
                             //Fill block with one bed options
                             while (currentBlockOption.ValidateBlockAdd(optionsOneBed[currentModWidth]) && 
                                 (roomAreaFilledRatio <= Convert.ToDecimal(unitLayoutRatio_1Bed)) &&
-                                (Convert.ToDecimal(currentBlockOption.SFModFilled) + Convert.ToDecimal(optionsOneBed[currentModWidth].OverallModArea) < unitLayoutRatio_1Bed_MaxSF) &&
+                                (Convert.ToDecimal(currentBlockOption.SFModFilled) + Convert.ToDecimal(optionsOneBed[currentModWidth].OverallModArea) <= unitLayoutRatio_1Bed_MaxSF) &&
                                 Percentage1Bed != 0)
                             {
                                 currentBlockOption.AddModToBlock(optionsOneBed[currentModWidth]);
@@ -520,7 +520,10 @@ namespace Stacker.Commands
                         floorLayout.FloorLayoutOptions.Add(floorLayoutOptions);
 
 
-
+                        foreach (FloorModBlock option in floorBlockOptions)
+                        {
+                            option.ModifyModPositions();
+                        }
 
 
 
