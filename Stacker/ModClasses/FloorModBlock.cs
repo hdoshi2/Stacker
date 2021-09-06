@@ -26,6 +26,8 @@ namespace Stacker.ModClasses
 
         public double SFModAvailable;
 
+        public double SFModFilled;
+
         public double BlockLengthAvailable;
 
         public double BlockLengthUsed;
@@ -58,6 +60,7 @@ namespace Stacker.ModClasses
 
             SFModTotal = totalBlockWidth * TotalBlockLength;
             SFModAvailable = totalBlockWidth * TotalBlockLength;
+            SFModFilled = SFModTotal - SFModAvailable;
 
             PlacedModCount = 0;
             PlacedMods = new Dictionary<int, ModOption>();
@@ -134,6 +137,7 @@ namespace Stacker.ModClasses
             BlockLengthUsed = BlockLengthUsed + modToAdd.Geometry.TotalModWidth;
 
             SFModAvailable = SFModAvailable - modGeometry.TotalModArea;
+            SFModFilled = SFModTotal - SFModAvailable;
 
             PlacedModCount++;
 

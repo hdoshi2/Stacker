@@ -454,40 +454,48 @@ namespace Stacker.Commands
 
                             FloorModBlock currentBlockOption = new FloorModBlock($"{floorBlockCount.ToString()} - {modsAdded.ToString()}", currentBlockBasePt, floorBlockWidth, floorBlockLength, floorLayout);
 
-                            decimal percentageRoomAreaFilled = 1;
+                            decimal roomAreaFilledRatio = 0;
 
-                            //Random rnd = new Random();
-                            //int num = rnd.Next(6, 8);
+                            //Overall max room unit fill percentages for entire floor. 
                             decimal unitLayoutRatio_2Bed = (decimal)Percentage2Bed / 100;
+                            decimal unitLayoutRatio_1Bed = unitLayoutRatio_2Bed + (decimal)Percentage1Bed / 100;
+                            decimal unitLayoutRatio_Studio = unitLayoutRatio_1Bed + (decimal)PercentageStudio / 100;
 
-                            //Random rnd2 = new Random();
-                            //int num2 = rnd.Next(3, 6);
-                            decimal unitLayoutRatio_1Bed = (decimal)Percentage1Bed / 100;
-                            decimal unitLayoutRatio_Studio = (decimal)PercentageStudio / 100;
+                            //Overall maxroom unit fill SF values for entire floor. 
+                            decimal unitLayoutRatio_2Bed_MaxSF = unitLayoutRatio_2Bed * Convert.ToDecimal(currentBlockOption.SFModTotal);
+                            decimal unitLayoutRatio_1Bed_MaxSF = ((decimal)Percentage1Bed / 100) * Convert.ToDecimal(currentBlockOption.SFModTotal) + unitLayoutRatio_2Bed_MaxSF;
+                            decimal unitLayoutRatio_Studio_MaxSF = ((decimal)PercentageStudio / 100) * Convert.ToDecimal(currentBlockOption.SFModTotal) + unitLayoutRatio_1Bed_MaxSF;
+
 
                             //Fill block with two bed options
-                            while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(unitLayoutRatio_2Bed)))
+                            while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && 
+                                (roomAreaFilledRatio <= Convert.ToDecimal(unitLayoutRatio_2Bed)) &&
+                                (Convert.ToDecimal(currentBlockOption.SFModFilled) + Convert.ToDecimal(optionsTwoBed[currentModWidth].OverallModArea) < unitLayoutRatio_2Bed_MaxSF) &&
+                                Percentage2Bed != 0)
                             {
                                 currentBlockOption.AddModToBlock(optionsTwoBed[currentModWidth]);
-                                percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                                roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
 
                                 modsAdded++;
                             }
 
                             //Fill block with one bed options
-                            while (currentBlockOption.ValidateBlockAdd(optionsOneBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(unitLayoutRatio_1Bed)))
+                            while (currentBlockOption.ValidateBlockAdd(optionsOneBed[currentModWidth]) && 
+                                (roomAreaFilledRatio <= Convert.ToDecimal(unitLayoutRatio_1Bed)) &&
+                                (Convert.ToDecimal(currentBlockOption.SFModFilled) + Convert.ToDecimal(optionsOneBed[currentModWidth].OverallModArea) < unitLayoutRatio_1Bed_MaxSF) &&
+                                Percentage1Bed != 0)
                             {
                                 currentBlockOption.AddModToBlock(optionsOneBed[currentModWidth]);
-                                percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
-
+                                roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
                                 modsAdded++;
                             }
 
                             //Fill remaining block with studio options
-                            while (currentBlockOption.ValidateBlockAdd(optionsStudio[currentModWidth]))
+                            while (currentBlockOption.ValidateBlockAdd(optionsStudio[currentModWidth]) &&
+                                PercentageStudio != 0)
                             {
                                 currentBlockOption.AddModToBlock(optionsStudio[currentModWidth]);
-                                percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                                roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
 
                                 modsAdded++;
                             }
