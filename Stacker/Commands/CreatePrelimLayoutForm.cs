@@ -456,16 +456,17 @@ namespace Stacker.Commands
 
                             decimal percentageRoomAreaFilled = 1;
 
-                            Random rnd = new Random();
-                            int num = rnd.Next(6, 8);
-                            decimal randomDec = (decimal)num / 10;
+                            //Random rnd = new Random();
+                            //int num = rnd.Next(6, 8);
+                            decimal unitLayoutRatio_2Bed = (decimal)Percentage2Bed / 100;
 
-                            Random rnd2 = new Random();
-                            int num2 = rnd.Next(3, 6);
-                            decimal randomDec2 = (decimal)num2 / 10;
+                            //Random rnd2 = new Random();
+                            //int num2 = rnd.Next(3, 6);
+                            decimal unitLayoutRatio_1Bed = (decimal)Percentage1Bed / 100;
+                            decimal unitLayoutRatio_Studio = (decimal)PercentageStudio / 100;
 
                             //Fill block with two bed options
-                            while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(randomDec)))
+                            while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(unitLayoutRatio_2Bed)))
                             {
                                 currentBlockOption.AddModToBlock(optionsTwoBed[currentModWidth]);
                                 percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
@@ -474,7 +475,7 @@ namespace Stacker.Commands
                             }
 
                             //Fill block with one bed options
-                            while (currentBlockOption.ValidateBlockAdd(optionsOneBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(randomDec2)))
+                            while (currentBlockOption.ValidateBlockAdd(optionsOneBed[currentModWidth]) && (percentageRoomAreaFilled > Convert.ToDecimal(unitLayoutRatio_1Bed)))
                             {
                                 currentBlockOption.AddModToBlock(optionsOneBed[currentModWidth]);
                                 percentageRoomAreaFilled = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModAvailable), Convert.ToDecimal(currentBlockOption.SFModTotal));
@@ -703,7 +704,7 @@ namespace Stacker.Commands
 
 
 
-                        using (Transaction transCreateRegion = new Transaction(_doc, "Mod: Create Region"))
+                        using (Transaction transCreateRegion = new Transaction(_doc, "Mod: Create Flr Elements"))
                         {
                             transCreateRegion.Start();
 
@@ -1042,10 +1043,15 @@ namespace Stacker.Commands
 
 
 
+
+
+
                             //
-                            //Replicate floor to next floor
+                            //Replicate first floor to all other typical floors
                             //
                             bool addMultiplefloors = true;
+
+                            //Create copy of intially created first floor elements - to be used to copy to other floors. 
                             Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
                             
                             //Copy floor elements to all typical floors - Except Roof Floor
@@ -1059,10 +1065,10 @@ namespace Stacker.Commands
 
                                 Dictionary<string, List<ElementId>> copiedElements = new Dictionary<string, List<ElementId>>();
 
-                                foreach (var j in elementsBuiltFirstFloor)
+                                foreach (var elementToCopy in elementsBuiltFirstFloor)
                                 {
-                                    string elemType = j.Key;
-                                    List<ElementId> elemList = j.Value;
+                                    string elemType = elementToCopy.Key;
+                                    List<ElementId> elemList = elementToCopy.Value;
 
                                     if (elemList.Count == 0)
                                         continue;
@@ -1083,6 +1089,10 @@ namespace Stacker.Commands
 
 
 
+
+                            //
+                            //Ensure all walls and floors are not offset
+                            //
                             foreach (var elemList in ElementsBuilt.Values)
                             {
                                 foreach (var elemId in elemList)
@@ -1613,47 +1623,7 @@ namespace Stacker.Commands
         }
 
 
-        /// <summary>
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tbTypStoryHeight_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Verify that the pressed key isn't CTRL or any non-numeric digit
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-        }
 
-        /// <summary>
-        /// Avoid entering non numeric info
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tbTotalBuildingHeight_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Verify that the pressed key isn't CTRL or any non-numeric digit
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-        }
-
-
-        /// <summary>
-        /// Avoid entering non numeric info
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tbTotalFloors_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Verify that the pressed key isn't CTRL or any non-numeric digit
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-        }
 
 
         /// <summary>
@@ -1707,6 +1677,79 @@ namespace Stacker.Commands
 
 
 
+        /// <summary>
+        /// Verify that the pressed key isn't CTRL or any non-numeric digit
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private bool validateKeyPressIsNumeric(KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                return true;
+            }
 
-    }
+            return false;
+        }
+
+
+
+        private void tbPercentageStudio_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (validateKeyPressIsNumeric(e))
+                e.Handled = true;
+        }
+
+        private void tbPercentage1Bed_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (validateKeyPressIsNumeric(e))
+                e.Handled = true;
+        }
+
+        private void tbPercentage2Bed_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (validateKeyPressIsNumeric(e))
+                e.Handled = true;
+        }
+
+
+        /// <summary>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tbTypStoryHeight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (validateKeyPressIsNumeric(e))
+                e.Handled = true;
+        }
+
+        /// <summary>
+        /// Avoid entering non numeric info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tbTotalBuildingHeight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (validateKeyPressIsNumeric(e))
+                e.Handled = true;
+        }
+
+
+        /// <summary>
+        /// Avoid entering non numeric info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tbTotalFloors_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (validateKeyPressIsNumeric(e))
+                e.Handled = true;
+        }
 }

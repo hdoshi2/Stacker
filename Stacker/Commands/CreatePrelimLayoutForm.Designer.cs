@@ -361,6 +361,7 @@ namespace Stacker.Commands
             this.tbPercentage2Bed.Size = new System.Drawing.Size(45, 20);
             this.tbPercentage2Bed.TabIndex = 20;
             this.tbPercentage2Bed.Text = "30";
+            this.tbPercentage2Bed.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbPercentage2Bed_KeyPress);
             // 
             // tbPercentage1Bed
             // 
@@ -369,6 +370,7 @@ namespace Stacker.Commands
             this.tbPercentage1Bed.Size = new System.Drawing.Size(45, 20);
             this.tbPercentage1Bed.TabIndex = 19;
             this.tbPercentage1Bed.Text = "40";
+            this.tbPercentage1Bed.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbPercentage1Bed_KeyPress);
             // 
             // label21
             // 
@@ -388,6 +390,7 @@ namespace Stacker.Commands
             this.tbPercentageStudio.Size = new System.Drawing.Size(45, 20);
             this.tbPercentageStudio.TabIndex = 12;
             this.tbPercentageStudio.Text = "30";
+            this.tbPercentageStudio.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbPercentageStudio_KeyPress);
             // 
             // label4
             // 
