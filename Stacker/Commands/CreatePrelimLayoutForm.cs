@@ -365,10 +365,13 @@ namespace Stacker.Commands
                     ModBase modBaseStudio = new ModBase("Studio", 1, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
                     ModBase modBaseOneBed = new ModBase("OneBed", 2, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
                     ModBase modBaseTwoBed = new ModBase("TwoBed", 3, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
+                    ModBase modBaseCore = new ModBase("Core", 1, PodWidthMax, PodWidthMin, PodLengthMax, PodLengthMin, 10);
+
 
                     Dictionary<double, ModOption> optionsStudio = new Dictionary<double, ModOption>();
                     Dictionary<double, ModOption> optionsOneBed = new Dictionary<double, ModOption>();
                     Dictionary<double, ModOption> optionsTwoBed = new Dictionary<double, ModOption>();
+                    Dictionary<double, ModOption> optionsCore = new Dictionary<double, ModOption>();
 
                     //
                     //Create Mod Options of Varying Widths
@@ -378,10 +381,12 @@ namespace Stacker.Commands
                         ModOption studio = new ModOption(i, modIdealLength, modBaseStudio);
                         ModOption oneBed = new ModOption(i, modIdealLength, modBaseOneBed);
                         ModOption twoBed = new ModOption(i, modIdealLength, modBaseTwoBed);
+                        ModOption core = new ModOption(i, modIdealLength, modBaseCore);
 
                         optionsStudio[i] = studio;
                         optionsOneBed[i] = oneBed;
                         optionsTwoBed[i] = twoBed;
+                        optionsCore[i] = core;
                     }
 
 
@@ -466,6 +471,11 @@ namespace Stacker.Commands
                             decimal unitLayoutRatio_1Bed_MaxSF = ((decimal)Percentage1Bed / 100) * Convert.ToDecimal(currentBlockOption.SFModTotal) + unitLayoutRatio_2Bed_MaxSF;
                             decimal unitLayoutRatio_Studio_MaxSF = ((decimal)PercentageStudio / 100) * Convert.ToDecimal(currentBlockOption.SFModTotal) + unitLayoutRatio_1Bed_MaxSF;
 
+                            bool addCoreToBlock = false;
+                            bool coreModAdded = false;
+                            if (i == floorLayout.TotalModBlocks)
+                                addCoreToBlock = true;
+
 
                             //Fill block with two bed options
                             while (currentBlockOption.ValidateBlockAdd(optionsTwoBed[currentModWidth]) && 
@@ -475,6 +485,13 @@ namespace Stacker.Commands
                             {
                                 currentBlockOption.AddModToBlock(optionsTwoBed[currentModWidth]);
                                 roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
+
+                                if(addCoreToBlock && !coreModAdded && roomAreaFilledRatio > Convert.ToDecimal(0.50))
+                                {
+                                    currentBlockOption.AddModToBlock(optionsCore[currentModWidth]);
+                                    roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                                    coreModAdded = true;
+                                }
 
                                 modsAdded++;
                             }
@@ -487,6 +504,14 @@ namespace Stacker.Commands
                             {
                                 currentBlockOption.AddModToBlock(optionsOneBed[currentModWidth]);
                                 roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
+
+                                if (addCoreToBlock && !coreModAdded && roomAreaFilledRatio > Convert.ToDecimal(0.50))
+                                {
+                                    currentBlockOption.AddModToBlock(optionsCore[currentModWidth]);
+                                    roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                                    coreModAdded = true;
+                                }
+
                                 modsAdded++;
                             }
 
@@ -496,6 +521,13 @@ namespace Stacker.Commands
                             {
                                 currentBlockOption.AddModToBlock(optionsStudio[currentModWidth]);
                                 roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
+
+                                if (addCoreToBlock && !coreModAdded && roomAreaFilledRatio > Convert.ToDecimal(0.50))
+                                {
+                                    currentBlockOption.AddModToBlock(optionsCore[currentModWidth]);
+                                    roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
+                                    coreModAdded = true;
+                                }
 
                                 modsAdded++;
                             }
@@ -619,19 +651,26 @@ namespace Stacker.Commands
                         List<ElementId> selectedElemsModLab0BDTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLab1BDTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLab2BDTYPA = new List<ElementId>();
+                        List<ElementId> selectedElemsModLabCoreTYPA = new List<ElementId>();
+                        List<ElementId> selectedElemsModLabCoreTYPB = new List<ElementId>();
 
                         Element wallToMoveModLab0BDTYPA_X = null;
                         Element wallToMoveModLab1BDTYPA_X = null;
                         Element wallToMoveModLab2BDTYPA_X = null;
+                        Element wallToMoveModLabCoreTYPA_X = null;
+                        Element wallToMoveModLabCoreTYPB_X = null;
 
                         Element wallToMoveModLab0BDTYPA_Y = null;
                         Element wallToMoveModLab1BDTYPA_Y = null;
                         Element wallToMoveModLab2BDTYPA_Y = null;
+                        Element wallToMoveModLabCoreTYPA_Y = null;
+                        Element wallToMoveModLabCoreTYPB_Y = null;
 
                         Element centralColModLab0BDTYPA = null;
                         Element centralColModLab1BDTYPA = null;
                         Element centralColModLab2BDTYPA = null;
-
+                        Element centralColModLabCoreTYPA = null;
+                        Element centralColModLabCoreTYPB = null;
 
                         //Find all elements of precreated wall types
                         foreach (var elem in AllElem)
@@ -651,6 +690,11 @@ namespace Stacker.Commands
                                 centralColModLab1BDTYPA = elem;
                             else if (parMark.AsString() == "ModLab_BD_2_MOD_3_TYPA_Center")
                                 centralColModLab2BDTYPA = elem;
+                            else if (parMark.AsString() == "ModLab_CORE_TYPA_Center")
+                                centralColModLabCoreTYPA = elem;
+                            else if (parMark.AsString() == "ModLab_CORE_TYPB_Center")
+                                centralColModLabCoreTYPB = elem;
+
 
                             if (commentInfo == "ModLab_BD_1_MOD_2_TYPA")
                             {
@@ -708,7 +752,42 @@ namespace Stacker.Commands
                                     }
                                 }
                             }
+                            else if (commentInfo == "ModLab_CORE_TYPA")
+                            {
+                                selectedElemsModLabCoreTYPA.Add(elem.Id);
 
+                                if (parMark != null)
+                                {
+                                    var markInfo = parMark.AsString();
+
+                                    if (markInfo == "ModLab_CORE_TYPA_WallX")
+                                    {
+                                        wallToMoveModLabCoreTYPA_X = elem;
+                                    }
+                                    else if (markInfo == "ModLab_CORE_TYPA_WallY")
+                                    {
+                                        wallToMoveModLabCoreTYPA_Y = elem;
+                                    }
+                                }
+                            }
+                            else if (commentInfo == "ModLab_CORE_TYPB")
+                            {
+                                selectedElemsModLabCoreTYPB.Add(elem.Id);
+
+                                if (parMark != null)
+                                {
+                                    var markInfo = parMark.AsString();
+
+                                    if (markInfo == "ModLab_CORE_TYPB_WallX")
+                                    {
+                                        wallToMoveModLabCoreTYPB_X = elem;
+                                    }
+                                    else if (markInfo == "ModLab_CORE_TYPB_WallY")
+                                    {
+                                        wallToMoveModLabCoreTYPB_Y = elem;
+                                    }
+                                }
+                            }
 
 
                         }
@@ -733,10 +812,13 @@ namespace Stacker.Commands
                             var colorStudio = new Autodesk.Revit.DB.Color(245, 194, 66); // Orange
                             var colorOneBed = new Autodesk.Revit.DB.Color(108, 245, 66); // Green
                             var colorTwoBed = new Autodesk.Revit.DB.Color(66, 245, 239); // Blue
+                            var colorCore = new Autodesk.Revit.DB.Color(237, 179, 252); // Purple
+
 
                             FilledRegionType newPattern0 = findOrCreateSolidFieldRegions("BedStudio", colorStudio);
                             FilledRegionType newPattern1 = findOrCreateSolidFieldRegions("BedOne", colorOneBed);
                             FilledRegionType newPattern2 = findOrCreateSolidFieldRegions("BedTwo", colorTwoBed);
+                            FilledRegionType newPattern3 = findOrCreateSolidFieldRegions("Core", colorCore);
 
 
                             var regionsBuilt = new List<ElementId>();
@@ -950,18 +1032,104 @@ namespace Stacker.Commands
 
 
                                     }
-                                    else
+                                    else if (currentMod.TotalMods == 1 && currentMod.ModOptionName.Contains("Core"))
                                     {
 
-                                        filledRegion = FilledRegion.Create(_doc, newPattern0.Id, VPlan.Id, profilelps);
-
+                                        filledRegion = FilledRegion.Create(_doc, newPattern3.Id, VPlan.Id, profilelps);
 
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
                                             bool wallMoved_X = false;
                                             double width = currentMod.UnitModWidth;
-                                            double dimToMoveX = (width - 10) * currentMod.TotalMods;
+                                            double intialWidth = 10;
+
+                                            double dimToMoveX = (width - intialWidth) * currentMod.TotalMods;
+
+                                            if (wallToMoveModLabCoreTYPA_X != null && dimToMoveX > 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLabCoreTYPA_X.Id, new XYZ(dimToMoveX, 0, 0));
+                                                wallMoved_X = true;
+                                            }
+
+
+
+                                            bool wallMoved_Y = false;
+                                            double length = currentMod.UnitModLength;
+                                            double dimToMoveY = length - 30;
+
+
+                                            if (wallToMoveModLabCoreTYPA_Y != null && dimToMoveY != 0)
+                                            {
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLabCoreTYPA_Y.Id, new XYZ(0, -dimToMoveY, 0));
+                                                wallMoved_Y = true;
+                                            }
+
+
+
+                                            _uidoc.Selection.SetElementIds(new List<ElementId>() { });
+                                            _uidoc.Selection.SetElementIds(selectedElemsModLabCoreTYPA);
+
+                                            LocationPoint locationPt = (LocationPoint)centralColModLabCoreTYPA.Location;
+                                            XYZ point = locationPt.Point;
+                                            XYZ translationPt = new XYZ(ptMid.X - point.X, ptMid.Y - point.Y, TypFloorHeight);
+
+                                            // Set handler to skip the duplicate types dialog
+                                            CopyPasteOptions options = new CopyPasteOptions();
+                                            options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
+
+
+                                            var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElemsModLabCoreTYPA, VPlan, Transform.Identity, options);
+
+                                            if (j == 0)
+                                            {
+                                                LocationPoint lp = (LocationPoint)centralColModLabCoreTYPA.Location;
+                                                XYZ ppt = new XYZ(lp.Point.X, lp.Point.Y, 0);
+                                                Line axis = Line.CreateBound(ppt, new XYZ(ppt.X, ppt.Y, ppt.Z + 10));
+
+                                                ElementTransformUtils.RotateElements(_doc, elementsAddedToDelete, axis, Math.PI);
+                                            }
+
+                                            var elementsAdded = ElementTransformUtils.CopyElements(_doc, elementsAddedToDelete, translationPt);
+
+
+                                            foreach (ElementId eId in elementsAdded)
+                                            {
+                                                Element elem = _doc.GetElement(eId);
+
+                                                var parOffset = elem.LookupParameter("Offset");
+                                                if (parOffset != null)
+                                                    parOffset.Set(0);
+
+                                            }
+
+
+                                            _doc.Delete(elementsAddedToDelete);
+
+                                            if (wallMoved_X)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLabCoreTYPA_X.Id, new XYZ(-dimToMoveX, 0, 0));
+
+                                            if (wallMoved_Y)
+                                                ElementTransformUtils.MoveElement(_doc, wallToMoveModLabCoreTYPA_Y.Id, new XYZ(0, dimToMoveY, 0));
+
+
+                                            ElementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        filledRegion = FilledRegion.Create(_doc, newPattern0.Id, VPlan.Id, profilelps);
+
+                                        if (cbDrawInteriorLAyout.Checked)
+                                        {
+                                            bool wallMoved_X = false;
+                                            double width = currentMod.UnitModWidth;
+                                            double intialWidth = 10;
+
+                                            double dimToMoveX = (width - intialWidth) * currentMod.TotalMods;
 
                                             if (wallToMoveModLab0BDTYPA_X != null && dimToMoveX > 0)
                                             {
@@ -975,13 +1143,12 @@ namespace Stacker.Commands
                                             double length = currentMod.UnitModLength;
                                             double dimToMoveY = length - 30;
 
+
                                             if (wallToMoveModLab0BDTYPA_Y != null && dimToMoveY != 0)
                                             {
                                                 ElementTransformUtils.MoveElement(_doc, wallToMoveModLab0BDTYPA_Y.Id, new XYZ(0, -dimToMoveY, 0));
                                                 wallMoved_Y = true;
                                             }
-
-
 
 
                                             _uidoc.Selection.SetElementIds(new List<ElementId>() { });
@@ -1021,9 +1188,6 @@ namespace Stacker.Commands
                                             }
 
 
-
-
-
                                             _doc.Delete(elementsAddedToDelete);
 
                                             if (wallMoved_X)
@@ -1034,10 +1198,13 @@ namespace Stacker.Commands
 
 
                                             ElementsBuilt[$"Room Elements"].AddRange(elementsAdded);
+
+
+
                                         }
 
-
                                     }
+
 
 
                                     ////Draw temp line at mod top left corner
@@ -1046,7 +1213,7 @@ namespace Stacker.Commands
                                     //elementsBuilt[$"Temp Line"].Add(line.Id);
 
                                     if (filledRegion != null)
-                                        regionsBuilt.Add(filledRegion.Id);
+                                    regionsBuilt.Add(filledRegion.Id);
                                 }
                             }
 
