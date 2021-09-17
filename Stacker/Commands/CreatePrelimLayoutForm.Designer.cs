@@ -105,6 +105,7 @@ namespace Stacker.Commands
             this.label22 = new System.Windows.Forms.Label();
             this.tbTotalBuildingHeight = new System.Windows.Forms.TextBox();
             this.tbTypStoryHeight = new System.Windows.Forms.TextBox();
+            this.btnExportImages = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -260,7 +261,7 @@ namespace Stacker.Commands
             // tbTotalSquareFootage
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalSquareFootage.Location = new System.Drawing.Point(333, 108);
+            this.tbTotalSquareFootage.Location = new System.Drawing.Point(274, 108);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(39, 20);
@@ -270,7 +271,7 @@ namespace Stacker.Commands
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(201, 112);
+            this.label5.Location = new System.Drawing.Point(142, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(130, 13);
             this.label5.TabIndex = 5;
@@ -469,7 +470,7 @@ namespace Stacker.Commands
             // btnAddInteriorLayout
             // 
             this.btnAddInteriorLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddInteriorLayout.Location = new System.Drawing.Point(252, 77);
+            this.btnAddInteriorLayout.Location = new System.Drawing.Point(257, 77);
             this.btnAddInteriorLayout.Name = "btnAddInteriorLayout";
             this.btnAddInteriorLayout.Size = new System.Drawing.Size(116, 30);
             this.btnAddInteriorLayout.TabIndex = 20;
@@ -479,7 +480,7 @@ namespace Stacker.Commands
             // btnPrevious
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrevious.Location = new System.Drawing.Point(252, 113);
+            this.btnPrevious.Location = new System.Drawing.Point(257, 113);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(57, 30);
             this.btnPrevious.TabIndex = 19;
@@ -489,7 +490,7 @@ namespace Stacker.Commands
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(312, 113);
+            this.btnNext.Location = new System.Drawing.Point(317, 113);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(57, 30);
             this.btnNext.TabIndex = 18;
@@ -500,7 +501,7 @@ namespace Stacker.Commands
             // btnDeleteGeom
             // 
             this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteGeom.Location = new System.Drawing.Point(312, 16);
+            this.btnDeleteGeom.Location = new System.Drawing.Point(317, 16);
             this.btnDeleteGeom.Name = "btnDeleteGeom";
             this.btnDeleteGeom.Size = new System.Drawing.Size(57, 30);
             this.btnDeleteGeom.TabIndex = 17;
@@ -936,12 +937,30 @@ namespace Stacker.Commands
             this.tbTypStoryHeight.Text = "12";
             this.tbTypStoryHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTypStoryHeight_KeyPress);
             // 
+            // btnExportImages
+            // 
+            this.btnExportImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportImages.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnExportImages.Image = ((System.Drawing.Image)(resources.GetObject("btnExportImages.Image")));
+            this.btnExportImages.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnExportImages.Location = new System.Drawing.Point(487, 530);
+            this.btnExportImages.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnExportImages.Name = "btnExportImages";
+            this.btnExportImages.Padding = new System.Windows.Forms.Padding(2);
+            this.btnExportImages.Size = new System.Drawing.Size(117, 30);
+            this.btnExportImages.TabIndex = 89;
+            this.btnExportImages.Text = "Export Images";
+            this.btnExportImages.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnExportImages.UseVisualStyleBackColor = true;
+            this.btnExportImages.Click += new System.EventHandler(this.btnExportImages_Click);
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(616, 574);
+            this.Controls.Add(this.btnExportImages);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.btnViewJSON);
             this.Controls.Add(this.groupBox2);
@@ -1054,5 +1073,6 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox tbMaxFloors;
         private System.Windows.Forms.Button btnApplyFloorChanges;
+        private System.Windows.Forms.Button btnExportImages;
     }
 }

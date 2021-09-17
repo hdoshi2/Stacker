@@ -72,7 +72,7 @@ namespace Stacker.Commands
 
             PodLengthMin = 20;
             PodLengthMax = 35;
-            PodWidthMin = 10;
+            PodWidthMin = 12;
             PodWidthMax = 16;
 
             tbModLengthMin.Text = PodLengthMin.ToString();
@@ -1931,6 +1931,86 @@ namespace Stacker.Commands
                 e.Handled = true;
         }
 
+
+
+
+        private void btnExportImages_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = "Select folder to save plan image file:";
+                string selectedPath = "";
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                    selectedPath = fbd.SelectedPath;
+
+                for (var i = 0; i < allLevels.Count; i++)
+                {
+                    Level currentLevel = allLevels[i];
+                    ViewPlan currentViewPlan = allViewPlans[i];
+
+                    using (Transaction transExportImage = new Transaction(_doc))
+                    {
+                        transExportImage.Start($"Export Image {i.ToString()}");
+
+                        IList<ElementId> ImageExportList = new List<ElementId>();
+                        ImageExportList.Add(currentViewPlan.Id);
+
+
+                        if (selectedPath != "")
+                        {
+                            //Generate date string
+                            string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+                            string fileDateString = dateString.Replace(":", "-").Replace(".", "-") + "____" + i.ToString();
+
+                            string fullPathAndFileName = selectedPath + @"\" + fileDateString;
+
+                            var imageExportOpt = new ImageExportOptions
+                            {
+                                ZoomType = ZoomFitType.Zoom,
+                                PixelSize = 8192,
+                                FilePath = fullPathAndFileName,
+                                FitDirection = FitDirectionType.Horizontal,
+                                HLRandWFViewsFileType = ImageFileType.JPEGLossless,
+                                ImageResolution = ImageResolution.DPI_600,
+                                ExportRange = ExportRange.SetOfViews,
+                            };
+
+                            imageExportOpt.SetViewsAndSheets(ImageExportList);
+
+                            _doc.ExportImage(imageExportOpt);
+
+                            DirectoryInfo directory = new DirectoryInfo(selectedPath);
+                            FileInfo imageFile = (from f in directory.GetFiles()
+                                                    orderby f.LastWriteTime descending
+                                                    select f).First();
+
+                            if (imageFile != null && imageFile.Name.StartsWith(fileDateString))
+                            {
+                                //TaskDialog.Show("Image Created", $"Image file from Area ViewPlan: [{currentViewPlan.Name}] created.");
+                                //System.Diagnostics.Process.Start(imageFile.FullName);
+                            }
+
+
+                        }
+
+
+
+                        transExportImage.Commit();
+
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Exporting View Image  [" + ex.GetType().ToString() + "]. ");
+            }
+
+        }
 
 
 
