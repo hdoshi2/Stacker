@@ -1950,64 +1950,190 @@ namespace Stacker.Commands
                     Level currentLevel = allLevels[i];
                     ViewPlan currentViewPlan = allViewPlans[i];
 
-                    using (Transaction transExportImage = new Transaction(_doc))
-                    {
-                        transExportImage.Start($"Export Image {i.ToString()}");
-
-                        IList<ElementId> ImageExportList = new List<ElementId>();
-                        ImageExportList.Add(currentViewPlan.Id);
-
-
-                        if (selectedPath != "")
-                        {
-                            //Generate date string
-                            string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
-                            string fileDateString = dateString.Replace(":", "-").Replace(".", "-") + "____" + i.ToString();
-
-                            string fullPathAndFileName = selectedPath + @"\" + fileDateString;
-
-                            var imageExportOpt = new ImageExportOptions
-                            {
-                                ZoomType = ZoomFitType.Zoom,
-                                PixelSize = 8192,
-                                FilePath = fullPathAndFileName,
-                                FitDirection = FitDirectionType.Horizontal,
-                                HLRandWFViewsFileType = ImageFileType.JPEGLossless,
-                                ImageResolution = ImageResolution.DPI_600,
-                                ExportRange = ExportRange.SetOfViews,
-                            };
-
-                            imageExportOpt.SetViewsAndSheets(ImageExportList);
-
-                            _doc.ExportImage(imageExportOpt);
-
-                            DirectoryInfo directory = new DirectoryInfo(selectedPath);
-                            FileInfo imageFile = (from f in directory.GetFiles()
-                                                    orderby f.LastWriteTime descending
-                                                    select f).First();
-
-                            if (imageFile != null && imageFile.Name.StartsWith(fileDateString))
-                            {
-                                //TaskDialog.Show("Image Created", $"Image file from Area ViewPlan: [{currentViewPlan.Name}] created.");
-                                //System.Diagnostics.Process.Start(imageFile.FullName);
-                            }
-
-
-                        }
-
-
-
-                        transExportImage.Commit();
-
-                    }
+                    if (selectedPath != "")
+                        exportViewPlanImage(currentViewPlan, selectedPath);
 
                 }
+
+                var viewCollector1 = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
+
+                var collector = new FilteredElementCollector(_doc);
+
+                var viewFamilyType = collector
+                  .OfClass(typeof(ViewFamilyType))
+                  .OfType<ViewFamilyType>()
+                  .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
+
+                List<View3D> view3D = new List<View3D>();
+
+                using (Transaction transExportImage = new Transaction(_doc))
+                {
+                    transExportImage.Start($"Create 3D View");
+                    for(var i = 0; i < 3; i++)
+                    {
+                        var view3DCurrent = (viewFamilyType != null)
+                            ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
+                            : null;
+
+                        view3DCurrent.Name = $"View {i.ToString()}";
+                        if(i == 0)
+                        {
+                            var eyeDirection = new XYZ(23.5262711771655, -274.775327941385, 267.088086745375);
+                            var upDirection = new XYZ(-0.408248290463863, 0.408248290463863, 0.816496580927726);
+                            var forwardDirection = new XYZ(-0.577350269189626, 0.577350269189626, -0.577350269189626);
+
+                            view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
+                        }
+                        else if (i == 1)
+                        {
+                            var eyeDirection = new XYZ(-462.725440347728, 211.476383583508, 267.088086745375);
+                            var upDirection = new XYZ(0.408248290463863, -0.408248290463863, 0.816496580927726);
+                            var forwardDirection = new XYZ(0.577350269189626, -0.577350269189626, -0.577350269189626);
+
+                            view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
+                        }
+
+                        //1.Wireframe
+                        //2.Hidden line
+                        //3.Shaded
+                        //4.Shaded with Edges
+                        //5.Consistent Colors
+                        //6.Realistic
+                        view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
+
+                        view3D.Add(view3DCurrent);
+                    }
+
+
+                    transExportImage.Commit();
+                }
+
+
+
+                //var viewCollector = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).ToList();
+
+                //foreach (View3D v in viewCollector)
+                //{
+                //    if (v.IsTemplate || !v.CanBePrinted)
+                //        return;
+
+                //    if (selectedPath != "")
+                //    {
+                //        using (Transaction transExportImage = new Transaction(_doc))
+                //        {
+                //            transExportImage.Start($"Export Image");
+
+                //            IList<ElementId> ImageExportList = new List<ElementId>();
+                //            ImageExportList.Add(v.Id);
+
+
+                //            if (selectedPath != "")
+                //            {
+                //                //Generate date string
+                //                string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+                //                string fileDateString = dateString.Replace(":", "-").Replace(".", "-") + "____" + v.Name;
+
+                //                string fullPathAndFileName = selectedPath + @"\" + fileDateString;
+
+                //                var imageExportOpt = new ImageExportOptions
+                //                {
+                //                    ZoomType = ZoomFitType.Zoom,
+                //                    PixelSize = 8192,
+                //                    FilePath = fullPathAndFileName,
+                //                    FitDirection = FitDirectionType.Horizontal,
+                //                    HLRandWFViewsFileType = ImageFileType.JPEGLossless,
+                //                    ImageResolution = ImageResolution.DPI_600,
+                //                    ExportRange = ExportRange.SetOfViews,
+                //                };
+
+                //                imageExportOpt.SetViewsAndSheets(ImageExportList);
+
+                //                _doc.ExportImage(imageExportOpt);
+
+                //                //DirectoryInfo directory = new DirectoryInfo(selectedPath);
+                //                //FileInfo imageFile = (from f in directory.GetFiles()
+                //                //                      orderby f.LastWriteTime descending
+                //                //                      select f).First();
+
+                //                //if (imageFile != null && imageFile.Name.StartsWith(fileDateString))
+                //                //{
+                //                    //TaskDialog.Show("Image Created", $"Image file from Area ViewPlan: [{currentViewPlan.Name}] created.");
+                //                    //System.Diagnostics.Process.Start(imageFile.FullName);
+                //                //}
+
+
+                //            }
+
+                //            transExportImage.Commit();
+
+                //        }
+                //    }
+
+
+                //}
 
 
             }
             catch (Exception ex)
             {
                 throw new Exception("Exception in Exporting View Image  [" + ex.GetType().ToString() + "]. ");
+            }
+
+        }
+
+
+        private void exportViewPlanImage(ViewPlan currentViewPlan, string selectedPath)
+        {
+            if (currentViewPlan.IsTemplate || !currentViewPlan.CanBePrinted)
+                return;
+
+            using (Transaction transExportImage = new Transaction(_doc))
+            {
+                transExportImage.Start($"Export Image");
+
+                IList<ElementId> ImageExportList = new List<ElementId>();
+                ImageExportList.Add(currentViewPlan.Id);
+
+
+                if (selectedPath != "")
+                {
+                    //Generate date string
+                    string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+                    string fileDateString = dateString.Replace(":", "-").Replace(".", "-") + "____" + currentViewPlan.Name;
+
+                    string fullPathAndFileName = selectedPath + @"\" + fileDateString;
+
+                    var imageExportOpt = new ImageExportOptions
+                    {
+                        ZoomType = ZoomFitType.Zoom,
+                        PixelSize = 8192,
+                        FilePath = fullPathAndFileName,
+                        FitDirection = FitDirectionType.Horizontal,
+                        HLRandWFViewsFileType = ImageFileType.JPEGLossless,
+                        ImageResolution = ImageResolution.DPI_600,
+                        ExportRange = ExportRange.SetOfViews,
+                    };
+
+                    imageExportOpt.SetViewsAndSheets(ImageExportList);
+
+                    _doc.ExportImage(imageExportOpt);
+
+                    //DirectoryInfo directory = new DirectoryInfo(selectedPath);
+                    //FileInfo imageFile = (from f in directory.GetFiles()
+                    //                      orderby f.LastWriteTime descending
+                    //                      select f).First();
+
+                    //if (imageFile != null && imageFile.Name.StartsWith(fileDateString))
+                    //{
+                        //TaskDialog.Show("Image Created", $"Image file from Area ViewPlan: [{currentViewPlan.Name}] created.");
+                        //System.Diagnostics.Process.Start(imageFile.FullName);
+                    //}
+
+
+                }
+
+                transExportImage.Commit();
+
             }
 
         }
