@@ -1955,16 +1955,14 @@ namespace Stacker.Commands
 
                 }
 
-                var viewCollector1 = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
+                
 
-                var collector = new FilteredElementCollector(_doc);
-
-                var viewFamilyType = collector
+                var viewFamilyType = new FilteredElementCollector(_doc)
                   .OfClass(typeof(ViewFamilyType))
                   .OfType<ViewFamilyType>()
                   .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
 
-                List<View3D> view3D = new List<View3D>();
+                List<View3D> view3Ds = new List<View3D>();
 
                 using (Transaction transExportImage = new Transaction(_doc))
                 {
@@ -2001,76 +1999,23 @@ namespace Stacker.Commands
                         //6.Realistic
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
-                        view3D.Add(view3DCurrent);
+                        view3Ds.Add(view3DCurrent);
                     }
-
 
                     transExportImage.Commit();
                 }
 
+                var all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
 
 
-                //var viewCollector = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).ToList();
+                for (var i = 0; i < view3Ds.Count; i++)
+                {
+                    Autodesk.Revit.DB.View current3DView = view3Ds[i] as Autodesk.Revit.DB.View;
 
-                //foreach (View3D v in viewCollector)
-                //{
-                //    if (v.IsTemplate || !v.CanBePrinted)
-                //        return;
+                    if (selectedPath != "")
+                        exportViewPlanImage(current3DView, selectedPath);
 
-                //    if (selectedPath != "")
-                //    {
-                //        using (Transaction transExportImage = new Transaction(_doc))
-                //        {
-                //            transExportImage.Start($"Export Image");
-
-                //            IList<ElementId> ImageExportList = new List<ElementId>();
-                //            ImageExportList.Add(v.Id);
-
-
-                //            if (selectedPath != "")
-                //            {
-                //                //Generate date string
-                //                string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
-                //                string fileDateString = dateString.Replace(":", "-").Replace(".", "-") + "____" + v.Name;
-
-                //                string fullPathAndFileName = selectedPath + @"\" + fileDateString;
-
-                //                var imageExportOpt = new ImageExportOptions
-                //                {
-                //                    ZoomType = ZoomFitType.Zoom,
-                //                    PixelSize = 8192,
-                //                    FilePath = fullPathAndFileName,
-                //                    FitDirection = FitDirectionType.Horizontal,
-                //                    HLRandWFViewsFileType = ImageFileType.JPEGLossless,
-                //                    ImageResolution = ImageResolution.DPI_600,
-                //                    ExportRange = ExportRange.SetOfViews,
-                //                };
-
-                //                imageExportOpt.SetViewsAndSheets(ImageExportList);
-
-                //                _doc.ExportImage(imageExportOpt);
-
-                //                //DirectoryInfo directory = new DirectoryInfo(selectedPath);
-                //                //FileInfo imageFile = (from f in directory.GetFiles()
-                //                //                      orderby f.LastWriteTime descending
-                //                //                      select f).First();
-
-                //                //if (imageFile != null && imageFile.Name.StartsWith(fileDateString))
-                //                //{
-                //                    //TaskDialog.Show("Image Created", $"Image file from Area ViewPlan: [{currentViewPlan.Name}] created.");
-                //                    //System.Diagnostics.Process.Start(imageFile.FullName);
-                //                //}
-
-
-                //            }
-
-                //            transExportImage.Commit();
-
-                //        }
-                //    }
-
-
-                //}
+                }
 
 
             }
@@ -2082,7 +2027,7 @@ namespace Stacker.Commands
         }
 
 
-        private void exportViewPlanImage(ViewPlan currentViewPlan, string selectedPath)
+        private void exportViewPlanImage(Autodesk.Revit.DB.View currentViewPlan, string selectedPath)
         {
             if (currentViewPlan.IsTemplate || !currentViewPlan.CanBePrinted)
                 return;
