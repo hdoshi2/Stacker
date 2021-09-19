@@ -16,6 +16,7 @@ using System.IO;
 using Stacker.ModClasses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using View = Autodesk.Revit.DB.View;
 
 namespace Stacker.Commands
 {
@@ -276,8 +277,6 @@ namespace Stacker.Commands
                                 allLevels.Add(newLevel);
                                 allViewPlans.Add(newViewPlan);
                             }
-
-                            hideElementsFromView(VPlan);
 
                             LevelBuilt = true;
 
@@ -2045,6 +2044,8 @@ namespace Stacker.Commands
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
+                List<View3D> built3DViews = new List<View3D>();
+
 
                 //
                 //Export images for all Levels created. 
@@ -2052,7 +2053,9 @@ namespace Stacker.Commands
                 for (var i = 0; i < allLevels.Count; i++)
                 {
                     Level currentLevel = allLevels[i];
-                    ViewPlan currentViewPlan = allViewPlans[i];
+                    View currentViewPlan = allViewPlans[i] as View; 
+
+                    hideElementsFromView(new List<View>() { currentViewPlan });
 
                     if (selectedPath != "")
                         exportViewPlanImage(currentViewPlan, selectedPath);
@@ -2063,21 +2066,20 @@ namespace Stacker.Commands
                 //Create Two 3D Views
                 //
                 ViewFamilyType viewFamilyType = new FilteredElementCollector(_doc)
-                                                  .OfClass(typeof(ViewFamilyType))
-                                                  .OfType<ViewFamilyType>()
-                                                  .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
+                                                    .OfClass(typeof(ViewFamilyType))
+                                                    .OfType<ViewFamilyType>()
+                                                    .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
 
                 List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
                 List<string> existing3DViewNames = (from v in all3DViews
                                                     select v.Name).ToList();
 
-                List<View3D> built3DViews = new List<View3D>();
-
 
                 using (Transaction transExportImage = new Transaction(_doc))
                 {
-                    transExportImage.Start($"Mod: Create 3D View");
-                    for(var i = 0; i < 2; i++)
+                    transExportImage.Start($"Mod: Export View Img");
+
+                    for (var i = 0; i < 2; i++)
                     {
                         View3D view3DCurrent = (viewFamilyType != null)
                                                 ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
@@ -2116,58 +2118,29 @@ namespace Stacker.Commands
                         //6.Realistic
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
-                        //
-                        //Hide all elements not needed in the 3D View
-                        //
-                        hideElementsFromView(view3DCurrent);
-
-                        ////
-                        ////Hide all elements not needed in the 3D View
-                        ////
-                        //FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view3DCurrent.Id);
-                        //List<Element> elementsInView = allElementsInView.ToElements().ToList();
-
-                        //List<ElementId> allElementIdsBuilt = new List<ElementId>();
-                        //var elementsBuilt = ElementsBuilt.Values.ToList();
-                        //foreach (List<ElementId> elem in elementsBuilt)
-                        //    allElementIdsBuilt.AddRange(elem);
-
-                        //foreach (Element elemInView in elementsInView)
-                        //{
-                        //    if (elemInView.Category == null)
-                        //        continue;
-
-                        //    if (elemInView.Category.Name.Equals("Reference Planes")
-                        //      || elemInView.Category.Name.Equals("Elevations")
-                        //      || elemInView.Category.Name.Equals("Views")
-                        //      || elemInView.Category.Name.Equals("Property Lines")
-                        //      || elemInView.Category.Name.Equals("Levels")
-                        //      || elemInView.Category.Name.Equals("Scope Boxes")
-                        //      || elemInView.Category.Name.Equals("Property Lines")
-                        //      || elemInView.Category.Name.Equals("Grids")
-                        //      || !allElementIdsBuilt.Contains(elemInView.Id))
-                        //    {
-
-                        //        List<ElementId> ids = new List<ElementId>() { elemInView.Id };
-
-                        //        if (elemInView.CanBeHidden(view3DCurrent))
-                        //        {
-                        //            view3DCurrent.HideElements(ids);
-                        //        }
-
-                        //    }
-
-                        //}
-
                         built3DViews.Add(view3DCurrent);
 
                         ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
                     }
 
+
                     transExportImage.Commit();
                 }
 
-                
+
+
+                //
+                //Hide all elements not needed in the 3D View
+                //
+                for (var i = 0; i < built3DViews.Count; i++)
+                {
+                    Autodesk.Revit.DB.View current3DView = built3DViews[i] as Autodesk.Revit.DB.View;
+
+                    if (selectedPath != "")
+                        hideElementsFromView(new List<View>() { current3DView });
+                }
+
+
                 //
                 //Export 3D View Images
                 //
@@ -2251,45 +2224,57 @@ namespace Stacker.Commands
 
         }
 
-        private void hideElementsFromView(Autodesk.Revit.DB.View view)
+        private void hideElementsFromView(List<Autodesk.Revit.DB.View> views)
         {
-            //
-            //Hide all elements not needed in the 3D View
-            //
-            FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view.Id);
-            List<Element> elementsInView = allElementsInView.ToElements().ToList();
-
-            List<ElementId> allElementIdsBuilt = new List<ElementId>();
-            var elementsBuilt = ElementsBuilt.Values.ToList();
-            foreach (List<ElementId> elem in elementsBuilt)
-                allElementIdsBuilt.AddRange(elem);
-
-            foreach (Element elemInView in elementsInView)
+            using (Transaction transExportImage = new Transaction(_doc))
             {
-                if (elemInView.Category == null)
-                    continue;
+                transExportImage.Start($"Mod: Hide View Elems");
 
-                if (elemInView.Category.Name.Equals("Reference Planes")
-                  || elemInView.Category.Name.Equals("Elevations")
-                  || elemInView.Category.Name.Equals("Views")
-                  || elemInView.Category.Name.Equals("Property Lines")
-                  || elemInView.Category.Name.Equals("Levels")
-                  || elemInView.Category.Name.Equals("Scope Boxes")
-                  || elemInView.Category.Name.Equals("Property Lines")
-                  || elemInView.Category.Name.Equals("Grids")
-                  || !allElementIdsBuilt.Contains(elemInView.Id))
+                foreach (var view in views)
                 {
 
-                    List<ElementId> ids = new List<ElementId>() { elemInView.Id };
 
-                    if (elemInView.CanBeHidden(view))
+                    //
+                    //Hide all elements not needed in the 3D View
+                    //
+                    FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view.Id);
+                    List<Element> elementsInView = allElementsInView.ToElements().ToList();
+
+                    List<ElementId> allElementIdsBuilt = new List<ElementId>();
+                    var elementsBuilt = ElementsBuilt.Values.ToList();
+                    foreach (List<ElementId> elem in elementsBuilt)
+                        allElementIdsBuilt.AddRange(elem);
+
+                    foreach (Element elemInView in elementsInView)
                     {
-                        view.HideElements(ids);
-                    }
+                        if (elemInView.Category == null)
+                            continue;
 
+                        if (elemInView.Category.Name.Equals("Reference Planes")
+                          || elemInView.Category.Name.Equals("Elevations")
+                          || elemInView.Category.Name.Equals("Views")
+                          || elemInView.Category.Name.Equals("Property Lines")
+                          || elemInView.Category.Name.Equals("Levels")
+                          || elemInView.Category.Name.Equals("Scope Boxes")
+                          || elemInView.Category.Name.Equals("Property Lines")
+                          || elemInView.Category.Name.Equals("Grids")
+                          || !allElementIdsBuilt.Contains(elemInView.Id))
+                        {
+
+                            List<ElementId> ids = new List<ElementId>() { elemInView.Id };
+
+                            if (elemInView.CanBeHidden(view))
+                            {
+                                view.HideElements(ids);
+                            }
+                        }
+                    }
                 }
 
+                transExportImage.Commit();
+
             }
+            
         }
 
 
