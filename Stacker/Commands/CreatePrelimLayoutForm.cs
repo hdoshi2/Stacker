@@ -1938,6 +1938,9 @@ namespace Stacker.Commands
         {
             try
             {
+                //
+                //Select folder path
+                //
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
                 fbd.Description = "Select folder to save plan image file:";
                 string selectedPath = "";
@@ -1945,7 +1948,10 @@ namespace Stacker.Commands
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
+
+                //
                 //Export images for all Levels created. 
+                //
                 for (var i = 0; i < allLevels.Count; i++)
                 {
                     Level currentLevel = allLevels[i];
@@ -1953,28 +1959,40 @@ namespace Stacker.Commands
 
                     if (selectedPath != "")
                         exportViewPlanImage(currentViewPlan, selectedPath);
-
                 }
 
 
-
+                //
+                //Create Two 3D Views
+                //
                 ViewFamilyType viewFamilyType = new FilteredElementCollector(_doc)
                                                   .OfClass(typeof(ViewFamilyType))
                                                   .OfType<ViewFamilyType>()
                                                   .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
 
-                List<View3D> built3DView = new List<View3D>();
+                List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
+                List<string> existing3DViewNames = (from v in all3DViews
+                                                    select v.Name).ToList();
+
+                List<View3D> built3DViews = new List<View3D>();
+
 
                 using (Transaction transExportImage = new Transaction(_doc))
                 {
-                    transExportImage.Start($"Create 3D View");
-                    for(var i = 0; i < 3; i++)
+                    transExportImage.Start($"Mod: Create 3D View");
+                    for(var i = 0; i < 2; i++)
                     {
-                        var view3DCurrent = (viewFamilyType != null)
-                            ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
-                            : null;
+                        View3D view3DCurrent = (viewFamilyType != null)
+                                                ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
+                                                : null;
 
-                        view3DCurrent.Name = $"View {i.ToString()}";
+                        string view3DName = $"3D Mod View {i.ToString()}";
+
+                        if (existing3DViewNames.Contains(view3DName))
+                            continue;
+
+                        view3DCurrent.Name = view3DName;
+
                         if(i == 0)
                         {
                             var eyeDirection = new XYZ(23.5262711771655, -274.775327941385, 267.088086745375);
@@ -1992,6 +2010,7 @@ namespace Stacker.Commands
                             view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
                         }
 
+
                         //1.Wireframe
                         //2.Hidden line
                         //3.Shaded
@@ -2000,22 +2019,61 @@ namespace Stacker.Commands
                         //6.Realistic
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
-                        built3DView.Add(view3DCurrent);
+
+                        //
+                        //Hide all elements not needed in the 3D View
+                        //
+                        FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view3DCurrent.Id);
+                        List<Element> elementsInView = allElementsInView.ToElements().ToList();
+
+                        List<ElementId> allElementIdsBuilt = new List<ElementId>();
+                        var elementsBuilt = ElementsBuilt.Values.ToList();
+                        foreach (List<ElementId> elem in elementsBuilt)
+                            allElementIdsBuilt.AddRange(elem);
+
+                        foreach (Element elemInView in elementsInView)
+                        {
+                            if (elemInView.Category == null)
+                                continue;
+
+                            if (elemInView.Category.Name.Equals("Reference Planes")
+                              || elemInView.Category.Name.Equals("Elevations")
+                              || elemInView.Category.Name.Equals("Views")
+                              || elemInView.Category.Name.Equals("Property Lines")
+                              || elemInView.Category.Name.Equals("Levels")
+                              || elemInView.Category.Name.Equals("Scope Boxes")
+                              || elemInView.Category.Name.Equals("Property Lines")
+                              || elemInView.Category.Name.Equals("Grids")
+                              || !allElementIdsBuilt.Contains(elemInView.Id))
+                            {
+
+                                List<ElementId> ids = new List<ElementId>() { elemInView.Id };
+
+                                if (elemInView.CanBeHidden(view3DCurrent))
+                                {
+                                    view3DCurrent.HideElements(ids);
+                                }
+
+                            }
+
+                        }
+
+                        built3DViews.Add(view3DCurrent);
                     }
 
                     transExportImage.Commit();
                 }
 
-                List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
-
-
-                for (var i = 0; i < built3DView.Count; i++)
+                
+                //
+                //Export 3D View Images
+                //
+                for (var i = 0; i < built3DViews.Count; i++)
                 {
-                    Autodesk.Revit.DB.View current3DView = built3DView[i] as Autodesk.Revit.DB.View;
+                    Autodesk.Revit.DB.View current3DView = built3DViews[i] as Autodesk.Revit.DB.View;
 
                     if (selectedPath != "")
                         exportViewPlanImage(current3DView, selectedPath);
-
                 }
 
 
@@ -2041,7 +2099,7 @@ namespace Stacker.Commands
 
             using (Transaction transExportImage = new Transaction(_doc))
             {
-                transExportImage.Start($"Export Image");
+                transExportImage.Start($"Mod: Export Image");
 
                 IList<ElementId> ImageExportList = new List<ElementId>();
                 ImageExportList.Add(currentViewPlan.Id);
