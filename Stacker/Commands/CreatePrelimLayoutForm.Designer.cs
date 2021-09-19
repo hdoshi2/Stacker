@@ -117,13 +117,13 @@ namespace Stacker.Commands
             // 
             // btnBuildLayout
             // 
-            this.btnBuildLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBuildLayout.Location = new System.Drawing.Point(168, 529);
+            this.btnBuildLayout.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnBuildLayout.Location = new System.Drawing.Point(217, 525);
             this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnBuildLayout.Name = "btnBuildLayout";
-            this.btnBuildLayout.Size = new System.Drawing.Size(134, 30);
+            this.btnBuildLayout.Size = new System.Drawing.Size(194, 30);
             this.btnBuildLayout.TabIndex = 0;
-            this.btnBuildLayout.Text = "Build Floor Layout";
+            this.btnBuildLayout.Text = "BUILD FLOOR LAYOUT";
             this.btnBuildLayout.UseVisualStyleBackColor = true;
             this.btnBuildLayout.Click += new System.EventHandler(this.btnBuildLayout_Click);
             // 
@@ -635,16 +635,14 @@ namespace Stacker.Commands
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
             this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnClose.Location = new System.Drawing.Point(326, 529);
+            this.btnClose.Location = new System.Drawing.Point(420, 567);
             this.btnClose.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(2);
             this.btnClose.Size = new System.Drawing.Size(92, 30);
             this.btnClose.TabIndex = 83;
             this.btnClose.Text = "Close";
-            this.btnClose.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
@@ -810,18 +808,16 @@ namespace Stacker.Commands
             // 
             // btnViewJSON
             // 
-            this.btnViewJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnViewJSON.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnViewJSON.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnViewJSON.Image = ((System.Drawing.Image)(resources.GetObject("btnViewJSON.Image")));
             this.btnViewJSON.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnViewJSON.Location = new System.Drawing.Point(400, 17);
+            this.btnViewJSON.Location = new System.Drawing.Point(269, 567);
             this.btnViewJSON.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnViewJSON.Name = "btnViewJSON";
             this.btnViewJSON.Padding = new System.Windows.Forms.Padding(2);
             this.btnViewJSON.Size = new System.Drawing.Size(92, 30);
             this.btnViewJSON.TabIndex = 86;
             this.btnViewJSON.Text = "View JSON";
-            this.btnViewJSON.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnViewJSON.UseVisualStyleBackColor = true;
             this.btnViewJSON.Click += new System.EventHandler(this.btnViewJSON_Click);
             // 
@@ -939,18 +935,16 @@ namespace Stacker.Commands
             // 
             // btnExportImages
             // 
-            this.btnExportImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExportImages.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnExportImages.Image = ((System.Drawing.Image)(resources.GetObject("btnExportImages.Image")));
             this.btnExportImages.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnExportImages.Location = new System.Drawing.Point(487, 530);
+            this.btnExportImages.Location = new System.Drawing.Point(86, 567);
             this.btnExportImages.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnExportImages.Name = "btnExportImages";
             this.btnExportImages.Padding = new System.Windows.Forms.Padding(2);
             this.btnExportImages.Size = new System.Drawing.Size(117, 30);
             this.btnExportImages.TabIndex = 89;
             this.btnExportImages.Text = "Export Images";
-            this.btnExportImages.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnExportImages.UseVisualStyleBackColor = true;
             this.btnExportImages.Click += new System.EventHandler(this.btnExportImages_Click);
             // 
@@ -959,7 +953,7 @@ namespace Stacker.Commands
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(616, 574);
+            this.ClientSize = new System.Drawing.Size(616, 608);
             this.Controls.Add(this.btnExportImages);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.btnViewJSON);
