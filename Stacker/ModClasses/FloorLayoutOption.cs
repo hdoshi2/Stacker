@@ -124,8 +124,8 @@ namespace Stacker.ModClasses
                 //Hallway Wall 1
                 var wallEnds1 = new List<XYPosition>();
 
-                XYPosition bottomPoint1 = new XYPosition(0, (refFloorLayout.OverallFloorWidth / 2) + (refFloorLayout.HallwayWidth / 2));
-                XYPosition bottomPoint2 = new XYPosition(ActualTotalFloorLength, (refFloorLayout.OverallFloorWidth / 2) + (refFloorLayout.HallwayWidth / 2));
+                XYPosition bottomPoint1 = new XYPosition(0, (refFloorLayout.OverallFloorWidth / 2) - (refFloorLayout.HallwayWidth / 2));
+                XYPosition bottomPoint2 = new XYPosition(ActualTotalFloorLength, (refFloorLayout.OverallFloorWidth / 2) - (refFloorLayout.HallwayWidth / 2));
 
                 wallEnds1.Add(bottomPoint1);
                 wallEnds1.Add(bottomPoint2);
@@ -135,13 +135,25 @@ namespace Stacker.ModClasses
                 //Hallway Wall 2
                 var wallEnds2 = new List<XYPosition>();
 
-                XYPosition topPoint1 = new XYPosition(0, (refFloorLayout.OverallFloorWidth / 2) - (refFloorLayout.HallwayWidth / 2));
-                XYPosition topPoint2 = new XYPosition(ActualTotalFloorLength, (refFloorLayout.OverallFloorWidth / 2) - (refFloorLayout.HallwayWidth / 2));
+                XYPosition topPoint1 = new XYPosition(0, (refFloorLayout.OverallFloorWidth / 2) + (refFloorLayout.HallwayWidth / 2));
+                XYPosition topPoint2 = new XYPosition(ActualTotalFloorLength, (refFloorLayout.OverallFloorWidth / 2) + (refFloorLayout.HallwayWidth / 2));
 
                 wallEnds2.Add(topPoint1);
                 wallEnds2.Add(topPoint2);
 
                 internalHallwayPoints.Add(wallEnds2);
+
+
+                //Hallway MidLine
+                var wallEndsMid = new List<XYPosition>();
+
+                XYPosition midPoint1 = new XYPosition(0, bottomPoint1.Y + (topPoint1.Y - bottomPoint1.Y)/2);
+                XYPosition midPoint2 = new XYPosition(ActualTotalFloorLength, bottomPoint2.Y + (topPoint2.Y - bottomPoint2.Y)/2);
+
+                wallEndsMid.Add(midPoint1);
+                wallEndsMid.Add(midPoint2);
+
+                internalHallwayPoints.Add(wallEndsMid);
 
             }
 

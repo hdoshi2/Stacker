@@ -599,6 +599,7 @@ namespace Stacker.Commands
                             hallwayLines.AddRange(hallwayLine);
                         }
 
+                        Autodesk.Revit.DB.XYZ hallwayMidPt = hallwayLines[2].Evaluate(0.5, true);
 
 
                         if (cbDrawOutlineWalls.Checked)
@@ -653,7 +654,7 @@ namespace Stacker.Commands
                         List<ElementId> selectedElemsModLab2BDTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLabCoreTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLabCoreTYPB = new List<ElementId>();
-                        List<ElementId> selectedHallway = new List<ElementId>();
+                        List<ElementId> selectedElementsHallway = new List<ElementId>();
 
                         Element wallToMoveModLab0BDTYPA_X = null;
                         Element wallToMoveModLab1BDTYPA_X = null;
@@ -702,7 +703,7 @@ namespace Stacker.Commands
 
                             if (commentInfo == "ModLab_Hallway")
                             {
-                                selectedHallway.Add(elem.Id);
+                                selectedElementsHallway.Add(elem.Id);
 
                                 if (parMark != null)
                                 {
@@ -1232,13 +1233,69 @@ namespace Stacker.Commands
 
                                     if (filledRegion != null)
                                     regionsBuilt.Add(filledRegion.Id);
-                                }
+                                }                           
+
+
+
                             }
+
 
                             ElementsBuilt["Mod Regions"] = regionsBuilt;
 
 
 
+                            //
+                            //Create hallway walls and floor
+                            //
+                            if (cbDrawInteriorLAyout.Checked)
+                            {
+                                bool wallMoved_X = false;
+                                double overallLength = floorBlockOptions[0].BlockLengthUsed;
+                                double dimToMoveX = (overallLength - 10);
+
+                                if (wallToMoveHallway_X != null && dimToMoveX > 0)
+                                {
+                                    ElementTransformUtils.MoveElement(_doc, wallToMoveHallway_X.Id, new XYZ(dimToMoveX, 0, 0));
+                                    wallMoved_X = true;
+                                }
+
+
+                                _uidoc.Selection.SetElementIds(new List<ElementId>() { });
+                                _uidoc.Selection.SetElementIds(selectedElementsHallway);
+
+                                LocationPoint locationPt = (LocationPoint)centralColHallway.Location;
+                                XYZ point = locationPt.Point;
+                                XYZ translationPt = new XYZ(hallwayMidPt.X - point.X, hallwayMidPt.Y - point.Y, TypFloorHeight);
+
+                                // Set handler to skip the duplicate types dialog
+                                CopyPasteOptions options = new CopyPasteOptions();
+                                options.SetDuplicateTypeNamesHandler(new HideAndAcceptDuplicateTypeNamesHandler());
+
+
+                                var elementsAddedToDelete = ElementTransformUtils.CopyElements(viewSource, selectedElementsHallway, VPlan, Transform.Identity, options);
+
+
+                                var elementsAdded = ElementTransformUtils.CopyElements(_doc, elementsAddedToDelete, translationPt);
+
+                                foreach (ElementId eId in elementsAdded)
+                                {
+                                    Element elem = _doc.GetElement(eId);
+
+                                    var parOffset = elem.LookupParameter("Offset");
+                                    if (parOffset != null)
+                                        parOffset.Set(0);
+                                }
+
+                                _doc.Delete(elementsAddedToDelete);
+
+
+                                if (wallMoved_X)
+                                    ElementTransformUtils.MoveElement(_doc, wallToMoveHallway_X.Id, new XYZ(-dimToMoveX, 0, 0));
+
+
+                                ElementsBuilt[$"Hallway Elements"] = elementsAdded.ToList();
+
+                            }
 
 
 
