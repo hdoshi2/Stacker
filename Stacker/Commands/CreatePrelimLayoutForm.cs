@@ -277,6 +277,7 @@ namespace Stacker.Commands
                                 allViewPlans.Add(newViewPlan);
                             }
 
+                            hideElementsFromView(VPlan);
 
                             LevelBuilt = true;
 
@@ -2115,44 +2116,48 @@ namespace Stacker.Commands
                         //6.Realistic
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
-
                         //
                         //Hide all elements not needed in the 3D View
                         //
-                        FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view3DCurrent.Id);
-                        List<Element> elementsInView = allElementsInView.ToElements().ToList();
+                        hideElementsFromView(view3DCurrent);
 
-                        List<ElementId> allElementIdsBuilt = new List<ElementId>();
-                        var elementsBuilt = ElementsBuilt.Values.ToList();
-                        foreach (List<ElementId> elem in elementsBuilt)
-                            allElementIdsBuilt.AddRange(elem);
+                        ////
+                        ////Hide all elements not needed in the 3D View
+                        ////
+                        //FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view3DCurrent.Id);
+                        //List<Element> elementsInView = allElementsInView.ToElements().ToList();
 
-                        foreach (Element elemInView in elementsInView)
-                        {
-                            if (elemInView.Category == null)
-                                continue;
+                        //List<ElementId> allElementIdsBuilt = new List<ElementId>();
+                        //var elementsBuilt = ElementsBuilt.Values.ToList();
+                        //foreach (List<ElementId> elem in elementsBuilt)
+                        //    allElementIdsBuilt.AddRange(elem);
 
-                            if (elemInView.Category.Name.Equals("Reference Planes")
-                              || elemInView.Category.Name.Equals("Elevations")
-                              || elemInView.Category.Name.Equals("Views")
-                              || elemInView.Category.Name.Equals("Property Lines")
-                              || elemInView.Category.Name.Equals("Levels")
-                              || elemInView.Category.Name.Equals("Scope Boxes")
-                              || elemInView.Category.Name.Equals("Property Lines")
-                              || elemInView.Category.Name.Equals("Grids")
-                              || !allElementIdsBuilt.Contains(elemInView.Id))
-                            {
+                        //foreach (Element elemInView in elementsInView)
+                        //{
+                        //    if (elemInView.Category == null)
+                        //        continue;
 
-                                List<ElementId> ids = new List<ElementId>() { elemInView.Id };
+                        //    if (elemInView.Category.Name.Equals("Reference Planes")
+                        //      || elemInView.Category.Name.Equals("Elevations")
+                        //      || elemInView.Category.Name.Equals("Views")
+                        //      || elemInView.Category.Name.Equals("Property Lines")
+                        //      || elemInView.Category.Name.Equals("Levels")
+                        //      || elemInView.Category.Name.Equals("Scope Boxes")
+                        //      || elemInView.Category.Name.Equals("Property Lines")
+                        //      || elemInView.Category.Name.Equals("Grids")
+                        //      || !allElementIdsBuilt.Contains(elemInView.Id))
+                        //    {
 
-                                if (elemInView.CanBeHidden(view3DCurrent))
-                                {
-                                    view3DCurrent.HideElements(ids);
-                                }
+                        //        List<ElementId> ids = new List<ElementId>() { elemInView.Id };
 
-                            }
+                        //        if (elemInView.CanBeHidden(view3DCurrent))
+                        //        {
+                        //            view3DCurrent.HideElements(ids);
+                        //        }
 
-                        }
+                        //    }
+
+                        //}
 
                         built3DViews.Add(view3DCurrent);
 
@@ -2245,6 +2250,50 @@ namespace Stacker.Commands
             }
 
         }
+
+        private void hideElementsFromView(Autodesk.Revit.DB.View view)
+        {
+            //
+            //Hide all elements not needed in the 3D View
+            //
+            FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view.Id);
+            List<Element> elementsInView = allElementsInView.ToElements().ToList();
+
+            List<ElementId> allElementIdsBuilt = new List<ElementId>();
+            var elementsBuilt = ElementsBuilt.Values.ToList();
+            foreach (List<ElementId> elem in elementsBuilt)
+                allElementIdsBuilt.AddRange(elem);
+
+            foreach (Element elemInView in elementsInView)
+            {
+                if (elemInView.Category == null)
+                    continue;
+
+                if (elemInView.Category.Name.Equals("Reference Planes")
+                  || elemInView.Category.Name.Equals("Elevations")
+                  || elemInView.Category.Name.Equals("Views")
+                  || elemInView.Category.Name.Equals("Property Lines")
+                  || elemInView.Category.Name.Equals("Levels")
+                  || elemInView.Category.Name.Equals("Scope Boxes")
+                  || elemInView.Category.Name.Equals("Property Lines")
+                  || elemInView.Category.Name.Equals("Grids")
+                  || !allElementIdsBuilt.Contains(elemInView.Id))
+                {
+
+                    List<ElementId> ids = new List<ElementId>() { elemInView.Id };
+
+                    if (elemInView.CanBeHidden(view))
+                    {
+                        view.HideElements(ids);
+                    }
+
+                }
+
+            }
+        }
+
+
+
 
 
 
