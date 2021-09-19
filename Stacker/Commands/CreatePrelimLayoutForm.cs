@@ -1945,6 +1945,7 @@ namespace Stacker.Commands
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
+                //Export images for all Levels created. 
                 for (var i = 0; i < allLevels.Count; i++)
                 {
                     Level currentLevel = allLevels[i];
@@ -1955,14 +1956,14 @@ namespace Stacker.Commands
 
                 }
 
-                
 
-                var viewFamilyType = new FilteredElementCollector(_doc)
-                  .OfClass(typeof(ViewFamilyType))
-                  .OfType<ViewFamilyType>()
-                  .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
 
-                List<View3D> view3Ds = new List<View3D>();
+                ViewFamilyType viewFamilyType = new FilteredElementCollector(_doc)
+                                                  .OfClass(typeof(ViewFamilyType))
+                                                  .OfType<ViewFamilyType>()
+                                                  .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
+
+                List<View3D> built3DView = new List<View3D>();
 
                 using (Transaction transExportImage = new Transaction(_doc))
                 {
@@ -1999,18 +2000,18 @@ namespace Stacker.Commands
                         //6.Realistic
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
-                        view3Ds.Add(view3DCurrent);
+                        built3DView.Add(view3DCurrent);
                     }
 
                     transExportImage.Commit();
                 }
 
-                var all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
+                List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
 
 
-                for (var i = 0; i < view3Ds.Count; i++)
+                for (var i = 0; i < built3DView.Count; i++)
                 {
-                    Autodesk.Revit.DB.View current3DView = view3Ds[i] as Autodesk.Revit.DB.View;
+                    Autodesk.Revit.DB.View current3DView = built3DView[i] as Autodesk.Revit.DB.View;
 
                     if (selectedPath != "")
                         exportViewPlanImage(current3DView, selectedPath);
@@ -2027,6 +2028,12 @@ namespace Stacker.Commands
         }
 
 
+
+        /// <summary>
+        /// Export View images as high quality images to a provided folder path. 
+        /// </summary>
+        /// <param name="currentViewPlan">View</param>
+        /// <param name="selectedPath">Folder Path</param>
         private void exportViewPlanImage(Autodesk.Revit.DB.View currentViewPlan, string selectedPath)
         {
             if (currentViewPlan.IsTemplate || !currentViewPlan.CanBePrinted)
