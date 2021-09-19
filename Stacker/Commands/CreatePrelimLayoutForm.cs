@@ -1340,6 +1340,9 @@ namespace Stacker.Commands
                                         string elemType = elementToCopy.Key;
                                         List<ElementId> elemList = elementToCopy.Value;
 
+                                        if (elemType.StartsWith("Views"))
+                                            continue;
+
                                         if (elemList.Count == 0)
                                             continue;
 
@@ -2152,6 +2155,8 @@ namespace Stacker.Commands
                         }
 
                         built3DViews.Add(view3DCurrent);
+
+                        ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
                     }
 
                     transExportImage.Commit();
