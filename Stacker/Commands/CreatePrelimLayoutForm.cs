@@ -643,7 +643,7 @@ namespace Stacker.Commands
                         //Find all elements in the model
                         //
 
-                        List<Element> AllElem = new FilteredElementCollector(_doc)
+                        List<Element> allElemInModel = new FilteredElementCollector(_doc)
                                                 .WhereElementIsNotElementType()
                                                 .Where(elem => IsPhysicalElement(elem))
                                                 .ToList<Element>();
@@ -653,12 +653,14 @@ namespace Stacker.Commands
                         List<ElementId> selectedElemsModLab2BDTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLabCoreTYPA = new List<ElementId>();
                         List<ElementId> selectedElemsModLabCoreTYPB = new List<ElementId>();
+                        List<ElementId> selectedHallway = new List<ElementId>();
 
                         Element wallToMoveModLab0BDTYPA_X = null;
                         Element wallToMoveModLab1BDTYPA_X = null;
                         Element wallToMoveModLab2BDTYPA_X = null;
                         Element wallToMoveModLabCoreTYPA_X = null;
                         Element wallToMoveModLabCoreTYPB_X = null;
+                        Element wallToMoveHallway_X = null;
 
                         Element wallToMoveModLab0BDTYPA_Y = null;
                         Element wallToMoveModLab1BDTYPA_Y = null;
@@ -671,9 +673,10 @@ namespace Stacker.Commands
                         Element centralColModLab2BDTYPA = null;
                         Element centralColModLabCoreTYPA = null;
                         Element centralColModLabCoreTYPB = null;
+                        Element centralColHallway = null;
 
                         //Find all elements of precreated wall types
-                        foreach (var elem in AllElem)
+                        foreach (var elem in allElemInModel)
                         {
                             var parComments = elem.LookupParameter("Comments");
                             var parMark = elem.LookupParameter("Mark");
@@ -694,9 +697,24 @@ namespace Stacker.Commands
                                 centralColModLabCoreTYPA = elem;
                             else if (parMark.AsString() == "ModLab_CORE_TYPB_Center")
                                 centralColModLabCoreTYPB = elem;
+                            else if (parMark.AsString() == "ModLab_Hallway_Center")
+                                centralColHallway = elem;
 
+                            if (commentInfo == "ModLab_Hallway")
+                            {
+                                selectedHallway.Add(elem.Id);
 
-                            if (commentInfo == "ModLab_BD_1_MOD_2_TYPA")
+                                if (parMark != null)
+                                {
+                                    var markInfo = parMark.AsString();
+
+                                    if (markInfo == "ModLab_Hallway_WallX")
+                                    {
+                                        wallToMoveHallway_X = elem;
+                                    }
+                                }
+                            }
+                            else if (commentInfo == "ModLab_BD_1_MOD_2_TYPA")
                             {
                                 selectedElemsModLab1BDTYPA.Add(elem.Id);
 
@@ -1233,7 +1251,7 @@ namespace Stacker.Commands
                             Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
 
                             //Copy floor elements to all typical floors - Except Roof Floor
-                            for (var i = 1; i < allLevels.Count - 1; i++)
+                            for (var i = 1; i < allLevels.Count; i++)
                             {
                                 Level currentLevel = allLevels[i];
                                 ViewPlan currentViewPlan = allViewPlans[i];
@@ -1242,20 +1260,38 @@ namespace Stacker.Commands
                                     continue;
 
                                 Dictionary<string, List<ElementId>> copiedElements = new Dictionary<string, List<ElementId>>();
-
-                                foreach (var elementToCopy in elementsBuiltFirstFloor)
+                                
+                                if(i == allLevels.Count - 1)
                                 {
-                                    string elemType = elementToCopy.Key;
-                                    List<ElementId> elemList = elementToCopy.Value;
+                                    var floorElements = elementsBuiltFirstFloor["Floor"];
 
-                                    if (elemList.Count == 0)
-                                        continue;
+                                    foreach (var elementToCopy in floorElements)
+                                    {
+                                        string elemType = "Floor";
 
-                                    ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, elemList, currentViewPlan, null, null);
+                                        ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, new List<ElementId>() { elementToCopy }, currentViewPlan, null, null);
 
-                                    copiedElements[elemType + $"_{i + 1}"] = elemIds.ToList();
+                                        copiedElements[elemType + $"_Roof"] = elemIds.ToList();
+
+                                    }
 
                                 }
+                                else
+                                {
+                                    foreach (var elementToCopy in elementsBuiltFirstFloor)
+                                    {
+                                        string elemType = elementToCopy.Key;
+                                        List<ElementId> elemList = elementToCopy.Value;
+
+                                        if (elemList.Count == 0)
+                                            continue;
+
+                                        ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, elemList, currentViewPlan, null, null);
+
+                                        copiedElements[elemType + $"_{i + 1}"] = elemIds.ToList();
+                                    }
+                                }
+
 
                                 foreach (var k in copiedElements)
                                 {
