@@ -894,8 +894,6 @@ namespace Stacker.Commands
                                         filledRegion = FilledRegion.Create(_doc, newPattern2.Id, VPlan.Id, profilelps);
                                         var parComments = filledRegion.LookupParameter("Comments");
                                         parComments.Set(_doc.GetElement(selectedElemsModLab2BDTYPA[0]).LookupParameter("Comments").AsString());
-                                        var parMark = filledRegion.LookupParameter("Mark");
-                                        parComments.Set("TYPE-3MOD");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -981,8 +979,6 @@ namespace Stacker.Commands
                                         filledRegion = FilledRegion.Create(_doc, newPattern1.Id, VPlan.Id, profilelps);
                                         var parComments = filledRegion.LookupParameter("Comments");
                                         parComments.Set(_doc.GetElement(selectedElemsModLab1BDTYPA[0]).LookupParameter("Comments").AsString());
-                                        var parMark = filledRegion.LookupParameter("Mark");
-                                        parComments.Set("TYPE-2MOD");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -1064,8 +1060,6 @@ namespace Stacker.Commands
                                         filledRegion = FilledRegion.Create(_doc, newPattern3.Id, VPlan.Id, profilelps);
                                         var parComments = filledRegion.LookupParameter("Comments");
                                         parComments.Set(_doc.GetElement(selectedElemsModLabCoreTYPA[0]).LookupParameter("Comments").AsString());
-                                        var parMark = filledRegion.LookupParameter("Mark");
-                                        parComments.Set("TYPE-CORE");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -1153,8 +1147,6 @@ namespace Stacker.Commands
                                         filledRegion = FilledRegion.Create(_doc, newPattern0.Id, VPlan.Id, profilelps);
                                         var parComments = filledRegion.LookupParameter("Comments");
                                         parComments.Set(_doc.GetElement(selectedElemsModLab0BDTYPA[0]).LookupParameter("Comments").AsString());
-                                        var parMark = filledRegion.LookupParameter("Mark");
-                                        parComments.Set("TYPE-1MOD");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -1454,7 +1446,7 @@ namespace Stacker.Commands
                 var message = ex.Message;
                 TaskDialog.Show("Error", message);
             }
-
+            
         }
 
 
@@ -2295,6 +2287,109 @@ namespace Stacker.Commands
             }
             
         }
+
+
+
+
+
+        Dictionary<string, double> AreaElements;
+
+        private void btnExportData_Click(object sender, EventArgs e)
+        {
+            AreaElements = new Dictionary<string, double>();
+            int count = 0;
+
+            foreach (KeyValuePair<string, List<ElementId>> elem in ElementsBuilt)
+            {
+                string elemCategoryName = elem.Key;
+                List<ElementId> elemIDs = elem.Value;
+                
+                if(elemCategoryName.Contains("Mod Regions"))
+                {
+                    AreaElements[$"Mod Regions-{count}"] = 0;
+
+                    foreach (ElementId elemID in elemIDs)
+                    {
+                        FilledRegion filledRegion = _doc.GetElement(elemID) as FilledRegion;
+
+                        Parameter parComments = filledRegion.LookupParameter("Comments");
+                        Parameter parArea = filledRegion.LookupParameter("Area");
+
+                        string comment = parComments.AsString();
+                        double area = parArea.AsDouble();
+
+                        if (comment.Contains("MOD_3"))
+                        {
+                            string catName = $"Mod Regions-Mod-3-{count}";
+
+                            if (AreaElements.ContainsKey(catName))
+                            {
+                                double oldArea = AreaElements[catName];
+                                AreaElements[catName] = oldArea + area;
+                            }
+                            else
+                            {
+                                AreaElements[catName] = area;
+                            }
+
+                        }
+                        else if (comment.Contains("MOD_2"))
+                        {
+                            string catName = $"Mod Regions-Mod-2-{count}";
+
+                            if (AreaElements.ContainsKey(catName))
+                            {
+                                double oldArea = AreaElements[catName];
+                                AreaElements[catName] = oldArea + area;
+                            }
+                            else
+                            {
+                                AreaElements[catName] = area;
+                            }
+
+                        }
+                        else if (comment.Contains("MOD_1"))
+                        {
+                            string catName = $"Mod Regions-Mod-1-{count}";
+
+                            if (AreaElements.ContainsKey(catName))
+                            {
+                                double oldArea = AreaElements[catName];
+                                AreaElements[catName] = oldArea + area;
+                            }
+                            else
+                            {
+                                AreaElements[catName] = area;
+                            }
+
+                        }
+                        else if (comment.Contains("CORE"))
+                        {
+                            string catName = $"Mod Regions-CORE-{count}";
+
+                            if (AreaElements.ContainsKey(catName))
+                            {
+                                double oldArea = AreaElements[catName];
+                                AreaElements[catName] = oldArea + area;
+                            }
+                            else
+                            {
+                                AreaElements[catName] = area;
+                            }
+
+                        }
+
+
+
+                    }
+
+                    count++;
+                }
+
+
+            }
+        }
+
 
 
 
