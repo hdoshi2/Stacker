@@ -17,6 +17,7 @@ using Stacker.ModClasses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using View = Autodesk.Revit.DB.View;
+using EPPlus = OfficeOpenXml;
 
 namespace Stacker.Commands
 {
@@ -2306,7 +2307,6 @@ namespace Stacker.Commands
                 
                 if(elemCategoryName.Contains("Mod Regions"))
                 {
-                    AreaElements[$"Mod Regions-{count}"] = 0;
 
                     foreach (ElementId elemID in elemIDs)
                     {
@@ -2320,7 +2320,7 @@ namespace Stacker.Commands
 
                         if (comment.Contains("MOD_3"))
                         {
-                            string catName = $"Mod Regions-Mod-3-{count}";
+                            string catName = $"Mod Regions_Mod_3_LVL_{count}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2335,7 +2335,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_2"))
                         {
-                            string catName = $"Mod Regions-Mod-2-{count}";
+                            string catName = $"Mod Regions_Mod_2_LVL_{count}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2350,7 +2350,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_1"))
                         {
-                            string catName = $"Mod Regions-Mod-1-{count}";
+                            string catName = $"Mod Regions_Mod_1_LVL_{count}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2365,7 +2365,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("CORE"))
                         {
-                            string catName = $"Mod Regions-CORE-{count}";
+                            string catName = $"Mod Regions_CORE_LVL_{count}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2376,7 +2376,6 @@ namespace Stacker.Commands
                             {
                                 AreaElements[catName] = area;
                             }
-
                         }
 
 
@@ -2385,12 +2384,163 @@ namespace Stacker.Commands
 
                     count++;
                 }
+            }
 
 
+            DataGridView newDGV = new DataGridView();
+            
+            SaveFileDialog saveResults = new SaveFileDialog();
+
+            saveResults.Filter = "Excel File|*.xlsx";
+            saveResults.Title = "Export table";
+            saveResults.ShowDialog();
+
+            if (saveResults.FileName != "")
+            {
+                DataTable sheetListResult = null;
+
+                sheetListResult = CreateDataTable(newDGV, _doc);
+
+                //Save
+                SaveExcelWorksheet(sheetListResult, true, saveResults.FileName, "Building Data Output");
+
+                var responsetoOpen = MessageBox.Show($"Building Data Output '{saveResults.FileName.ToString()}' successfully exported to Excel. \r\nOpen Excel file?", "Excel Export", MessageBoxButtons.YesNo);
+
+                //Open file
+                if (responsetoOpen == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(saveResults.FileName);
+                }
+
+                return;
+
+            }
+
+
+        }
+
+
+        /// <summary>
+        /// Save a Datatable to an Excel Open XML file
+        /// </summary>
+        /// <param name="inputData">Datatable to save</param>
+        /// <param name="saveHeaders">Save headers in top row?</param>
+        /// <param name="path">Destination file path (*.xlsx)</param>
+        /// <param name="worksheetName">Excel worksheet name</param>
+        /// <param name="headerBold">Make header format bold?</param>
+        /// <param name="appendToExisting">If false, a new file will be created, if not, a sheet with the input worksheetName will be added</param>
+        public static void SaveExcelWorksheet(DataTable inputData, bool saveHeaders, string path, string worksheetName = "Worksheet 1", bool headerBold = true, bool appendToExisting = false)
+        {
+            DataTableToExcel(inputData, saveHeaders, path, worksheetName, headerBold, appendToExisting);
+        }
+
+
+
+
+        /// <summary>
+        /// Save a Datatable to an excel file
+        /// </summary>
+        /// <param name="inputData">Datatable to save</param>
+        /// <param name="saveHeaders">Save headers in top row?</param>
+        /// <param name="path">Destination file path (*.xlsx)</param>
+        /// <param name="worksheetName">Excel worksheet name</param>
+        /// <param name="headerBold">Make header format bold?</param>
+        /// <param name="appendToExisting">If false, a new file will be created, if not, a sheet with the input worksheetName will be added</param>
+        public static void DataTableToExcel(DataTable inputData, bool saveHeaders, string path, string worksheetName = "Worksheet 1", bool headerBold = true, bool appendToExisting = false)
+        {
+            if (appendToExisting == false)
+            {
+                System.IO.File.Delete(path);
+            }
+
+            using (EPPlus.ExcelPackage pck = new EPPlus.ExcelPackage(new System.IO.FileInfo(path)))
+            {
+                EPPlus.ExcelWorksheet ws = pck.Workbook.Worksheets.Add(worksheetName);
+                ws.Cells["A1"].LoadFromDataTable(inputData, saveHeaders);
+
+                if (headerBold && saveHeaders)
+                    ws.Row(1).Style.Font.Bold = true;
+
+                pck.Save();
             }
         }
 
 
+        /// <summary>
+        /// Format excel sheet consisting of column data
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        private static DataTable CreateDataTable(DataGridView d, Document doc)
+        {
+            DataTable buildingDataOutput = new DataTable();
+
+            //Column headers to be left empty
+            buildingDataOutput.Columns.Add("BUILDING DATA OUTPUT", typeof(string));
+            buildingDataOutput.Columns.Add("  ", typeof(string));
+            buildingDataOutput.Columns.Add("   ", typeof(string));
+            buildingDataOutput.Columns.Add("    ", typeof(string));
+            buildingDataOutput.Columns.Add("     ", typeof(string));
+            buildingDataOutput.Columns.Add("      ", typeof(string));
+            buildingDataOutput.Columns.Add("       ", typeof(string));
+            buildingDataOutput.Columns.Add("        ", typeof(string));
+            buildingDataOutput.Columns.Add("         ", typeof(string));
+            buildingDataOutput.Columns.Add("          ", typeof(string));
+
+            //Second excel row also kept empty
+            buildingDataOutput.Rows.Add(
+                $"",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "");
+
+            //Add column headers in 3rd row to contain title
+            buildingDataOutput.Rows.Add(
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1",
+                "Col 1");
+
+
+            //Add building data in 4th row
+            foreach (DataGridViewRow row in d.Rows)
+            {
+                if (row.Cells[0].Value == null)
+                    continue;
+
+                buildingDataOutput.Rows.Add(
+                    row.Cells[0].Value.ToString(),
+                    row.Cells[1].Value.ToString(),
+                    row.Cells[2].Value.ToString(),
+                    row.Cells[3].Value.ToString(),
+                    row.Cells[4].Value.ToString(),
+                    row.Cells[5].Value.ToString(),
+                    row.Cells[6].Value.ToString(),
+                    row.Cells[7].Value.ToString(),
+                    row.Cells[8].Value.ToString(),
+                    row.Cells[9].Value.ToString());
+
+            }
+
+            //Do not sort at the moment
+            //sheetListResult.DefaultView.Sort = "[Reference Level] asc";
+            buildingDataOutput = buildingDataOutput.DefaultView.ToTable();
+
+            return buildingDataOutput;
+        }
 
 
 

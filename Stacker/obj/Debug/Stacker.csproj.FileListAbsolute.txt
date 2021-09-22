@@ -25,3 +25,5 @@ C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.Co
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.dll
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.pdb
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.FormViewJsonData.resources
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\EPPlus.dll
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\EPPlus.xml
