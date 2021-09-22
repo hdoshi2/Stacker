@@ -171,6 +171,8 @@ namespace Stacker.Commands
         {
             try
             {
+                FloorLayoutOptions = new List<FloorLayout>();
+
                 FloorOverallLength = Convert.ToDouble(tbLength.Text);
                 FloorOverallWidth = Convert.ToDouble(tbWidth.Text);
                 FloorHallwayWidth = Convert.ToDouble(tbHallwayWidth.Text);
@@ -194,7 +196,6 @@ namespace Stacker.Commands
 
 
                 double fixedModWidth = Convert.ToDouble(tbFixedWidth.Text);
-
 
 
                 // Begin to create a level
@@ -891,7 +892,10 @@ namespace Stacker.Commands
                                     {
 
                                         filledRegion = FilledRegion.Create(_doc, newPattern2.Id, VPlan.Id, profilelps);
-
+                                        var parComments = filledRegion.LookupParameter("Comments");
+                                        parComments.Set(_doc.GetElement(selectedElemsModLab2BDTYPA[0]).LookupParameter("Comments").AsString());
+                                        var parMark = filledRegion.LookupParameter("Mark");
+                                        parComments.Set("TYPE-3MOD");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -975,7 +979,10 @@ namespace Stacker.Commands
                                     {
 
                                         filledRegion = FilledRegion.Create(_doc, newPattern1.Id, VPlan.Id, profilelps);
-
+                                        var parComments = filledRegion.LookupParameter("Comments");
+                                        parComments.Set(_doc.GetElement(selectedElemsModLab1BDTYPA[0]).LookupParameter("Comments").AsString());
+                                        var parMark = filledRegion.LookupParameter("Mark");
+                                        parComments.Set("TYPE-2MOD");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -1055,7 +1062,10 @@ namespace Stacker.Commands
                                     {
 
                                         filledRegion = FilledRegion.Create(_doc, newPattern3.Id, VPlan.Id, profilelps);
-
+                                        var parComments = filledRegion.LookupParameter("Comments");
+                                        parComments.Set(_doc.GetElement(selectedElemsModLabCoreTYPA[0]).LookupParameter("Comments").AsString());
+                                        var parMark = filledRegion.LookupParameter("Mark");
+                                        parComments.Set("TYPE-CORE");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -1141,6 +1151,10 @@ namespace Stacker.Commands
                                     else
                                     {
                                         filledRegion = FilledRegion.Create(_doc, newPattern0.Id, VPlan.Id, profilelps);
+                                        var parComments = filledRegion.LookupParameter("Comments");
+                                        parComments.Set(_doc.GetElement(selectedElemsModLab0BDTYPA[0]).LookupParameter("Comments").AsString());
+                                        var parMark = filledRegion.LookupParameter("Mark");
+                                        parComments.Set("TYPE-1MOD");
 
                                         if (cbDrawInteriorLAyout.Checked)
                                         {
@@ -1443,6 +1457,11 @@ namespace Stacker.Commands
 
         }
 
+
+        private void setConfigurationPreview()
+        {
+
+        }
 
 
 

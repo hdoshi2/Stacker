@@ -261,7 +261,7 @@ namespace Stacker.Commands
             // tbTotalSquareFootage
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalSquareFootage.Location = new System.Drawing.Point(274, 108);
+            this.tbTotalSquareFootage.Location = new System.Drawing.Point(335, 107);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(39, 20);
@@ -271,7 +271,7 @@ namespace Stacker.Commands
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(142, 112);
+            this.label5.Location = new System.Drawing.Point(203, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(130, 13);
             this.label5.TabIndex = 5;
