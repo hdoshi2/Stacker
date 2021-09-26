@@ -2056,8 +2056,9 @@ namespace Stacker.Commands
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
-                List<View3D> built3DViews = new List<View3D>();
+                List<View3D> builtMod3DViews = new List<View3D>();
 
+                List<ViewSheet> allSheets = (new FilteredElementCollector(_doc)).OfClass(typeof(ViewSheet)).OfType<ViewSheet>().ToList();
 
                 //
                 //Export images for all Levels created. 
@@ -2089,7 +2090,7 @@ namespace Stacker.Commands
 
                 using (Transaction transExportImage = new Transaction(_doc))
                 {
-                    transExportImage.Start($"Mod: Export View Img");
+                    transExportImage.Start($"Mod: Create 3D Views");
 
                     for (var i = 0; i < 2; i++)
                     {
@@ -2100,7 +2101,10 @@ namespace Stacker.Commands
                         string view3DName = $"3D Mod View {i.ToString()}";
 
                         if (existing3DViewNames.Contains(view3DName))
+                        {
+                            builtMod3DViews.Add(view3DCurrent);
                             continue;
+                        }
 
                         view3DCurrent.Name = view3DName;
 
@@ -2130,7 +2134,7 @@ namespace Stacker.Commands
                         //6.Realistic
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
-                        built3DViews.Add(view3DCurrent);
+                        builtMod3DViews.Add(view3DCurrent);
 
                         ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
                     }
@@ -2144,9 +2148,9 @@ namespace Stacker.Commands
                 //
                 //Hide all elements not needed in the 3D View
                 //
-                for (var i = 0; i < built3DViews.Count; i++)
+                for (var i = 0; i < builtMod3DViews.Count; i++)
                 {
-                    Autodesk.Revit.DB.View current3DView = built3DViews[i] as Autodesk.Revit.DB.View;
+                    Autodesk.Revit.DB.View current3DView = builtMod3DViews[i] as Autodesk.Revit.DB.View;
 
                     if (selectedPath != "")
                         hideElementsFromView(new List<View>() { current3DView });
@@ -2156,12 +2160,23 @@ namespace Stacker.Commands
                 //
                 //Export 3D View Images
                 //
-                for (var i = 0; i < built3DViews.Count; i++)
+                for (var i = 0; i < builtMod3DViews.Count; i++)
                 {
-                    Autodesk.Revit.DB.View current3DView = built3DViews[i] as Autodesk.Revit.DB.View;
+                    Autodesk.Revit.DB.View current3DView = builtMod3DViews[i] as Autodesk.Revit.DB.View;
 
                     if (selectedPath != "")
                         exportViewPlanImage(current3DView, selectedPath);
+                }
+
+                //
+                //Export Sheet Images
+                //
+                for (var i = 0; i < allSheets.Count; i++)
+                {
+                    Autodesk.Revit.DB.View currentSheet = allSheets[i] as Autodesk.Revit.DB.View;
+
+                    if (selectedPath != "")
+                        exportViewPlanImage(currentSheet, selectedPath);
                 }
 
 
@@ -2293,6 +2308,34 @@ namespace Stacker.Commands
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Dictionary<string, double> AreaElements;
 
         private void btnExportData_Click(object sender, EventArgs e)
@@ -2387,6 +2430,9 @@ namespace Stacker.Commands
             }
 
 
+
+
+
             DataGridView newDGV = new DataGridView();
             
             SaveFileDialog saveResults = new SaveFileDialog();
@@ -2466,6 +2512,7 @@ namespace Stacker.Commands
         }
 
 
+
         /// <summary>
         /// Format excel sheet consisting of column data
         /// </summary>
@@ -2504,15 +2551,15 @@ namespace Stacker.Commands
             //Add column headers in 3rd row to contain title
             buildingDataOutput.Rows.Add(
                 "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1",
-                "Col 1");
+                "Col 2",
+                "Col 3",
+                "Col 4",
+                "Col 5",
+                "Col 6",
+                "Col 7",
+                "Col 8",
+                "Col 9",
+                "Col 10");
 
 
             //Add building data in 4th row
