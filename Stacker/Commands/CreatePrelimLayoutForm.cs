@@ -2056,17 +2056,22 @@ namespace Stacker.Commands
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
+
                 List<View3D> builtMod3DViews = new List<View3D>();
 
                 List<ViewSheet> allSheets = (new FilteredElementCollector(_doc)).OfClass(typeof(ViewSheet)).OfType<ViewSheet>().ToList();
 
+                Dictionary<string, string> sheetNames = new Dictionary<string, string>();
+
                 //
                 //Export images for all Levels created. 
                 //
-                for (var i = 0; i < allLevels.Count; i++)
+                for (int i = 0; i < allLevels.Count; i++)
                 {
                     Level currentLevel = allLevels[i];
-                    View currentViewPlan = allViewPlans[i] as View; 
+                    View currentViewPlan = allViewPlans[i] as View;
+
+                    sheetNames[currentLevel.Name] = $"DB-00{i + 1}";
 
                     hideElementsFromView(new List<View>() { currentViewPlan });
 
@@ -2098,7 +2103,7 @@ namespace Stacker.Commands
                                                 ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
                                                 : null;
 
-                        string view3DName = $"3D Mod View {i.ToString()}";
+                        string view3DName = $"3D Mod View {i + 1}";
 
                         if (existing3DViewNames.Contains(view3DName))
                         {
@@ -2115,6 +2120,7 @@ namespace Stacker.Commands
                             var forwardDirection = new XYZ(-0.577350269189626, 0.577350269189626, -0.577350269189626);
 
                             view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
+                            sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
                         }
                         else if (i == 1)
                         {
@@ -2123,6 +2129,7 @@ namespace Stacker.Commands
                             var forwardDirection = new XYZ(0.577350269189626, -0.577350269189626, -0.577350269189626);
 
                             view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
+                            sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
                         }
 
 
@@ -2157,6 +2164,7 @@ namespace Stacker.Commands
                 }
 
 
+
                 //
                 //Export 3D View Images
                 //
@@ -2168,15 +2176,33 @@ namespace Stacker.Commands
                         exportViewPlanImage(current3DView, selectedPath);
                 }
 
+
+
+
                 //
                 //Export Sheet Images
                 //
-                for (var i = 0; i < allSheets.Count; i++)
+                List<Element> titleBlocks = loadTitleBlocks();
+                Element selectedTitleBlock = (from tb in titleBlocks
+                                              where tb.Name == "E1 30x42 Horizontal"
+                                              select tb).FirstOrDefault();
+
+                foreach (var sht in sheetNames)
                 {
-                    Autodesk.Revit.DB.View currentSheet = allSheets[i] as Autodesk.Revit.DB.View;
+                    ViewSheet builtSheet = null;
+
+                    builtSheet = (from s in allSheets
+                                    where s.Name == sht.Key
+                                    select s).FirstOrDefault();
+
+                    if(builtSheet == null)
+                        builtSheet = createCustomSheet(selectedTitleBlock.Id, sht.Key, sht.Value);
+
+                    if (builtSheet == null)
+                        continue;
 
                     if (selectedPath != "")
-                        exportViewPlanImage(currentSheet, selectedPath);
+                        exportViewPlanImage(builtSheet, selectedPath);
                 }
 
 
@@ -2251,6 +2277,11 @@ namespace Stacker.Commands
 
         }
 
+
+        /// <summary>
+        /// Hide all extra elements from the provided view. 
+        /// </summary>
+        /// <param name="views"></param>
         private void hideElementsFromView(List<Autodesk.Revit.DB.View> views)
         {
             using (Transaction transExportImage = new Transaction(_doc))
@@ -2303,6 +2334,72 @@ namespace Stacker.Commands
             }
             
         }
+
+
+
+
+
+        /// <summary>
+        /// Loads all title block in the Revit document. 
+        /// </summary>
+        /// <returns></returns>
+        private List<Element> loadTitleBlocks()
+        {
+            List<Element> titleblockList = new List<Element>();
+
+            try
+            {
+                FilteredElementCollector collector = new FilteredElementCollector(_doc);
+                titleblockList = collector.OfClass(typeof(FamilySymbol)).OfCategory(BuiltInCategory.OST_TitleBlocks).ToElements().ToList();
+
+                if (titleblockList.Count() == 0)
+                {
+                    MessageBox.Show("Title blocks were not found in current Revit model. ", "Title Blocks not found", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return titleblockList;
+                }
+
+                return titleblockList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to obtain model Title Block data. " + ex.Message);
+            }
+
+        }
+
+
+
+
+        /// <summary>
+        /// Build a sheet in Revit
+        /// </summary>
+        /// <param name="titleblock"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="sheetNumber"></param>
+        /// <returns></returns>
+        private ViewSheet createCustomSheet(ElementId titleblock, string sheetName, string sheetNumber)
+        {
+            using (Transaction transCreateSheets = new Transaction(_doc))
+            {
+                transCreateSheets.Start("Build Sheet");
+
+                try
+                {
+                    ViewSheet workingSheet = ViewSheet.Create(_doc, titleblock);
+                    workingSheet.Name = sheetName;
+                    workingSheet.SheetNumber = sheetNumber;
+
+                    transCreateSheets.Commit();
+
+                    return workingSheet;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Unable to create new Sheet. " + ex.Message);
+                }
+            }
+        }
+
 
 
 
