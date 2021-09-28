@@ -2058,7 +2058,7 @@ namespace Stacker.Commands
 
 
                 List<View3D> builtMod3DViews = new List<View3D>();
-
+                List<View> allViews = new List<View>();
                 List<ViewSheet> allSheets = (new FilteredElementCollector(_doc)).OfClass(typeof(ViewSheet)).OfType<ViewSheet>().ToList();
 
                 Dictionary<string, string> sheetNames = new Dictionary<string, string>();
@@ -2070,7 +2070,9 @@ namespace Stacker.Commands
                 {
                     Level currentLevel = allLevels[i];
                     View currentViewPlan = allViewPlans[i] as View;
-
+                    
+                    allViews.Add(currentViewPlan);
+                    
                     sheetNames[currentLevel.Name] = $"DB-00{i + 1}";
 
                     hideElementsFromView(new List<View>() { currentViewPlan });
@@ -2108,6 +2110,7 @@ namespace Stacker.Commands
                         if (existing3DViewNames.Contains(view3DName))
                         {
                             builtMod3DViews.Add(view3DCurrent);
+                            allViews.Add(view3DCurrent);
                             continue;
                         }
 
@@ -2142,6 +2145,7 @@ namespace Stacker.Commands
                         view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
 
                         builtMod3DViews.Add(view3DCurrent);
+                        allViews.Add(view3DCurrent);
 
                         ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
                     }
@@ -2187,6 +2191,9 @@ namespace Stacker.Commands
                                               where tb.Name == "E1 30x42 Horizontal"
                                               select tb).FirstOrDefault();
 
+                Dictionary<string, ViewSheet> builtSheets = new Dictionary<string, ViewSheet>();
+
+                int count = 0;
                 foreach (var sht in sheetNames)
                 {
                     ViewSheet builtSheet = null;
@@ -2196,7 +2203,51 @@ namespace Stacker.Commands
                                     select s).FirstOrDefault();
 
                     if(builtSheet == null)
+                    {
                         builtSheet = createCustomSheet(selectedTitleBlock.Id, sht.Key, sht.Value);
+                        builtSheets[sht.Value] = builtSheet;
+
+                        using (Transaction transPlaceViewPort = new Transaction(_doc))
+                        {
+                            transPlaceViewPort.Start($"Mod: Place ViewPort");
+
+                            //XYZ maxPointSheet = builtSheet.get_BoundingBox(builtSheet).Max;
+                            //XYZ minPointSheet = builtSheet.get_BoundingBox(builtSheet).Min;
+                            UV maxPointSheet = builtSheet.Outline.Max;
+                            UV minPointSheet = builtSheet.Outline.Min;
+
+                            Double ptX = ((maxPointSheet.U - 0.5) - (minPointSheet.U)) / 2;
+                            Double ptY = ((maxPointSheet.V) - (minPointSheet.V)) / 2;
+                            Double ptZ = 0;
+                            XYZ pointToInsert = new XYZ(ptX, ptY, ptZ);
+
+                            Viewport newViewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, pointToInsert);
+
+                            //Get inserted view port exact location on sheet
+                            XYZ viewPortMaxPt = newViewPort.GetBoxOutline().MaximumPoint;
+                            XYZ viewPortMinPt = newViewPort.GetBoxOutline().MinimumPoint;
+                            double viewPortWidth = (viewPortMaxPt.X - viewPortMinPt.X) * 12;
+                            double viewPortHeight = (viewPortMaxPt.Y - viewPortMinPt.Y) * 12;
+                            ////Determine detail offset dimensions to move from center of detail box to bottom-left corner of detail box. 
+                            //XYZ offsetCenterToBottomLeft = new XYZ(
+                            //    -((groupBoxWidth - viewPortWidth) / 2) / 12,
+                            //    -((groupBoxHeight - viewPortHeight) / 2) / 12,
+                            //    0);
+
+
+                            ////Move view port to bottom left corner of detail box
+                            //ElementTransformUtils.MoveElement(_doc, newViewPort.Id, offsetCenterToBottomLeft);
+                            ////Move view port back slightly so that view name/number align with detail box bubble
+                            //ElementTransformUtils.MoveElement(_doc, newViewPort.Id, new XYZ(0.425 / 12, 0.65 / 12, 0));
+
+
+
+                            transPlaceViewPort.Commit();
+                        }
+
+                    }
+
+                    count++;
 
                     if (builtSheet == null)
                         continue;
