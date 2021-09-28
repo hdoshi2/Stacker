@@ -2215,25 +2215,62 @@ namespace Stacker.Commands
                             //XYZ minPointSheet = builtSheet.get_BoundingBox(builtSheet).Min;
                             UV maxPointSheet = builtSheet.Outline.Max;
                             UV minPointSheet = builtSheet.Outline.Min;
+                            double sheetWidth = ((maxPointSheet.U - 0.5) - (minPointSheet.U));
+                            double sheetHeight = ((maxPointSheet.V) - (minPointSheet.V));
 
                             Double ptX = ((maxPointSheet.U - 0.5) - (minPointSheet.U)) / 2;
                             Double ptY = ((maxPointSheet.V) - (minPointSheet.V)) / 2;
                             Double ptZ = 0;
                             XYZ pointToInsert = new XYZ(ptX, ptY, ptZ);
 
-                            Viewport newViewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, pointToInsert);
 
-                            //Get inserted view port exact location on sheet
-                            XYZ viewPortMaxPt = newViewPort.GetBoxOutline().MaximumPoint;
-                            XYZ viewPortMinPt = newViewPort.GetBoxOutline().MinimumPoint;
-                            double viewPortWidth = (viewPortMaxPt.X - viewPortMinPt.X) * 12;
-                            double viewPortHeight = (viewPortMaxPt.Y - viewPortMinPt.Y) * 12;
-                            ////Determine detail offset dimensions to move from center of detail box to bottom-left corner of detail box. 
-                            //XYZ offsetCenterToBottomLeft = new XYZ(
-                            //    -((groupBoxWidth - viewPortWidth) / 2) / 12,
-                            //    -((groupBoxHeight - viewPortHeight) / 2) / 12,
-                            //    0);
+                            //Scales: 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1
+                            List<int> scales = new List<int>() { 96, 64, 48, 32, 24, 16, 12};
 
+                            var currentView = allViews[count];
+                            var currentViewWidth = currentView.Outline.Max.U;
+                            var currentViewHeight = currentView.Outline.Max.V;
+
+                            double possibleWidth = 0;
+                            double possibleHeight = 0;
+                            int usedScale = 96;
+
+                            for (int i = 0; i < scales.Count; i++)
+                            {
+                                usedScale = scales[i];
+
+                                possibleWidth = (currentViewWidth * (12 / Convert.ToDouble(scales[i]))) / 0.125;
+                                possibleHeight = (currentViewHeight * (12 / Convert.ToDouble(scales[i]))) / 0.125;
+
+                                if(possibleWidth > sheetWidth || possibleHeight > sheetHeight)
+                                {
+                                    if (i == 0)
+                                        usedScale = scales[i];
+                                    else
+                                        usedScale = scales[i - 1];
+
+                                    break;
+                                }
+
+                            }
+
+
+                            Viewport viewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, pointToInsert);
+                            viewPort.LookupParameter("View Scale").Set(usedScale);
+
+                            var maxViewPort = viewPort.GetBoxOutline().MaximumPoint;
+                            var minViewPort = viewPort.GetBoxOutline().MinimumPoint;
+                            double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
+                            double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
+
+                            Double ptXvp = ((maxViewPort.X) - (minViewPort.X)) / 2;
+                            Double ptYvp = ((maxViewPort.Y) - (minViewPort.Y)) / 2;
+                            Double ptZvp = 0;
+                            XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
+
+                            XYZ translation = new XYZ(ptXvp - ptX, ptYvp - ptY, ptZvp - ptZ);
+
+                            ElementTransformUtils.MoveElement(_doc, viewPort.Id, translation);
 
                             ////Move view port to bottom left corner of detail box
                             //ElementTransformUtils.MoveElement(_doc, newViewPort.Id, offsetCenterToBottomLeft);
