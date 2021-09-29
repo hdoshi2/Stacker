@@ -2193,10 +2193,14 @@ namespace Stacker.Commands
 
                 Dictionary<string, ViewSheet> builtSheets = new Dictionary<string, ViewSheet>();
 
+                bool moveVPs = true;
                 int count = 0;
+
                 foreach (var sht in sheetNames)
                 {
                     ViewSheet builtSheet = null;
+                    Viewport builtViewPort = null;
+                    XYZ centerPtSheet = null;
 
                     builtSheet = (from s in allSheets
                                     where s.Name == sht.Key
@@ -2221,15 +2225,15 @@ namespace Stacker.Commands
                             Double ptX = ((maxPointSheet.U - 0.5) - (minPointSheet.U)) / 2;
                             Double ptY = ((maxPointSheet.V) - (minPointSheet.V)) / 2;
                             Double ptZ = 0;
-                            XYZ pointToInsert = new XYZ(ptX, ptY, ptZ);
-
+                            XYZ centerPtOfSheet = new XYZ(ptX, ptY, ptZ);
+                            centerPtSheet = centerPtOfSheet;
 
                             //Scales: 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1
                             List<int> scales = new List<int>() { 96, 64, 48, 32, 24, 16, 12};
 
                             var currentView = allViews[count];
-                            var currentViewWidth = currentView.Outline.Max.U;
-                            var currentViewHeight = currentView.Outline.Max.V;
+                            var currentViewWidth = Math.Abs(currentView.Outline.Max.U - currentView.Outline.Min.U);
+                            var currentViewHeight = Math.Abs(currentView.Outline.Max.V - currentView.Outline.Min.V);
 
                             double possibleWidth = 0;
                             double possibleHeight = 0;
@@ -2255,34 +2259,51 @@ namespace Stacker.Commands
                             }
 
 
-                            Viewport viewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, pointToInsert);
+                            Viewport viewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, centerPtOfSheet);
                             viewPort.LookupParameter("View Scale").Set(usedScale);
 
-                            var maxViewPort = viewPort.GetBoxOutline().MaximumPoint;
-                            var minViewPort = viewPort.GetBoxOutline().MinimumPoint;
-                            double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
-                            double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
-
-                            Double ptXvp = ((maxViewPort.X) - (minViewPort.X)) / 2;
-                            Double ptYvp = ((maxViewPort.Y) - (minViewPort.Y)) / 2;
-                            Double ptZvp = 0;
-                            XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
-
-                            XYZ translation = new XYZ(ptXvp - ptX, ptYvp - ptY, ptZvp - ptZ);
-
-                            ElementTransformUtils.MoveElement(_doc, viewPort.Id, translation);
-
-                            ////Move view port to bottom left corner of detail box
-                            //ElementTransformUtils.MoveElement(_doc, newViewPort.Id, offsetCenterToBottomLeft);
-                            ////Move view port back slightly so that view name/number align with detail box bubble
-                            //ElementTransformUtils.MoveElement(_doc, newViewPort.Id, new XYZ(0.425 / 12, 0.65 / 12, 0));
-
-
+                            builtViewPort = viewPort;
 
                             transPlaceViewPort.Commit();
                         }
 
                     }
+
+                    
+
+                    using (Transaction transMoveVPs = new Transaction(_doc))
+                    {
+                        transMoveVPs.Start($"Mod: Move ViewPort");
+
+                        foreach (var vp in builtViewPort)
+                        {
+
+                            var maxViewPort = vp.GetBoxOutline().MaximumPoint;
+                            var minViewPort = vp.GetBoxOutline().MinimumPoint;
+                            double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
+                            double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
+
+                            Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
+                            Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
+                            Double ptZvp = 0;
+                            XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
+
+                            double xTrans = centerPtSheet.X - ptXvp;
+                            double yTrans = centerPtSheet.Y - ptYvp;
+                            double zTrans = centerPtSheet.Z - ptZvp;
+
+                            XYZ translation = new XYZ(xTrans, yTrans, zTrans);
+                            //XYZ translation = new XYZ(-ptXvp, -ptYvp, -ptZvp);
+
+                            ElementTransformUtils.MoveElement(_doc, vp.Id, translation);
+
+                        }
+
+                        transMoveVPs.Commit();
+
+                    }
+
+
 
                     count++;
 
