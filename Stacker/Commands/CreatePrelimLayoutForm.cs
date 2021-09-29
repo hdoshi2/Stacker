@@ -2184,7 +2184,7 @@ namespace Stacker.Commands
 
 
                 //
-                //Export Sheet Images
+                //Create and Export Sheet Images
                 //
                 List<Element> titleBlocks = loadTitleBlocks();
                 Element selectedTitleBlock = (from tb in titleBlocks
@@ -2269,47 +2269,43 @@ namespace Stacker.Commands
 
                     }
 
-                    
+                    count++;
 
+
+
+                    //Move built view port to center of sheet space
                     using (Transaction transMoveVPs = new Transaction(_doc))
                     {
                         transMoveVPs.Start($"Mod: Move ViewPort");
 
-                        foreach (var vp in builtViewPort)
-                        {
 
-                            var maxViewPort = vp.GetBoxOutline().MaximumPoint;
-                            var minViewPort = vp.GetBoxOutline().MinimumPoint;
-                            double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
-                            double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
+                        var maxViewPort = builtViewPort.GetBoxOutline().MaximumPoint;
+                        var minViewPort = builtViewPort.GetBoxOutline().MinimumPoint;
+                        double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
+                        double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
 
-                            Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
-                            Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
-                            Double ptZvp = 0;
-                            XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
+                        Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
+                        Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
+                        Double ptZvp = 0;
+                        XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
 
-                            double xTrans = centerPtSheet.X - ptXvp;
-                            double yTrans = centerPtSheet.Y - ptYvp;
-                            double zTrans = centerPtSheet.Z - ptZvp;
+                        double xTrans = centerPtSheet.X - ptXvp;
+                        double yTrans = centerPtSheet.Y - ptYvp;
+                        double zTrans = centerPtSheet.Z - ptZvp;
 
-                            XYZ translation = new XYZ(xTrans, yTrans, zTrans);
-                            //XYZ translation = new XYZ(-ptXvp, -ptYvp, -ptZvp);
+                        XYZ translation = new XYZ(xTrans, yTrans, zTrans);
 
-                            ElementTransformUtils.MoveElement(_doc, vp.Id, translation);
-
-                        }
+                        ElementTransformUtils.MoveElement(_doc, builtViewPort.Id, translation);
 
                         transMoveVPs.Commit();
 
                     }
 
 
-
-                    count++;
-
                     if (builtSheet == null)
                         continue;
 
+                    //Export sheet to image
                     if (selectedPath != "")
                         exportViewPlanImage(builtSheet, selectedPath);
                 }
