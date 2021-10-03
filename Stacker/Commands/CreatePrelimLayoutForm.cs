@@ -66,6 +66,8 @@ namespace Stacker.Commands
         #endregion
 
 
+
+
         #region Form Constructor
 
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
@@ -115,6 +117,8 @@ namespace Stacker.Commands
         }
 
         #endregion
+
+
 
 
         #region Form Button Logic
@@ -206,6 +210,10 @@ namespace Stacker.Commands
         #endregion
 
 
+
+
+
+        #region Main Build Layout Method
 
         /// <summary>
         /// Entire process of building floor layouts
@@ -1616,6 +1624,16 @@ namespace Stacker.Commands
 
 
 
+        #endregion
+
+
+
+
+
+
+        #region Floor Builder Helper Methods 
+
+
 
         /// <summary>
         /// Check if points are matching
@@ -1667,14 +1685,6 @@ namespace Stacker.Commands
 
             #endregion
         }
-
-
-
-
-
-        #region Floor Builder Helper Methods 
-
-
 
         /// <summary>
         /// Suppress warnings and errors from user. 
@@ -2063,6 +2073,8 @@ namespace Stacker.Commands
 
 
 
+
+
         #region Form Validation
 
         /// <summary>
@@ -2224,6 +2236,8 @@ namespace Stacker.Commands
 
 
         #endregion
+
+
 
 
 
@@ -2700,43 +2714,23 @@ namespace Stacker.Commands
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         #region Extract Model Data / Export Excel
 
 
         Dictionary<string, double> AreaElements;
-
+        Dictionary<string, double> RoomElements = new Dictionary<string, double>();
         private void btnExportData_Click(object sender, EventArgs e)
         {
             AreaElements = new Dictionary<string, double>();
-            int floorCount = 0;
+            int floorCountModRegions = 0;
+            int floorCountRoomElements = 0;
 
             foreach (KeyValuePair<string, List<ElementId>> elem in ElementsBuilt)
             {
                 string elemCategoryName = elem.Key;
                 List<ElementId> elemIDs = elem.Value;
-                
-                if(elemCategoryName.Contains("Mod Regions"))
+
+                if (elemCategoryName.Contains("Mod Regions"))
                 {
 
                     foreach (ElementId elemID in elemIDs)
@@ -2751,7 +2745,7 @@ namespace Stacker.Commands
 
                         if (comment.Contains("MOD_3"))
                         {
-                            string catName = $"Mod Regions_Mod_3_LVL_{floorCount}";
+                            string catName = $"Mod Regions_Mod_3_LVL_{floorCountModRegions}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2766,7 +2760,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_2"))
                         {
-                            string catName = $"Mod Regions_Mod_2_LVL_{floorCount}";
+                            string catName = $"Mod Regions_Mod_2_LVL_{floorCountModRegions}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2781,7 +2775,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_1"))
                         {
-                            string catName = $"Mod Regions_Mod_1_LVL_{floorCount}";
+                            string catName = $"Mod Regions_Mod_1_LVL_{floorCountModRegions}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2796,7 +2790,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("CORE"))
                         {
-                            string catName = $"Mod Regions_CORE_LVL_{floorCount}";
+                            string catName = $"Mod Regions_CORE_LVL_{floorCountModRegions}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2813,8 +2807,58 @@ namespace Stacker.Commands
 
                     }
 
-                    floorCount++;
+                    floorCountModRegions++;
                 }
+                else if (elemCategoryName.Contains("Room Elements"))
+                {
+
+                    foreach (ElementId elemID in elemIDs)
+                    {
+                        Element roomElem = _doc.GetElement(elemID) as Element;
+                        string elementCatName = roomElem.Category.Name;
+                        string elementName = roomElem.Name;
+
+                        string elementNameForRecording = $"{elementCatName} - {elementName} - LVL_{floorCountRoomElements}";
+
+
+                        if (RoomElements.ContainsKey(elementNameForRecording))
+                        {
+                            double oldArea = AreaElements[elementNameForRecording];
+                            RoomElements[elementNameForRecording]++;
+                        }
+                        else
+                        {
+                            RoomElements[elementNameForRecording] = 1;
+                        }
+
+
+                        if(elemCategoryName == "Walls")
+                        {
+                            Parameter parWallLength = roomElem.LookupParameter("Length");
+                            elementNameForRecording = elementNameForRecording + " - Length";
+
+                            double length = parWallLength.AsDouble();
+
+                            if (RoomElements.ContainsKey(elementNameForRecording))
+                            {
+                                double oldLength = RoomElements[elementNameForRecording];
+                                RoomElements[elementNameForRecording] = oldLength + length;
+                            }
+                            else
+                            {
+                                RoomElements[elementNameForRecording] = length;
+                            }
+                        }
+
+
+
+                    }
+
+                    floorCountRoomElements++;
+
+                }
+
+
             }
 
 
