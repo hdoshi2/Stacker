@@ -1283,8 +1283,8 @@ namespace Stacker.Commands
                                     //elementsBuilt[$"Temp Line"].Add(line.Id);
 
                                     if (filledRegion != null)
-                                    regionsBuilt.Add(filledRegion.Id);
-                                }                           
+                                        regionsBuilt.Add(filledRegion.Id);
+                                }
 
 
 
@@ -1349,6 +1349,126 @@ namespace Stacker.Commands
                             }
 
 
+
+
+
+
+
+                            //
+                            //Find an Delete Overlapping walls
+                            //
+
+                            //Create list of walls where bounding boxes are matching
+                            List<Wall> wallsToRemove = new List<Wall>();
+
+                            foreach (var elem in ElementsBuilt)
+                            {
+                                string elemCategoryName = elem.Key;
+                                List<ElementId> elemIDs = elem.Value;
+
+                                if (!elemCategoryName.Contains("Room Elements"))
+                                {
+                                    continue;
+                                }
+
+                                for (int i = 0; i <= elemIDs.Count() - 2; i++)
+                                {
+                                    ElementId elemID = elemIDs[i];
+
+                                    Wall wall = _doc.GetElement(elemID) as Wall;
+
+                                    if (wall == null)
+                                        continue;
+
+                                    BoundingBoxXYZ bb = wall.get_BoundingBox(null);
+                                    var max = bb.Max;
+                                    var min = bb.Min;
+
+                                    for (int j = i + 1; j <= elemIDs.Count() - 1; j++)
+                                    {
+                                        ElementId elemID2 = elemIDs[j];
+                                        Wall wall2 = _doc.GetElement(elemID2) as Wall;
+
+                                        if (wall2 == null)
+                                            continue;
+
+                                        BoundingBoxXYZ bb2 = wall2.get_BoundingBox(null);
+                                        var max2 = bb2.Max;
+                                        var min2 = bb2.Min;
+                                        
+                                        //TODO dangerous to have 0 digits tolerance, but right now its working to find overlapping walls within a close range
+                                        if (arePointsSimilar(max, max2, 0) && arePointsSimilar(min, min2, 0))
+                                        {
+                                            wallsToRemove.Add(wall2);
+                                            break;
+                                        }
+
+
+                                    }
+                                }
+                            }
+
+
+                            //Remove walls from main ElementsBuilt object
+                            foreach (var wall in wallsToRemove)
+                            {
+                                foreach (var elem in ElementsBuilt)
+                                {
+                                    string elemCategoryName = elem.Key;
+                                    List<ElementId> elemIDs = elem.Value;
+
+                                    if (!elemCategoryName.Contains("Room Elements"))
+                                        continue;
+
+                                    for (int i = 0; i < elemIDs.Count(); i++)
+                                    {
+                                        ElementId elemID = elemIDs[i];
+                                        Wall wallToCheck = _doc.GetElement(elemID) as Wall;
+
+                                        if (wallToCheck == null)
+                                            continue;
+
+                                        if (wall.Id == wallToCheck.Id)
+                                        {
+                                            elemIDs.RemoveAt(i);
+                                            _doc.Delete(wall.Id);
+                                            break;
+                                        }
+
+                                    }
+                                }
+
+                                
+                            }
+
+
+                            transCreateRegion.Commit();
+                        }
+
+
+
+                        //
+                        //Validate all elements are still existing in model. TODO if elements are null try to fix the issue so they are not null
+                        //
+                        foreach(var cat in ElementsBuilt)
+                        {
+                            cat.Value.RemoveAll(id => _doc.GetElement(id) == null);
+                        }
+
+
+
+
+
+                        //
+                        //Create floors and copy base level up
+                        //
+                        using (Transaction transCreateFloors = new Transaction(_doc, "Mod: Create Floors"))
+                        {
+                            transCreateFloors.Start();
+
+                            FailureHandlingOptions failOpt = transCreateFloors.GetFailureHandlingOptions();
+                            failOpt.SetFailuresPreprocessor(new WarningSwallower());
+                            transCreateFloors.SetFailureHandlingOptions(failOpt);
 
                             //
                             //Replicate first floor to all other typical floors
@@ -1453,7 +1573,7 @@ namespace Stacker.Commands
 
 
                             _doc.Regenerate();
-                            transCreateRegion.Commit();
+                            transCreateFloors.Commit();
                         }
 
                         List<UIView> openViews = _uidoc.GetOpenUIViews().ToList();
@@ -1495,6 +1615,36 @@ namespace Stacker.Commands
         }
 
 
+
+
+        /// <summary>
+        /// Check if points are matching
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        /// <param name="digits"></param>
+        /// <returns>Bool: True if points match</returns>
+        private bool arePointsSimilar(XYZ pt1, XYZ pt2, int digits)
+        {
+            //Round precision to two spaces after decimal
+            Double x1 = Math.Round(pt1.X, digits);
+            Double y1 = Math.Round(pt1.Y, digits);
+            Double z1 = Math.Round(pt1.X, digits);
+
+            Double x2 = Math.Round(pt2.X, digits);
+            Double y2 = Math.Round(pt2.Y, digits);
+            Double z2 = Math.Round(pt2.X, digits);
+
+            if (x1 == x2 && y1 == y2 && z1 == z2)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
 
 
         /// <summary>
@@ -2579,7 +2729,7 @@ namespace Stacker.Commands
         private void btnExportData_Click(object sender, EventArgs e)
         {
             AreaElements = new Dictionary<string, double>();
-            int count = 0;
+            int floorCount = 0;
 
             foreach (KeyValuePair<string, List<ElementId>> elem in ElementsBuilt)
             {
@@ -2601,7 +2751,7 @@ namespace Stacker.Commands
 
                         if (comment.Contains("MOD_3"))
                         {
-                            string catName = $"Mod Regions_Mod_3_LVL_{count}";
+                            string catName = $"Mod Regions_Mod_3_LVL_{floorCount}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2616,7 +2766,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_2"))
                         {
-                            string catName = $"Mod Regions_Mod_2_LVL_{count}";
+                            string catName = $"Mod Regions_Mod_2_LVL_{floorCount}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2631,7 +2781,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_1"))
                         {
-                            string catName = $"Mod Regions_Mod_1_LVL_{count}";
+                            string catName = $"Mod Regions_Mod_1_LVL_{floorCount}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2646,7 +2796,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("CORE"))
                         {
-                            string catName = $"Mod Regions_CORE_LVL_{count}";
+                            string catName = $"Mod Regions_CORE_LVL_{floorCount}";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2663,7 +2813,7 @@ namespace Stacker.Commands
 
                     }
 
-                    count++;
+                    floorCount++;
                 }
             }
 
