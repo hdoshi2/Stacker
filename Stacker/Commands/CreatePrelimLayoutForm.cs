@@ -23,47 +23,50 @@ namespace Stacker.Commands
 {
     public partial class CreatePrelimLayoutForm : System.Windows.Forms.Form
     {
-        public double FloorOverallLength;
-        public double FloorOverallWidth;
-        public double FloorHallwayWidth;
-        public double FloorOverallSquareFootage;
 
-        public double PodLengthMin;
-        public double PodLengthMax;
-        public double PodWidthMin;
-        public double PodWidthMax;
-
-        public int PriorityStudio;
-        public int Priority1Bed;
-        public int Priority2Bed;
-
-        public double PercentageStudio;
-        public double Percentage1Bed;
-        public double Percentage2Bed;
-
-
+        #region Properties
 
         private Document _doc;
         private UIDocument _uidoc;
 
+        public double FloorOverallLength { get; set; }
+        public double FloorOverallWidth { get; set; }
+        public double FloorHallwayWidth { get; set; }
+        public double FloorOverallSquareFootage { get; set; }
+
+        public double PodLengthMin { get; set; }
+        public double PodLengthMax { get; set; }
+        public double PodWidthMin { get; set; }
+        public double PodWidthMax { get; set; }
+
+        public int PriorityStudio { get; set; }
+        public int Priority1Bed { get; set; }
+        public int Priority2Bed { get; set; }
+
+        public double PercentageStudio { get; set; }
+        public double Percentage1Bed { get; set; }
+        public double Percentage2Bed { get; set; }
+
+        public Dictionary<string, List<ElementId>> ElementsBuilt { get; set; }
         List<FloorLayout> FloorLayoutOptions { get; set; }
+        Dictionary<string, string> DictJSON { get; set; }
+        public Level Level { get; set; }
+        public ViewPlan VPlan { get; set; }
+        public List<Level> AllLevels { get; set; }
+        public List<ViewPlan> AllViewPlans { get; set; }
 
-        Dictionary<string, string> DictJSON;
-
-        public bool formClosed = false;
-
-
-        public bool LevelBuilt = false;
-        public Dictionary<string, List<ElementId>> ElementsBuilt = new Dictionary<string, List<ElementId>>();
-
-        public Level Level = null;
-        public ViewPlan VPlan = null;
-
-        public List<Level> allLevels = new List<Level>();
-        public List<ViewPlan> allViewPlans = new List<ViewPlan>();
 
         double TypFloorHeight = 12.0;
         int TotalFloors = 1;
+
+        public bool formClosed = false;
+        public bool LevelBuilt = false;
+
+
+        #endregion
+
+
+        #region Form Constructor
 
         public CreatePrelimLayoutForm(Document doc, UIDocument uidoc)
         {
@@ -84,6 +87,9 @@ namespace Stacker.Commands
 
             FloorLayoutOptions = new List<FloorLayout>();
             DictJSON = new Dictionary<string, string>();
+            ElementsBuilt = new Dictionary<string, List<ElementId>>();
+            AllLevels = new List<Level>();
+            AllViewPlans = new List<ViewPlan>();
 
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPA");
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS1");
@@ -108,8 +114,10 @@ namespace Stacker.Commands
 
         }
 
+        #endregion
 
 
+        #region Form Button Logic
         /// <summary>
         /// Set Initial Geometry Parameters.
         /// </summary>
@@ -128,13 +136,13 @@ namespace Stacker.Commands
 
 
 
-
-
-
-
+        /// <summary>
+        /// Delete All Existing Built Geometry
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDeleteGeom_Click(object sender, EventArgs e)
         {
-
             if (ElementsBuilt.Count > 0)
             {
                 using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
@@ -160,6 +168,42 @@ namespace Stacker.Commands
         }
 
 
+
+        /// <summary>
+        /// Close active form. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            formClosed = true;
+        }
+
+
+
+        /// <summary>
+        /// Logic to overwrite total floors in the building. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbTotalFloors_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbTotalFloors.Checked)
+            {
+                tbFloorsTotal.Enabled = true;
+            }
+            else
+            {
+                tbFloorsTotal.Enabled = false;
+                tbFloorsTotal.Text = tbMaxFloors.Text;
+            }
+        }
+
+
+
+
+
+        #endregion
 
 
 
@@ -247,8 +291,8 @@ namespace Stacker.Commands
                             VPlan = ViewPlan.Create(_doc, structuralvft.Id, Level.Id);
                             VPlan.Name = Level.Name + " - TEST";
 
-                            allLevels.Add(Level);
-                            allViewPlans.Add(VPlan);
+                            AllLevels.Add(Level);
+                            AllViewPlans.Add(VPlan);
 
                             double floorElevIncrement = TypFloorHeight;
 
@@ -276,8 +320,8 @@ namespace Stacker.Commands
                                 var newViewPlan = ViewPlan.Create(_doc, structuralvft.Id, newLevel.Id);
                                 newViewPlan.Name = newLevel.Name + " - TEST";
 
-                                allLevels.Add(newLevel);
-                                allViewPlans.Add(newViewPlan);
+                                AllLevels.Add(newLevel);
+                                AllViewPlans.Add(newViewPlan);
                             }
 
                             LevelBuilt = true;
@@ -1315,17 +1359,17 @@ namespace Stacker.Commands
                             Dictionary<string, List<ElementId>> elementsBuiltFirstFloor = new Dictionary<string, List<ElementId>>(ElementsBuilt);
 
                             //Copy floor elements to all typical floors - Except Roof Floor
-                            for (var i = 1; i < allLevels.Count; i++)
+                            for (var i = 1; i < AllLevels.Count; i++)
                             {
-                                Level currentLevel = allLevels[i];
-                                ViewPlan currentViewPlan = allViewPlans[i];
+                                Level currentLevel = AllLevels[i];
+                                ViewPlan currentViewPlan = AllViewPlans[i];
 
                                 if (!addMultiplefloors)
                                     continue;
 
                                 Dictionary<string, List<ElementId>> copiedElements = new Dictionary<string, List<ElementId>>();
                                 
-                                if(i == allLevels.Count - 1)
+                                if(i == AllLevels.Count - 1)
                                 {
                                     var floorElements = elementsBuiltFirstFloor["Floor"];
 
@@ -1451,13 +1495,11 @@ namespace Stacker.Commands
         }
 
 
-        private void setConfigurationPreview()
-        {
-
-        }
 
 
-
+        /// <summary>
+        /// Copy/Paste duplicate names warning swallower
+        /// </summary>
         class HideAndAcceptDuplicateTypeNamesHandler : IDuplicateTypeNamesHandler
         {
             #region IDuplicateTypeNamesHandler Members
@@ -1474,6 +1516,54 @@ namespace Stacker.Commands
             }
 
             #endregion
+        }
+
+
+
+
+
+        #region Floor Builder Helper Methods 
+
+
+
+        /// <summary>
+        /// Suppress warnings and errors from user. 
+        /// </summary>
+        public class WarningSwallower : IFailuresPreprocessor
+        {
+            public FailureProcessingResult PreprocessFailures(FailuresAccessor a)
+            {
+                IList<FailureMessageAccessor> failures = a.GetFailureMessages();
+
+                foreach (FailureMessageAccessor f in failures)
+                {
+                    FailureDefinitionId id = f.GetFailureDefinitionId();
+
+                    FailureSeverity failureSeverity = a.GetSeverity();
+
+                    if (failureSeverity == FailureSeverity.Warning)
+                    {
+                        a.DeleteWarning(f);
+                    }
+                    else if (failureSeverity == FailureSeverity.Error)
+                    {
+
+                        List<ElementId> failingElementIds = f.GetFailingElementIds().ToList();
+                        FailureHandlingOptions failureHandOptions = a.GetFailureHandlingOptions();
+                        List<FailureResolutionType> resolutionTypes = a.GetAttemptedResolutionTypes(f).ToList();
+
+                        a.ResolveFailure(f);
+
+                        return FailureProcessingResult.ProceedWithCommit;
+
+                    }
+                    else
+                    {
+                        return FailureProcessingResult.ProceedWithRollBack;
+                    }
+                }
+                return FailureProcessingResult.Continue;
+            }
         }
 
 
@@ -1634,20 +1724,38 @@ namespace Stacker.Commands
 
 
 
+
+
+
+
+
         /// <summary>
-        /// Close active form. 
+        /// Round down to nearest integer to calculate total floors. 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnClose_Click(object sender, EventArgs e)
+        /// <param name="floorHeight"></param>
+        /// <param name="totalBldgHeight"></param>
+        /// <returns></returns>
+        private int calculateTotalFloors(double floorHeight, double totalBldgHeight)
         {
-            formClosed = true;
+            int totalFloors = Convert.ToInt32(Math.Floor(totalBldgHeight / floorHeight));
+
+            return totalFloors;
         }
 
 
 
+        #endregion
+
+
+
+
+
+
+        #region Load and Parse JSON File
+
+
         /// <summary>
-        /// 
+        /// Load JSON File
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1772,10 +1880,6 @@ namespace Stacker.Commands
             }
         }
 
-        private void btnNext_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnViewJSON_Click(object sender, EventArgs e)
         {
@@ -1803,65 +1907,13 @@ namespace Stacker.Commands
 
         }
 
-        /// <summary>
-        /// Suppress warnings and errors from user. 
-        /// </summary>
-        public class WarningSwallower : IFailuresPreprocessor
-        {
-            public FailureProcessingResult PreprocessFailures(FailuresAccessor a)
-            {
-                IList<FailureMessageAccessor> failures = a.GetFailureMessages();
 
-                foreach (FailureMessageAccessor f in failures)
-                {
-                    FailureDefinitionId id = f.GetFailureDefinitionId();
 
-                    FailureSeverity failureSeverity = a.GetSeverity();
-
-                    if (failureSeverity == FailureSeverity.Warning)
-                    {
-                        a.DeleteWarning(f);
-                    }
-                    else if (failureSeverity == FailureSeverity.Error)
-                    {
-
-                        List<ElementId> failingElementIds = f.GetFailingElementIds().ToList();
-                        FailureHandlingOptions failureHandOptions = a.GetFailureHandlingOptions();
-                        List<FailureResolutionType> resolutionTypes = a.GetAttemptedResolutionTypes(f).ToList();
-
-                        a.ResolveFailure(f);
-
-                        return FailureProcessingResult.ProceedWithCommit;
-
-                    }
-                    else
-                    {
-                        return FailureProcessingResult.ProceedWithRollBack;
-                    }
-                }
-                return FailureProcessingResult.Continue;
-            }
-        }
+        #endregion
 
 
 
-
-
-
-
-        /// <summary>
-        /// Round down to nearest integer to calculate total floors. 
-        /// </summary>
-        /// <param name="floorHeight"></param>
-        /// <param name="totalBldgHeight"></param>
-        /// <returns></returns>
-        private int calculateTotalFloors(double floorHeight, double totalBldgHeight)
-        {
-            int totalFloors = Convert.ToInt32(Math.Floor(totalBldgHeight / floorHeight));
-
-            return totalFloors;
-        }
-
+        #region Form Validation
 
         /// <summary>
         /// Input values validation. 
@@ -1939,25 +1991,6 @@ namespace Stacker.Commands
             }
 
 
-        }
-
-
-        /// <summary>
-        /// Logic to overwrite total floors in the building. 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cbTotalFloors_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbTotalFloors.Checked)
-            {
-                tbFloorsTotal.Enabled = true;
-            }
-            else
-            {
-                tbFloorsTotal.Enabled = false;
-                tbFloorsTotal.Text = tbMaxFloors.Text;
-            }
         }
 
 
@@ -2040,7 +2073,11 @@ namespace Stacker.Commands
         }
 
 
+        #endregion
 
+
+
+        #region Export Images Logic
 
         private void btnExportImages_Click(object sender, EventArgs e)
         {
@@ -2066,10 +2103,10 @@ namespace Stacker.Commands
                 //
                 //Export images for all Levels created. 
                 //
-                for (int i = 0; i < allLevels.Count; i++)
+                for (int i = 0; i < AllLevels.Count; i++)
                 {
-                    Level currentLevel = allLevels[i];
-                    View currentViewPlan = allViewPlans[i] as View;
+                    Level currentLevel = AllLevels[i];
+                    View currentViewPlan = AllViewPlans[i] as View;
                     
                     allViews.Add(currentViewPlan);
                     
@@ -2396,7 +2433,6 @@ namespace Stacker.Commands
                 foreach (var view in views)
                 {
 
-
                     //
                     //Hide all elements not needed in the 3D View
                     //
@@ -2508,6 +2544,7 @@ namespace Stacker.Commands
 
 
 
+        #endregion
 
 
 
@@ -2534,8 +2571,7 @@ namespace Stacker.Commands
 
 
 
-
-
+        #region Extract Model Data / Export Excel
 
 
         Dictionary<string, double> AreaElements;
@@ -2792,7 +2828,7 @@ namespace Stacker.Commands
         }
 
 
-
+        #endregion
 
 
     }
