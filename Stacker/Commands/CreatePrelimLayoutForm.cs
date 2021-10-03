@@ -2718,10 +2718,13 @@ namespace Stacker.Commands
 
 
         Dictionary<string, double> AreaElements;
-        Dictionary<string, double> RoomElements = new Dictionary<string, double>();
+        Dictionary<string, double> RoomElements;
+
         private void btnExportData_Click(object sender, EventArgs e)
         {
             AreaElements = new Dictionary<string, double>();
+            RoomElements = new Dictionary<string, double>();
+
             int floorCountModRegions = 0;
             int floorCountRoomElements = 0;
 
@@ -2823,7 +2826,6 @@ namespace Stacker.Commands
 
                         if (RoomElements.ContainsKey(elementNameForRecording))
                         {
-                            double oldArea = AreaElements[elementNameForRecording];
                             RoomElements[elementNameForRecording]++;
                         }
                         else
@@ -2832,7 +2834,7 @@ namespace Stacker.Commands
                         }
 
 
-                        if(elemCategoryName == "Walls")
+                        if(elementCatName == "Walls")
                         {
                             Parameter parWallLength = roomElem.LookupParameter("Length");
                             elementNameForRecording = elementNameForRecording + " - Length";
