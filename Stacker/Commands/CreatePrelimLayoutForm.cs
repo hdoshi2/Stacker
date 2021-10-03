@@ -2864,11 +2864,74 @@ namespace Stacker.Commands
             }
 
 
+            List<string> sortedAreaElements = AreaElements.Keys.ToList();
+            sortedAreaElements.Sort();
+
+            List<string> sortedAreaRoomElements = RoomElements.Keys.ToList();
+            sortedAreaRoomElements.Sort();
 
 
 
             DataGridView newDGV = new DataGridView();
-            
+            var column1 = new DataGridViewTextBoxColumn();
+            var column2 = new DataGridViewTextBoxColumn();
+            var column3 = new DataGridViewTextBoxColumn();
+
+            column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            column1.HeaderText = "Revit Floor";
+            column1.MinimumWidth = 6;
+            column1.Name = "Column1";
+            column1.ReadOnly = true;
+
+            column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            column2.HeaderText = "Revit Element";
+            column2.MinimumWidth = 6;
+            column2.Name = "Column2";
+            column2.ReadOnly = true;
+
+            column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            column3.HeaderText = "Quantity";
+            column3.MinimumWidth = 6;
+            column3.Name = "Column3";
+            column3.ReadOnly = true;
+
+            newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3 });
+
+
+            for (int i = 0; i <= floorCountModRegions; i++)
+            {
+                string lvl = $"LVL_{i}";
+
+                int n = 0;
+                n = newDGV.Rows.Add();
+                newDGV.Rows[n].Cells[0].Value = lvl;
+
+                foreach (var flr in sortedAreaElements)
+                {
+                    n = newDGV.Rows.Add();
+
+                    newDGV.Rows[n].Cells[0].Value = "";
+                    newDGV.Rows[n].Cells[1].Value = flr;
+                    newDGV.Rows[n].Cells[2].Value = AreaElements[flr];
+                }
+
+                n = 0;
+                foreach (var flr in sortedAreaRoomElements)
+                {
+                    n = newDGV.Rows.Add();
+
+                    newDGV.Rows[n].Cells[0].Value = "";
+                    newDGV.Rows[n].Cells[1].Value = flr;
+                    newDGV.Rows[n].Cells[2].Value = RoomElements[flr];
+                }
+
+            }
+
+
+
+
+
+
             SaveFileDialog saveResults = new SaveFileDialog();
 
             saveResults.Filter = "Excel File|*.xlsx";
@@ -2884,7 +2947,7 @@ namespace Stacker.Commands
                 //Save
                 SaveExcelWorksheet(sheetListResult, true, saveResults.FileName, "Building Data Output");
 
-                var responsetoOpen = MessageBox.Show($"Building Data Output '{saveResults.FileName.ToString()}' successfully exported to Excel. \r\nOpen Excel file?", "Excel Export", MessageBoxButtons.YesNo);
+                var responsetoOpen = MessageBox.Show($"Building Data Output '{saveResults.FileName.ToString()}' successfully exported to Excel.\r\n\r\nOpen Excel file?", "Excel Export", MessageBoxButtons.YesNo);
 
                 //Open file
                 if (responsetoOpen == DialogResult.Yes)
@@ -2961,58 +3024,33 @@ namespace Stacker.Commands
             buildingDataOutput.Columns.Add("BUILDING DATA OUTPUT", typeof(string));
             buildingDataOutput.Columns.Add("  ", typeof(string));
             buildingDataOutput.Columns.Add("   ", typeof(string));
-            buildingDataOutput.Columns.Add("    ", typeof(string));
-            buildingDataOutput.Columns.Add("     ", typeof(string));
-            buildingDataOutput.Columns.Add("      ", typeof(string));
-            buildingDataOutput.Columns.Add("       ", typeof(string));
-            buildingDataOutput.Columns.Add("        ", typeof(string));
-            buildingDataOutput.Columns.Add("         ", typeof(string));
-            buildingDataOutput.Columns.Add("          ", typeof(string));
+
 
             //Second excel row also kept empty
             buildingDataOutput.Rows.Add(
                 $"",
                 "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
                 "");
 
             //Add column headers in 3rd row to contain title
             buildingDataOutput.Rows.Add(
-                "Col 1",
-                "Col 2",
-                "Col 3",
-                "Col 4",
-                "Col 5",
-                "Col 6",
-                "Col 7",
-                "Col 8",
-                "Col 9",
-                "Col 10");
+                "Floor",
+                "Element Name",
+                "Element Quantity");
 
 
             //Add building data in 4th row
             foreach (DataGridViewRow row in d.Rows)
             {
-                if (row.Cells[0].Value == null)
-                    continue;
+                var col0 = row.Cells[0].Value == null ? "" : row.Cells[0].Value;
+                var col1 = row.Cells[1].Value == null ? "" : row.Cells[1].Value;
+                var col2 = row.Cells[2].Value == null ? "" : row.Cells[2].Value;
+
 
                 buildingDataOutput.Rows.Add(
-                    row.Cells[0].Value.ToString(),
-                    row.Cells[1].Value.ToString(),
-                    row.Cells[2].Value.ToString(),
-                    row.Cells[3].Value.ToString(),
-                    row.Cells[4].Value.ToString(),
-                    row.Cells[5].Value.ToString(),
-                    row.Cells[6].Value.ToString(),
-                    row.Cells[7].Value.ToString(),
-                    row.Cells[8].Value.ToString(),
-                    row.Cells[9].Value.ToString());
+                    col0,
+                    col1,
+                    col2);
 
             }
 
