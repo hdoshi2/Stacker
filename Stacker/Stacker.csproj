@@ -77,6 +77,7 @@
       <DependentUpon>FormViewJsonData.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalApplication.cs" />
+    <Compile Include="ModClasses\BldgResult.cs" />
     <Compile Include="ModClasses\FloorLayout.cs" />
     <Compile Include="ModClasses\FloorLayoutOption.cs" />
     <Compile Include="ModClasses\FloorModBlock.cs" />

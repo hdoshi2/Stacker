@@ -2719,11 +2719,14 @@ namespace Stacker.Commands
 
         Dictionary<string, double> AreaElements;
         Dictionary<string, double> RoomElements;
+        List<BldgResult> BuildingResults;
+
 
         private void btnExportData_Click(object sender, EventArgs e)
         {
             AreaElements = new Dictionary<string, double>();
             RoomElements = new Dictionary<string, double>();
+            BuildingResults = new List<BldgResult>();
 
             int floorCountModRegions = 0;
             int floorCountRoomElements = 0;
@@ -2750,14 +2753,25 @@ namespace Stacker.Commands
                         {
                             string catName = $"LVL_{floorCountModRegions}_Mod Regions_Mod_3";
 
-                            if (AreaElements.ContainsKey(catName))
+                            var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName).FirstOrDefault();
+
+                            if (elemExists != null)
                             {
-                                double oldArea = AreaElements[catName];
-                                AreaElements[catName] = oldArea + area;
+                                double oldArea = elemExists.Quantity;
+                                elemExists.Quantity = oldArea + area;
                             }
                             else
                             {
                                 AreaElements[catName] = area;
+
+                                BldgResult result = new BldgResult();
+                                result.LevelName = $"LVL_{ floorCountModRegions}";
+                                result.ElementName = catName;
+                                result.Quantity = area;
+                                result.UnitType = "SF";
+                                result.CategoryType = "AreaElements";
+
+                                BuildingResults.Add(result);
                             }
 
                         }
@@ -2765,14 +2779,35 @@ namespace Stacker.Commands
                         {
                             string catName = $"LVL_{floorCountModRegions}_Mod Regions_Mod_2";
 
-                            if (AreaElements.ContainsKey(catName))
+                            //if (AreaElements.ContainsKey(catName))
+                            //{
+                            //    double oldArea = AreaElements[catName];
+                            //    AreaElements[catName] = oldArea + area;
+                            //}
+                            //else
+                            //{
+                            //    AreaElements[catName] = area;
+                            //}
+
+                            var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName).FirstOrDefault();
+
+                            if (elemExists != null)
                             {
-                                double oldArea = AreaElements[catName];
-                                AreaElements[catName] = oldArea + area;
+                                double oldArea = elemExists.Quantity;
+                                elemExists.Quantity = oldArea + area;
                             }
                             else
                             {
                                 AreaElements[catName] = area;
+
+                                BldgResult result = new BldgResult();
+                                result.LevelName = $"LVL_{ floorCountModRegions}";
+                                result.ElementName = catName;
+                                result.Quantity = area;
+                                result.UnitType = "SF";
+                                result.CategoryType = "AreaElements";
+
+                                BuildingResults.Add(result);
                             }
 
                         }
@@ -2780,30 +2815,74 @@ namespace Stacker.Commands
                         {
                             string catName = $"LVL_{floorCountModRegions}_Mod Regions_Mod_1";
 
-                            if (AreaElements.ContainsKey(catName))
+                            //if (AreaElements.ContainsKey(catName))
+                            //{
+                            //    double oldArea = AreaElements[catName];
+                            //    AreaElements[catName] = oldArea + area;
+                            //}
+                            //else
+                            //{
+                            //    AreaElements[catName] = area;
+                            //}
+
+                            var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName).FirstOrDefault();
+
+                            if (elemExists != null)
                             {
-                                double oldArea = AreaElements[catName];
-                                AreaElements[catName] = oldArea + area;
+                                double oldArea = elemExists.Quantity;
+                                elemExists.Quantity = oldArea + area;
                             }
                             else
                             {
                                 AreaElements[catName] = area;
+
+                                BldgResult result = new BldgResult();
+                                result.LevelName = $"LVL_{ floorCountModRegions}";
+                                result.ElementName = catName;
+                                result.Quantity = area;
+                                result.UnitType = "SF";
+                                result.CategoryType = "AreaElements";
+
+                                BuildingResults.Add(result);
                             }
+
 
                         }
                         else if (comment.Contains("CORE"))
                         {
                             string catName = $"LVL_{floorCountModRegions}_Mod Regions_CORE";
 
-                            if (AreaElements.ContainsKey(catName))
+                            //if (AreaElements.ContainsKey(catName))
+                            //{
+                            //    double oldArea = AreaElements[catName];
+                            //    AreaElements[catName] = oldArea + area;
+                            //}
+                            //else
+                            //{
+                            //    AreaElements[catName] = area;
+                            //}
+
+                            var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName).FirstOrDefault();
+
+                            if (elemExists != null)
                             {
-                                double oldArea = AreaElements[catName];
-                                AreaElements[catName] = oldArea + area;
+                                double oldArea = elemExists.Quantity;
+                                elemExists.Quantity = oldArea + area;
                             }
                             else
                             {
                                 AreaElements[catName] = area;
+
+                                BldgResult result = new BldgResult();
+                                result.LevelName = $"LVL_{ floorCountModRegions}";
+                                result.ElementName = catName;
+                                result.Quantity = area;
+                                result.UnitType = "SF";
+                                result.CategoryType = "AreaElements";
+
+                                BuildingResults.Add(result);
                             }
+
                         }
 
 
@@ -2824,17 +2903,38 @@ namespace Stacker.Commands
                         string elementNameForRecording = $"LVL_{floorCountModRegions}_{elementCatName}_{elementName}";
 
 
-                        if (RoomElements.ContainsKey(elementNameForRecording))
+                        //if (RoomElements.ContainsKey(elementNameForRecording))
+                        //{
+                        //    RoomElements[elementNameForRecording]++;
+                        //}
+                        //else
+                        //{
+                        //    RoomElements[elementNameForRecording] = 1;
+                        //}
+
+                        var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording).FirstOrDefault();
+
+                        if (elemExists != null)
                         {
-                            RoomElements[elementNameForRecording]++;
+                            elemExists.Quantity++;
                         }
                         else
                         {
                             RoomElements[elementNameForRecording] = 1;
+
+                            BldgResult result = new BldgResult();
+                            result.LevelName = $"LVL_{ floorCountModRegions}";
+                            result.ElementName = elementNameForRecording;
+                            result.Quantity = 1;
+                            result.UnitType = "EA";
+                            result.CategoryType = "RoomElements";
+
+                            BuildingResults.Add(result);
                         }
 
 
-                        if(elementCatName == "Walls")
+
+                        if (elementCatName == "Walls")
                         {
                             Parameter parWallLength = roomElem.LookupParameter("Length");
                             elementNameForRecording = elementNameForRecording + " - Length";
@@ -2850,6 +2950,31 @@ namespace Stacker.Commands
                             {
                                 RoomElements[elementNameForRecording] = length;
                             }
+
+
+
+                            var elemExistsWall = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording).FirstOrDefault();
+
+                            if (elemExistsWall != null)
+                            {
+                                double oldLength = elemExistsWall.Quantity;
+                                elemExistsWall.Quantity = oldLength + length;
+                            }
+                            else
+                            {
+                                RoomElements[elementNameForRecording] = 1;
+
+                                BldgResult result = new BldgResult();
+                                result.LevelName = $"LVL_{ floorCountModRegions}";
+                                result.ElementName = elementNameForRecording;
+                                result.Quantity = length;
+                                result.UnitType = "LF";
+                                result.CategoryType = "RoomElements";
+
+                                BuildingResults.Add(result);
+                            }
+
+
                         }
 
 
@@ -2863,12 +2988,14 @@ namespace Stacker.Commands
 
             }
 
+            List<BldgResult> sortedElements = BuildingResults.OrderBy(x => x.ElementName).ToList();
 
-            List<string> sortedAreaElements = AreaElements.Keys.ToList();
-            sortedAreaElements.Sort();
 
-            List<string> sortedAreaRoomElements = RoomElements.Keys.ToList();
-            sortedAreaRoomElements.Sort();
+            //List<string> sortedAreaElements = AreaElements.Keys.ToList();
+            //sortedAreaElements.Sort();
+
+            //List<string> sortedAreaRoomElements = RoomElements.Keys.ToList();
+            //sortedAreaRoomElements.Sort();
 
 
 
@@ -2876,6 +3003,8 @@ namespace Stacker.Commands
             var column1 = new DataGridViewTextBoxColumn();
             var column2 = new DataGridViewTextBoxColumn();
             var column3 = new DataGridViewTextBoxColumn();
+            var column4 = new DataGridViewTextBoxColumn();
+            var column5 = new DataGridViewTextBoxColumn();
 
             column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             column1.HeaderText = "Revit Floor";
@@ -2895,9 +3024,23 @@ namespace Stacker.Commands
             column3.Name = "Column3";
             column3.ReadOnly = true;
 
-            newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3 });
+            column4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            column4.HeaderText = "Unit";
+            column4.MinimumWidth = 6;
+            column4.Name = "column4";
+            column4.ReadOnly = true;
+
+            column5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            column5.HeaderText = "Category";
+            column5.MinimumWidth = 6;
+            column5.Name = "column5";
+            column5.ReadOnly = true;
+
+
+            newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3, column4, column5 });
 
             int n = 0;
+
             for (int i = 0; i <= floorCountModRegions; i++)
             {
                 string lvl = $"LVL_{i}";
@@ -2905,30 +3048,46 @@ namespace Stacker.Commands
                 n = newDGV.Rows.Add();
                 newDGV.Rows[n].Cells[0].Value = lvl;
 
-                foreach (var flr in sortedAreaElements)
+                foreach (BldgResult elem in sortedElements)
                 {
-                    if (!flr.Contains(lvl))
+                    if (!elem.ElementName.Contains(lvl))
                         continue;
 
                     n = newDGV.Rows.Add();
 
                     newDGV.Rows[n].Cells[0].Value = "";
-                    newDGV.Rows[n].Cells[1].Value = flr;
-                    newDGV.Rows[n].Cells[2].Value = AreaElements[flr];
+                    newDGV.Rows[n].Cells[1].Value = elem.ElementName;
+                    newDGV.Rows[n].Cells[2].Value = elem.Quantity;
+                    newDGV.Rows[n].Cells[3].Value = elem.UnitType;
+                    newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
                 }
 
-                //n = 0;
-                foreach (var flr in sortedAreaRoomElements)
-                {
-                    if (!flr.Contains(lvl))
-                        continue;
 
-                    n = newDGV.Rows.Add();
 
-                    newDGV.Rows[n].Cells[0].Value = "";
-                    newDGV.Rows[n].Cells[1].Value = flr;
-                    newDGV.Rows[n].Cells[2].Value = RoomElements[flr];
-                }
+                //foreach (var flr in sortedAreaElements)
+                //{
+                //    if (!flr.Contains(lvl))
+                //        continue;
+
+                //    n = newDGV.Rows.Add();
+
+                //    newDGV.Rows[n].Cells[0].Value = "";
+                //    newDGV.Rows[n].Cells[1].Value = flr;
+                //    newDGV.Rows[n].Cells[2].Value = AreaElements[flr];
+                //}
+
+                ////n = 0;
+                //foreach (var flr in sortedAreaRoomElements)
+                //{
+                //    if (!flr.Contains(lvl))
+                //        continue;
+
+                //    n = newDGV.Rows.Add();
+
+                //    newDGV.Rows[n].Cells[0].Value = "";
+                //    newDGV.Rows[n].Cells[1].Value = flr;
+                //    newDGV.Rows[n].Cells[2].Value = RoomElements[flr];
+                //}
 
             }
 
@@ -3006,12 +3165,20 @@ namespace Stacker.Commands
                 EPPlus.ExcelWorksheet ws = pck.Workbook.Worksheets.Add(worksheetName);
                 ws.Cells["A1"].LoadFromDataTable(inputData, saveHeaders);
 
-                using (var rng = ws.Cells["B1:B100"])
-                {
-                    rng.AutoFitColumns();
-                }
 
-                using (var rng = ws.Cells["A3:C3"])
+                using (var rng = ws.Cells["B1:B100"])
+                    rng.AutoFitColumns();
+
+                using (var rng = ws.Cells["C1:C100"])
+                    rng.AutoFitColumns();
+
+                using (var rng = ws.Cells["D1:D100"])
+                    rng.AutoFitColumns();
+
+                using (var rng = ws.Cells["E1:E100"])
+                    rng.AutoFitColumns();
+
+                using (var rng = ws.Cells["A3:F3"])
                 {
                     rng.Style.Font.Bold = true;
                     rng.Style.Font.UnderLine = true;
@@ -3019,19 +3186,13 @@ namespace Stacker.Commands
                     rng.Style.HorizontalAlignment = EPPlus.Style.ExcelHorizontalAlignment.Center;
                 }
 
-                using (var rng = ws.Cells["C1:C100"])
-                {
-                    rng.AutoFitColumns();
-                }
-
-                using (var rng = ws.Cells["A1:C1"])
+                using (var rng = ws.Cells["A1:F1"])
                 {
                     rng.Merge = true;
                     rng.Style.HorizontalAlignment = EPPlus.Style.ExcelHorizontalAlignment.Center;
                     rng.Style.VerticalAlignment = EPPlus.Style.ExcelVerticalAlignment.Center;
                 }
 
-                //ws.Cells.AutoFitColumns();
 
                 if (headerBold && saveHeaders)
                     ws.Row(1).Style.Font.Bold = true;
@@ -3056,11 +3217,16 @@ namespace Stacker.Commands
             buildingDataOutput.Columns.Add("BUILDING DATA OUTPUT", typeof(string));
             buildingDataOutput.Columns.Add("  ", typeof(string));
             buildingDataOutput.Columns.Add("   ", typeof(string));
+            buildingDataOutput.Columns.Add("    ", typeof(string));
+            buildingDataOutput.Columns.Add("     ", typeof(string));
+
 
 
             //Second excel row also kept empty
             buildingDataOutput.Rows.Add(
                 $"",
+                "",
+                "",
                 "",
                 "");
 
@@ -3068,7 +3234,9 @@ namespace Stacker.Commands
             buildingDataOutput.Rows.Add(
                 "Floor",
                 "Element Name",
-                "Element Quantity");
+                "Element Quantity",
+                "Units",
+                "Category");
 
 
             //Add building data in 4th row
@@ -3077,12 +3245,16 @@ namespace Stacker.Commands
                 var col0 = row.Cells[0].Value == null ? "" : row.Cells[0].Value;
                 var col1 = row.Cells[1].Value == null ? "" : row.Cells[1].Value;
                 var col2 = row.Cells[2].Value == null ? "" : row.Cells[2].Value;
+                var col3 = row.Cells[3].Value == null ? "" : row.Cells[3].Value;
+                var col4 = row.Cells[4].Value == null ? "" : row.Cells[4].Value;
 
 
                 buildingDataOutput.Rows.Add(
                     col0,
                     col1,
-                    col2);
+                    col2,
+                    col3,
+                    col4);
 
             }
 
