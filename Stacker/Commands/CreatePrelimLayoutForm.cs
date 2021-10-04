@@ -2748,7 +2748,7 @@ namespace Stacker.Commands
 
                         if (comment.Contains("MOD_3"))
                         {
-                            string catName = $"Mod Regions_Mod_3_LVL_{floorCountModRegions}";
+                            string catName = $"LVL_{floorCountModRegions}_Mod Regions_Mod_3";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2763,7 +2763,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_2"))
                         {
-                            string catName = $"Mod Regions_Mod_2_LVL_{floorCountModRegions}";
+                            string catName = $"LVL_{floorCountModRegions}_Mod Regions_Mod_2";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2778,7 +2778,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_1"))
                         {
-                            string catName = $"Mod Regions_Mod_1_LVL_{floorCountModRegions}";
+                            string catName = $"LVL_{floorCountModRegions}_Mod Regions_Mod_1";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2793,7 +2793,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("CORE"))
                         {
-                            string catName = $"Mod Regions_CORE_LVL_{floorCountModRegions}";
+                            string catName = $"LVL_{floorCountModRegions}_Mod Regions_CORE";
 
                             if (AreaElements.ContainsKey(catName))
                             {
@@ -2821,7 +2821,7 @@ namespace Stacker.Commands
                         string elementCatName = roomElem.Category.Name;
                         string elementName = roomElem.Name;
 
-                        string elementNameForRecording = $"{elementCatName} - {elementName} - LVL_{floorCountRoomElements}";
+                        string elementNameForRecording = $"LVL_{floorCountModRegions}_{elementCatName}_{elementName}";
 
 
                         if (RoomElements.ContainsKey(elementNameForRecording))
@@ -2897,17 +2897,19 @@ namespace Stacker.Commands
 
             newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3 });
 
-
+            int n = 0;
             for (int i = 0; i <= floorCountModRegions; i++)
             {
                 string lvl = $"LVL_{i}";
 
-                int n = 0;
                 n = newDGV.Rows.Add();
                 newDGV.Rows[n].Cells[0].Value = lvl;
 
                 foreach (var flr in sortedAreaElements)
                 {
+                    if (!flr.Contains(lvl))
+                        continue;
+
                     n = newDGV.Rows.Add();
 
                     newDGV.Rows[n].Cells[0].Value = "";
@@ -2915,9 +2917,12 @@ namespace Stacker.Commands
                     newDGV.Rows[n].Cells[2].Value = AreaElements[flr];
                 }
 
-                n = 0;
+                //n = 0;
                 foreach (var flr in sortedAreaRoomElements)
                 {
+                    if (!flr.Contains(lvl))
+                        continue;
+
                     n = newDGV.Rows.Add();
 
                     newDGV.Rows[n].Cells[0].Value = "";
@@ -3000,6 +3005,33 @@ namespace Stacker.Commands
             {
                 EPPlus.ExcelWorksheet ws = pck.Workbook.Worksheets.Add(worksheetName);
                 ws.Cells["A1"].LoadFromDataTable(inputData, saveHeaders);
+
+                using (var rng = ws.Cells["B1:B100"])
+                {
+                    rng.AutoFitColumns();
+                }
+
+                using (var rng = ws.Cells["A3:C3"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Font.UnderLine = true;
+                    rng.Style.VerticalAlignment = EPPlus.Style.ExcelVerticalAlignment.Center;
+                    rng.Style.HorizontalAlignment = EPPlus.Style.ExcelHorizontalAlignment.Center;
+                }
+
+                using (var rng = ws.Cells["C1:C100"])
+                {
+                    rng.AutoFitColumns();
+                }
+
+                using (var rng = ws.Cells["A1:C1"])
+                {
+                    rng.Merge = true;
+                    rng.Style.HorizontalAlignment = EPPlus.Style.ExcelHorizontalAlignment.Center;
+                    rng.Style.VerticalAlignment = EPPlus.Style.ExcelVerticalAlignment.Center;
+                }
+
+                //ws.Cells.AutoFitColumns();
 
                 if (headerBold && saveHeaders)
                     ws.Row(1).Style.Font.Bold = true;
