@@ -16,6 +16,7 @@ namespace Stacker.ModClasses
         public double Quantity { get; set; }
         public string UnitType { get; set; }
         public string CategoryType { get; set; }
+        public string FamilyName { get; set; }
 
 
         public BldgResult()

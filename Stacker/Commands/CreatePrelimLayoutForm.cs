@@ -2777,6 +2777,7 @@ namespace Stacker.Commands
                                 result.ElementName = catName;
                                 result.Quantity = area;
                                 result.UnitType = "SF";
+                                result.FamilyName = "Filled Region";
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
@@ -2803,6 +2804,7 @@ namespace Stacker.Commands
                                 result.ElementName = catName;
                                 result.Quantity = area;
                                 result.UnitType = "SF";
+                                result.FamilyName = "Filled Region";
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
@@ -2830,6 +2832,7 @@ namespace Stacker.Commands
                                 result.ElementName = catName;
                                 result.Quantity = area;
                                 result.UnitType = "SF";
+                                result.FamilyName = "Filled Region";
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
@@ -2857,6 +2860,7 @@ namespace Stacker.Commands
                                 result.ElementName = catName;
                                 result.Quantity = area;
                                 result.UnitType = "SF";
+                                result.FamilyName = "Filled Region";
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
@@ -2864,6 +2868,93 @@ namespace Stacker.Commands
                             }
 
                         }
+
+
+                        string elementNameStudio = "Unit Count - Studio";
+                        BldgResult elemExistsStudio = BuildingResults.Where(elem1 => elem1.ElementName == elementNameStudio && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsStudio != null)
+                        {
+                            elemExistsStudio.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultStudio = new BldgResult();
+                            resultStudio.LevelName = currentLevelName;
+                            resultStudio.ElementName = "Unit Count - Studio";
+                            resultStudio.Quantity = studioCount;
+                            resultStudio.UnitType = "EA";
+                            resultStudio.FamilyName = "Custom";
+                            resultStudio.CategoryType = "AreaElements";
+                            BuildingResults.Add(resultStudio);
+                        }
+
+
+
+
+                        string elementNameOneBed = "Unit Count - One Bed";
+                        BldgResult elemExistsOneBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameOneBed && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsStudio != null)
+                        {
+                            elemExistsOneBed.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultOneBed = new BldgResult();
+                            resultOneBed.LevelName = currentLevelName;
+                            resultOneBed.ElementName = elementNameOneBed;
+                            resultOneBed.Quantity = oneBedCount;
+                            resultOneBed.UnitType = "EA";
+                            resultOneBed.FamilyName = "Custom";
+                            resultOneBed.CategoryType = "AreaElements";
+                            BuildingResults.Add(resultOneBed);
+                        }
+
+
+
+
+                        string elementNameTwoBed = "Unit Count - Two Bed";
+                        BldgResult elemExistsTwoBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameTwoBed && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsTwoBed != null)
+                        {
+                            elemExistsOneBed.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultTwoBed = new BldgResult();
+                            resultTwoBed.LevelName = currentLevelName;
+                            resultTwoBed.ElementName = elementNameTwoBed;
+                            resultTwoBed.Quantity = twoBedCount;
+                            resultTwoBed.UnitType = "EA";
+                            resultTwoBed.FamilyName = "Custom";
+                            resultTwoBed.CategoryType = "AreaElements";
+                            BuildingResults.Add(resultTwoBed);
+                        }
+
+
+
+                        string elementNameCore = "Unit Count - Two Bed";
+                        BldgResult elemExistsCore = BuildingResults.Where(elem1 => elem1.ElementName == elementNameCore && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsCore != null)
+                        {
+                            elemExistsCore.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultCore = new BldgResult();
+                            resultCore.LevelName = currentLevelName;
+                            resultCore.ElementName = elementNameCore;
+                            resultCore.Quantity = coreCount;
+                            resultCore.UnitType = "EA";
+                            resultCore.FamilyName = "Custom";
+                            resultCore.CategoryType = "AreaElements";
+                            BuildingResults.Add(resultCore);
+                        }
+
+
 
                     }
 
@@ -2879,8 +2970,25 @@ namespace Stacker.Commands
                         Element roomElem = _doc.GetElement(elemID) as Element;
                         string elementCatName = roomElem.Category.Name;
                         string elementName = roomElem.Name;
+                        FamilyInstance roomElemFamilyInstance = roomElem as FamilyInstance;
+                        FamilySymbol roomElemFamilySymbol = null;
+                        Family roomElemFamily = null;
+                        string roomElemFamilyName = "";
 
-                        string elementNameForRecording = $"{elementCatName}_{elementName}";
+                        if (roomElemFamilyInstance != null)
+                        {
+                            roomElemFamilySymbol = roomElemFamilyInstance.Symbol;
+                            if(roomElemFamilySymbol != null)
+                                roomElemFamily = roomElemFamilySymbol.Family;
+                        }
+
+                        if (roomElemFamily != null)
+                            roomElemFamilyName = roomElemFamily.Name;
+
+                        
+
+
+                        string elementNameForRecording = $"{elementCatName}_{elementName}_{roomElemFamilyName}";
 
                         var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -2896,6 +3004,7 @@ namespace Stacker.Commands
                             result.Quantity = 1;
                             result.UnitType = "EA";
                             result.CategoryType = "RoomElements";
+                            result.FamilyName = roomElemFamilyName;
 
                             BuildingResults.Add(result);
                         }
@@ -2924,6 +3033,7 @@ namespace Stacker.Commands
                                 result.Quantity = length;
                                 result.UnitType = "LF";
                                 result.CategoryType = "RoomElements";
+                                result.FamilyName = roomElemFamilyName;
 
                                 BuildingResults.Add(result);
                             }
@@ -2970,6 +3080,7 @@ namespace Stacker.Commands
                             result.ElementName = catName;
                             result.Quantity = area;
                             result.UnitType = "SF";
+                            result.FamilyName = "Floor";
                             result.CategoryType = "AreaElements";
 
                             BuildingResults.Add(result);
@@ -3012,6 +3123,7 @@ namespace Stacker.Commands
                             result.ElementName = catName;
                             result.Quantity = area;
                             result.UnitType = "SF";
+                            result.FamilyName = "Floor";
                             result.CategoryType = "AreaElements";
 
                             BuildingResults.Add(result);
@@ -3044,6 +3156,7 @@ namespace Stacker.Commands
             var column3 = new DataGridViewTextBoxColumn();
             var column4 = new DataGridViewTextBoxColumn();
             var column5 = new DataGridViewTextBoxColumn();
+            var column6 = new DataGridViewTextBoxColumn();
 
             column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             column1.HeaderText = "Revit Floor";
@@ -3075,11 +3188,15 @@ namespace Stacker.Commands
             column5.Name = "column5";
             column5.ReadOnly = true;
 
+            column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            column6.HeaderText = "Family";
+            column6.MinimumWidth = 6;
+            column6.Name = "column6";
+            column6.ReadOnly = true;
 
-            newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3, column4, column5 });
+            newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3, column4, column5, column6 });
 
             int n = 0;
-
             for (int i = 0; i <= floorCount; i++)
             {
                 string lvl = $"LVL_{i}";
@@ -3099,34 +3216,9 @@ namespace Stacker.Commands
                     newDGV.Rows[n].Cells[2].Value = elem.Quantity;
                     newDGV.Rows[n].Cells[3].Value = elem.UnitType;
                     newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
+                    newDGV.Rows[n].Cells[5].Value = elem.FamilyName;
                 }
 
-
-
-                //foreach (var flr in sortedAreaElements)
-                //{
-                //    if (!flr.Contains(lvl))
-                //        continue;
-
-                //    n = newDGV.Rows.Add();
-
-                //    newDGV.Rows[n].Cells[0].Value = "";
-                //    newDGV.Rows[n].Cells[1].Value = flr;
-                //    newDGV.Rows[n].Cells[2].Value = AreaElements[flr];
-                //}
-
-                ////n = 0;
-                //foreach (var flr in sortedAreaRoomElements)
-                //{
-                //    if (!flr.Contains(lvl))
-                //        continue;
-
-                //    n = newDGV.Rows.Add();
-
-                //    newDGV.Rows[n].Cells[0].Value = "";
-                //    newDGV.Rows[n].Cells[1].Value = flr;
-                //    newDGV.Rows[n].Cells[2].Value = RoomElements[flr];
-                //}
 
             }
 
