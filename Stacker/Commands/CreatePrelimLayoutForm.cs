@@ -2869,94 +2869,95 @@ namespace Stacker.Commands
 
                         }
 
-
-                        string elementNameStudio = "Unit Count - Studio";
-                        BldgResult elemExistsStudio = BuildingResults.Where(elem1 => elem1.ElementName == elementNameStudio && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExistsStudio != null)
-                        {
-                            elemExistsStudio.Quantity++;
-                        }
-                        else
-                        {
-                            BldgResult resultStudio = new BldgResult();
-                            resultStudio.LevelName = currentLevelName;
-                            resultStudio.ElementName = "Unit Count - Studio";
-                            resultStudio.Quantity = studioCount;
-                            resultStudio.UnitType = "EA";
-                            resultStudio.FamilyName = "Custom";
-                            resultStudio.CategoryType = "AreaElements";
-                            BuildingResults.Add(resultStudio);
-                        }
-
-
-
-
-                        string elementNameOneBed = "Unit Count - One Bed";
-                        BldgResult elemExistsOneBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameOneBed && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExistsStudio != null)
-                        {
-                            elemExistsOneBed.Quantity++;
-                        }
-                        else
-                        {
-                            BldgResult resultOneBed = new BldgResult();
-                            resultOneBed.LevelName = currentLevelName;
-                            resultOneBed.ElementName = elementNameOneBed;
-                            resultOneBed.Quantity = oneBedCount;
-                            resultOneBed.UnitType = "EA";
-                            resultOneBed.FamilyName = "Custom";
-                            resultOneBed.CategoryType = "AreaElements";
-                            BuildingResults.Add(resultOneBed);
-                        }
-
-
-
-
-                        string elementNameTwoBed = "Unit Count - Two Bed";
-                        BldgResult elemExistsTwoBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameTwoBed && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExistsTwoBed != null)
-                        {
-                            elemExistsOneBed.Quantity++;
-                        }
-                        else
-                        {
-                            BldgResult resultTwoBed = new BldgResult();
-                            resultTwoBed.LevelName = currentLevelName;
-                            resultTwoBed.ElementName = elementNameTwoBed;
-                            resultTwoBed.Quantity = twoBedCount;
-                            resultTwoBed.UnitType = "EA";
-                            resultTwoBed.FamilyName = "Custom";
-                            resultTwoBed.CategoryType = "AreaElements";
-                            BuildingResults.Add(resultTwoBed);
-                        }
-
-
-
-                        string elementNameCore = "Unit Count - Two Bed";
-                        BldgResult elemExistsCore = BuildingResults.Where(elem1 => elem1.ElementName == elementNameCore && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExistsCore != null)
-                        {
-                            elemExistsCore.Quantity++;
-                        }
-                        else
-                        {
-                            BldgResult resultCore = new BldgResult();
-                            resultCore.LevelName = currentLevelName;
-                            resultCore.ElementName = elementNameCore;
-                            resultCore.Quantity = coreCount;
-                            resultCore.UnitType = "EA";
-                            resultCore.FamilyName = "Custom";
-                            resultCore.CategoryType = "AreaElements";
-                            BuildingResults.Add(resultCore);
-                        }
-
-
-
                     }
+
+
+
+                    string elementNameStudio = "Unit Count - Studio";
+                    BldgResult elemExistsStudio = BuildingResults.Where(elem1 => elem1.ElementName == elementNameStudio && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                    if (elemExistsStudio != null)
+                    {
+                        elemExistsStudio.Quantity++;
+                    }
+                    else
+                    {
+                        BldgResult resultStudio = new BldgResult();
+                        resultStudio.LevelName = currentLevelName;
+                        resultStudio.ElementName = "Unit Count - Studio";
+                        resultStudio.Quantity = studioCount;
+                        resultStudio.UnitType = "EA";
+                        resultStudio.FamilyName = "Custom";
+                        resultStudio.CategoryType = "AreaElements";
+                        BuildingResults.Add(resultStudio);
+                    }
+
+
+
+
+                    string elementNameOneBed = "Unit Count - One Bed";
+                    BldgResult elemExistsOneBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameOneBed && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                    if (elemExistsStudio != null)
+                    {
+                        elemExistsOneBed.Quantity++;
+                    }
+                    else
+                    {
+                        BldgResult resultOneBed = new BldgResult();
+                        resultOneBed.LevelName = currentLevelName;
+                        resultOneBed.ElementName = elementNameOneBed;
+                        resultOneBed.Quantity = oneBedCount;
+                        resultOneBed.UnitType = "EA";
+                        resultOneBed.FamilyName = "Custom";
+                        resultOneBed.CategoryType = "AreaElements";
+                        BuildingResults.Add(resultOneBed);
+                    }
+
+
+
+
+                    string elementNameTwoBed = "Unit Count - Two Bed";
+                    BldgResult elemExistsTwoBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameTwoBed && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                    if (elemExistsTwoBed != null)
+                    {
+                        elemExistsOneBed.Quantity++;
+                    }
+                    else
+                    {
+                        BldgResult resultTwoBed = new BldgResult();
+                        resultTwoBed.LevelName = currentLevelName;
+                        resultTwoBed.ElementName = elementNameTwoBed;
+                        resultTwoBed.Quantity = twoBedCount;
+                        resultTwoBed.UnitType = "EA";
+                        resultTwoBed.FamilyName = "Custom";
+                        resultTwoBed.CategoryType = "AreaElements";
+                        BuildingResults.Add(resultTwoBed);
+                    }
+
+
+
+                    string elementNameCore = "Unit Count - Core";
+                    BldgResult elemExistsCore = BuildingResults.Where(elem1 => elem1.ElementName == elementNameCore && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                    if (elemExistsCore != null)
+                    {
+                        elemExistsCore.Quantity++;
+                    }
+                    else
+                    {
+                        BldgResult resultCore = new BldgResult();
+                        resultCore.LevelName = currentLevelName;
+                        resultCore.ElementName = elementNameCore;
+                        resultCore.Quantity = coreCount;
+                        resultCore.UnitType = "EA";
+                        resultCore.FamilyName = "Custom";
+                        resultCore.CategoryType = "AreaElements";
+                        BuildingResults.Add(resultCore);
+                    }
+
+
 
                 }
                 //
@@ -3147,7 +3148,31 @@ namespace Stacker.Commands
 
 
 
-            List<BldgResult> sortedElements = BuildingResults.OrderBy(x => x.ElementName).ToList();
+            List<BldgResult> sortedBldgResults = BuildingResults.OrderBy(x => x.ElementName).ToList();
+            List<BldgResult> totalBldgResults = new List<BldgResult>();
+
+            foreach(var bldg in sortedBldgResults)
+            {
+                BldgResult elemExists = totalBldgResults.Where(elem1 => elem1.ElementName == bldg.ElementName).FirstOrDefault();
+
+                if (elemExists != null)
+                {
+                    double oldQty = elemExists.Quantity;
+                    elemExists.Quantity = oldQty + bldg.Quantity;
+                }
+                else
+                {
+                    BldgResult result = new BldgResult();
+                    result.LevelName = "TOTAL";
+                    result.ElementName = bldg.ElementName;
+                    result.Quantity = bldg.Quantity;
+                    result.UnitType = bldg.UnitType;
+                    result.FamilyName = bldg.FamilyName;
+                    result.CategoryType = bldg.CategoryType;
+
+                    totalBldgResults.Add(result);
+                }
+            }
 
 
             DataGridView newDGV = new DataGridView();
@@ -3196,6 +3221,7 @@ namespace Stacker.Commands
 
             newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3, column4, column5, column6 });
 
+
             int n = 0;
             for (int i = 0; i <= floorCount; i++)
             {
@@ -3204,7 +3230,7 @@ namespace Stacker.Commands
                 n = newDGV.Rows.Add();
                 newDGV.Rows[n].Cells[0].Value = lvl;
 
-                foreach (BldgResult elem in sortedElements)
+                foreach (BldgResult elem in sortedBldgResults)
                 {
                     if (!elem.LevelName.Contains(lvl))
                         continue;
@@ -3218,11 +3244,33 @@ namespace Stacker.Commands
                     newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
                     newDGV.Rows[n].Cells[5].Value = elem.FamilyName;
                 }
-
-
             }
 
 
+            for (int j = 0; j <= 3; j++)
+            {
+                n = newDGV.Rows.Add();
+
+                newDGV.Rows[n].Cells[0].Value = "";
+                newDGV.Rows[n].Cells[1].Value = "";
+                newDGV.Rows[n].Cells[2].Value = "";
+                newDGV.Rows[n].Cells[3].Value = "";
+                newDGV.Rows[n].Cells[4].Value = "";
+                newDGV.Rows[n].Cells[5].Value = "";
+            }
+
+
+            foreach (BldgResult elem in totalBldgResults)
+            {
+                n = newDGV.Rows.Add();
+
+                newDGV.Rows[n].Cells[0].Value = "";
+                newDGV.Rows[n].Cells[1].Value = elem.ElementName;
+                newDGV.Rows[n].Cells[2].Value = elem.Quantity;
+                newDGV.Rows[n].Cells[3].Value = elem.UnitType;
+                newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
+                newDGV.Rows[n].Cells[5].Value = elem.FamilyName;
+            }
 
 
 
@@ -3350,12 +3398,14 @@ namespace Stacker.Commands
             buildingDataOutput.Columns.Add("   ", typeof(string));
             buildingDataOutput.Columns.Add("    ", typeof(string));
             buildingDataOutput.Columns.Add("     ", typeof(string));
+            buildingDataOutput.Columns.Add("      ", typeof(string));
 
 
 
             //Second excel row also kept empty
             buildingDataOutput.Rows.Add(
                 $"",
+                "",
                 "",
                 "",
                 "",
@@ -3367,7 +3417,8 @@ namespace Stacker.Commands
                 "Element Name",
                 "Element Quantity",
                 "Units",
-                "Category");
+                "Category",
+                "Family Type");
 
 
             //Add building data in 4th row
@@ -3378,6 +3429,7 @@ namespace Stacker.Commands
                 var col2 = row.Cells[2].Value == null ? "" : row.Cells[2].Value;
                 var col3 = row.Cells[3].Value == null ? "" : row.Cells[3].Value;
                 var col4 = row.Cells[4].Value == null ? "" : row.Cells[4].Value;
+                var col5 = row.Cells[5].Value == null ? "" : row.Cells[5].Value;
 
 
                 buildingDataOutput.Rows.Add(
@@ -3385,7 +3437,8 @@ namespace Stacker.Commands
                     col1,
                     col2,
                     col3,
-                    col4);
+                    col4,
+                    col5);
 
             }
 
