@@ -3060,11 +3060,13 @@ namespace Stacker.Commands
 
                         Parameter parComments = floorElement.LookupParameter("Comments");
                         Parameter parArea = floorElement.LookupParameter("Area");
+                        Parameter parPerimeter = floorElement.LookupParameter("Perimeter");
 
                         string comment = parComments.AsString();
                         double area = parArea.AsDouble();
+                        double perimeter = parPerimeter.AsDouble();
 
-                        string catName = $"Floor - Overall Extents";
+                        string catName = $"Floor - TOTAL";
 
                         BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -3072,20 +3074,42 @@ namespace Stacker.Commands
                         {
                             double oldArea = elemExists.Quantity;
                             elemExists.Quantity = oldArea + area;
-                            coreCount++;
                         }
                         else
                         {
                             BldgResult result = new BldgResult();
                             result.LevelName = currentLevelName;
-                            result.ElementName = catName;
+                            result.ElementName = catName + " AREA";
                             result.Quantity = area;
                             result.UnitType = "SF";
                             result.FamilyName = "Floor";
                             result.CategoryType = "AreaElements";
 
                             BuildingResults.Add(result);
-                            coreCount++;
+
+
+
+                            BldgResult resultPerimeter = new BldgResult();
+                            resultPerimeter.LevelName = currentLevelName;
+                            resultPerimeter.ElementName = catName + " PERIMETER";
+                            resultPerimeter.Quantity = perimeter;
+                            resultPerimeter.UnitType = "LF";
+                            resultPerimeter.FamilyName = "Floor";
+                            resultPerimeter.CategoryType = "AreaElements";
+
+                            BuildingResults.Add(resultPerimeter);
+
+
+
+                            BldgResult resultFacadeSurface = new BldgResult();
+                            resultFacadeSurface.LevelName = currentLevelName;
+                            resultFacadeSurface.ElementName = catName + " FACADE SURFACE AREA";
+                            resultFacadeSurface.Quantity = perimeter * TypFloorHeight;
+                            resultFacadeSurface.UnitType = "SF";
+                            resultFacadeSurface.FamilyName = "Floor";
+                            resultFacadeSurface.CategoryType = "AreaElements";
+
+                            BuildingResults.Add(resultFacadeSurface);
                         }
 
 
@@ -3115,7 +3139,6 @@ namespace Stacker.Commands
                         {
                             double oldArea = elemExists.Quantity;
                             elemExists.Quantity = oldArea + area;
-                            coreCount++;
                         }
                         else
                         {
@@ -3128,7 +3151,6 @@ namespace Stacker.Commands
                             result.CategoryType = "AreaElements";
 
                             BuildingResults.Add(result);
-                            coreCount++;
                         }
                     }
 
@@ -3228,7 +3250,7 @@ namespace Stacker.Commands
                 string lvl = $"LVL_{i}";
 
                 n = newDGV.Rows.Add();
-                newDGV.Rows[n].Cells[0].Value = lvl;
+                newDGV.Rows[n].Cells[0].Value = $"-----{lvl}-----";
 
                 foreach (BldgResult elem in sortedBldgResults)
                 {
@@ -3237,7 +3259,7 @@ namespace Stacker.Commands
 
                     n = newDGV.Rows.Add();
 
-                    newDGV.Rows[n].Cells[0].Value = "";
+                    newDGV.Rows[n].Cells[0].Value = lvl;
                     newDGV.Rows[n].Cells[1].Value = elem.ElementName;
                     newDGV.Rows[n].Cells[2].Value = elem.Quantity;
                     newDGV.Rows[n].Cells[3].Value = elem.UnitType;
@@ -3247,18 +3269,15 @@ namespace Stacker.Commands
             }
 
 
-            for (int j = 0; j <= 3; j++)
+            for (int j = 0; j <= 1; j++)
             {
                 n = newDGV.Rows.Add();
 
                 newDGV.Rows[n].Cells[0].Value = "";
-                newDGV.Rows[n].Cells[1].Value = "";
-                newDGV.Rows[n].Cells[2].Value = "";
-                newDGV.Rows[n].Cells[3].Value = "";
-                newDGV.Rows[n].Cells[4].Value = "";
-                newDGV.Rows[n].Cells[5].Value = "";
             }
 
+            n = newDGV.Rows.Add();
+            newDGV.Rows[n].Cells[0].Value = "-----TOTAL VALUES------";
 
             foreach (BldgResult elem in totalBldgResults)
             {
@@ -3355,6 +3374,9 @@ namespace Stacker.Commands
                     rng.AutoFitColumns();
 
                 using (var rng = ws.Cells["E1:E100"])
+                    rng.AutoFitColumns();
+
+                using (var rng = ws.Cells["F1:F100"])
                     rng.AutoFitColumns();
 
                 using (var rng = ws.Cells["A3:F3"])
