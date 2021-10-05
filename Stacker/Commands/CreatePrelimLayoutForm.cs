@@ -2730,7 +2730,7 @@ namespace Stacker.Commands
             int studioCount = 0;
             int oneBedCount = 0;
             int twoBedCount = 0;
-
+            int coreCount = 0;
             //
             //Loop through all elements and itemize for Excel export
             //
@@ -2739,6 +2739,7 @@ namespace Stacker.Commands
                 string elemCategoryName = elem.Key;
                 List<ElementId> elemIDs = elem.Value;
                 string currentLevelName = $"LVL_{floorCount}";
+
 
                 //
                 //If elements are Mod Regions
@@ -2755,11 +2756,11 @@ namespace Stacker.Commands
 
                         string comment = parComments.AsString();
                         double area = parArea.AsDouble();
-                        
+
 
                         if (comment.Contains("MOD_3"))
                         {
-                            string catName = $"Units - Two Bed";
+                            string catName = $"Floor - Two Bed";
 
                             BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -2785,7 +2786,7 @@ namespace Stacker.Commands
                         }
                         else if (comment.Contains("MOD_2"))
                         {
-                            string catName = $"Units - One Bed";
+                            string catName = $"Floor - One Bed";
 
                             BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -2793,6 +2794,7 @@ namespace Stacker.Commands
                             {
                                 double oldArea = elemExists.Quantity;
                                 elemExists.Quantity = oldArea + area;
+                                oneBedCount++;
                             }
                             else
                             {
@@ -2804,12 +2806,14 @@ namespace Stacker.Commands
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
+                                oneBedCount++;
+
                             }
 
                         }
                         else if (comment.Contains("MOD_1"))
                         {
-                            string catName = $"Units - Studio";
+                            string catName = $"Floor - Studio";
 
                             BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -2817,6 +2821,7 @@ namespace Stacker.Commands
                             {
                                 double oldArea = elemExists.Quantity;
                                 elemExists.Quantity = oldArea + area;
+                                studioCount++;
                             }
                             else
                             {
@@ -2828,13 +2833,14 @@ namespace Stacker.Commands
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
+                                studioCount++;
                             }
 
 
                         }
                         else if (comment.Contains("CORE"))
                         {
-                            string catName = $"Units - Core";
+                            string catName = $"Floor - Core";
 
                             BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -2842,6 +2848,7 @@ namespace Stacker.Commands
                             {
                                 double oldArea = elemExists.Quantity;
                                 elemExists.Quantity = oldArea + area;
+                                coreCount++;
                             }
                             else
                             {
@@ -2853,6 +2860,7 @@ namespace Stacker.Commands
                                 result.CategoryType = "AreaElements";
 
                                 BuildingResults.Add(result);
+                                coreCount++;
                             }
 
                         }
@@ -2929,10 +2937,97 @@ namespace Stacker.Commands
 
 
                 }
-                else if(elemCategoryName.Contains("Hallway Elements"))
+                else if (elemCategoryName.Contains("Floor"))
                 {
-                    floorCount++;
+
+                    foreach (ElementId elemID in elemIDs)
+                    {
+                        Floor floorElement = _doc.GetElement(elemID) as Floor;
+
+                        if (floorElement == null)
+                            continue;
+
+                        Parameter parComments = floorElement.LookupParameter("Comments");
+                        Parameter parArea = floorElement.LookupParameter("Area");
+
+                        string comment = parComments.AsString();
+                        double area = parArea.AsDouble();
+
+                        string catName = $"Floor - Overall Extents";
+
+                        BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExists != null)
+                        {
+                            double oldArea = elemExists.Quantity;
+                            elemExists.Quantity = oldArea + area;
+                            coreCount++;
+                        }
+                        else
+                        {
+                            BldgResult result = new BldgResult();
+                            result.LevelName = currentLevelName;
+                            result.ElementName = catName;
+                            result.Quantity = area;
+                            result.UnitType = "SF";
+                            result.CategoryType = "AreaElements";
+
+                            BuildingResults.Add(result);
+                            coreCount++;
+                        }
+
+
+                    }
                 }
+                else if (elemCategoryName.Contains("Hallway Elements"))
+                {
+
+                    foreach (ElementId elemID in elemIDs)
+                    {
+                        Floor floorElement = _doc.GetElement(elemID) as Floor;
+
+                        if (floorElement == null)
+                            continue;
+
+                        Parameter parComments = floorElement.LookupParameter("Comments");
+                        Parameter parArea = floorElement.LookupParameter("Area");
+
+                        string comment = parComments.AsString();
+                        double area = parArea.AsDouble();
+
+                        string catName = $"Floor - Hallway";
+
+                        BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExists != null)
+                        {
+                            double oldArea = elemExists.Quantity;
+                            elemExists.Quantity = oldArea + area;
+                            coreCount++;
+                        }
+                        else
+                        {
+                            BldgResult result = new BldgResult();
+                            result.LevelName = currentLevelName;
+                            result.ElementName = catName;
+                            result.Quantity = area;
+                            result.UnitType = "SF";
+                            result.CategoryType = "AreaElements";
+
+                            BuildingResults.Add(result);
+                            coreCount++;
+                        }
+                    }
+
+
+                    floorCount++;
+
+                    studioCount = 0;
+                    oneBedCount = 0;
+                    twoBedCount = 0;
+                    coreCount = 0;
+                }
+                
 
 
             }
@@ -2994,7 +3089,7 @@ namespace Stacker.Commands
 
                 foreach (BldgResult elem in sortedElements)
                 {
-                    if (!elem.ElementName.Contains(lvl))
+                    if (!elem.LevelName.Contains(lvl))
                         continue;
 
                     n = newDGV.Rows.Add();
