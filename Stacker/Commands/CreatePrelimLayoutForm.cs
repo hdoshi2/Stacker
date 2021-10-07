@@ -3364,19 +3364,22 @@ namespace Stacker.Commands
                 ws.Cells["A1"].LoadFromDataTable(inputData, saveHeaders);
 
 
-                using (var rng = ws.Cells["B1:B100"])
+                using (var rng = ws.Cells["B1:B3000"])
                     rng.AutoFitColumns();
 
-                using (var rng = ws.Cells["C1:C100"])
+                using (var rng = ws.Cells["C1:C3000"])
+                {
+                    rng.AutoFitColumns();
+                    rng.Style.Numberformat.Format = "0.00";
+                }
+
+                using (var rng = ws.Cells["D1:D3000"])
                     rng.AutoFitColumns();
 
-                using (var rng = ws.Cells["D1:D100"])
+                using (var rng = ws.Cells["E1:E3000"])
                     rng.AutoFitColumns();
 
-                using (var rng = ws.Cells["E1:E100"])
-                    rng.AutoFitColumns();
-
-                using (var rng = ws.Cells["F1:F100"])
+                using (var rng = ws.Cells["F1:F3000"])
                     rng.AutoFitColumns();
 
                 using (var rng = ws.Cells["A3:F3"])
