@@ -3067,6 +3067,8 @@ namespace Stacker.Commands
                         double perimeter = parPerimeter.AsDouble();
 
                         string catName = $"Floor - TOTAL";
+                        if(floorCount == TotalFloors - 1)
+                            catName = $"Floor - Roof - TOTAL";
 
                         BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
 
@@ -3167,9 +3169,58 @@ namespace Stacker.Commands
 
             }
 
+            List<BldgResult> categoryTotals = new List<BldgResult>(); ;
 
+            foreach (var bldg in BuildingResults)
+            {
+                if (bldg.ElementName.Contains("Windows"))
+                {
+                    BldgResult elemExistsWin = categoryTotals.Where(elem1 => elem1.ElementName == "Windows_ALL").FirstOrDefault();
 
+                    if (elemExistsWin != null)
+                    {
+                        double oldQty = elemExistsWin.Quantity;
+                        elemExistsWin.Quantity = oldQty + bldg.Quantity;
+                    }
+                    else
+                    {
+                        BldgResult resultWinAll = new BldgResult();
+                        resultWinAll.LevelName = "TOTAL";
+                        resultWinAll.ElementName = "Windows-ALL";
+                        resultWinAll.Quantity = bldg.Quantity;
+                        resultWinAll.UnitType = bldg.UnitType;
+                        resultWinAll.FamilyName = bldg.FamilyName;
+                        resultWinAll.CategoryType = bldg.CategoryType;
 
+                        categoryTotals.Add(resultWinAll);
+                    }
+                }
+                else if (bldg.ElementName.Contains("Doors"))
+                {
+                    BldgResult elemExistsDoor = categoryTotals.Where(elem1 => elem1.ElementName == "Doors_ALL").FirstOrDefault();
+
+                    if (elemExistsDoor != null)
+                    {
+                        double oldQty = elemExistsDoor.Quantity;
+                        elemExistsDoor.Quantity = oldQty + bldg.Quantity;
+                    }
+                    else
+                    {
+                        BldgResult resultWinAll = new BldgResult();
+                        resultWinAll.LevelName = "TOTAL";
+                        resultWinAll.ElementName = "Doors-ALL";
+                        resultWinAll.Quantity = bldg.Quantity;
+                        resultWinAll.UnitType = bldg.UnitType;
+                        resultWinAll.FamilyName = bldg.FamilyName;
+                        resultWinAll.CategoryType = bldg.CategoryType;
+
+                        categoryTotals.Add(resultWinAll);
+                    }
+
+                }
+            }
+
+            BuildingResults.AddRange(categoryTotals);
             List<BldgResult> sortedBldgResults = BuildingResults.OrderBy(x => x.ElementName).ToList();
             List<BldgResult> totalBldgResults = new List<BldgResult>();
 
@@ -3362,24 +3413,38 @@ namespace Stacker.Commands
             {
                 EPPlus.ExcelWorksheet ws = pck.Workbook.Worksheets.Add(worksheetName);
                 ws.Cells["A1"].LoadFromDataTable(inputData, saveHeaders);
+                int totalRows = inputData.Rows.Count + 50;
 
-
-                using (var rng = ws.Cells["B1:B3000"])
+                using (var rng = ws.Cells[$"B1:B{totalRows}"])
+                {
                     rng.AutoFitColumns();
 
-                using (var rng = ws.Cells["C1:C3000"])
+                    foreach (var r in rng)
+                    {
+                        if (r.Value != null)
+                        {
+                            var str = r.Value as string;
+                            if (str != null && str.Contains("-ALL"))
+                                r.Style.HorizontalAlignment = EPPlus.Style.ExcelHorizontalAlignment.Right;
+                        }
+                    }
+                }
+
+
+                using (var rng = ws.Cells[$"C1:C{totalRows}"])
                 {
                     rng.AutoFitColumns();
                     rng.Style.Numberformat.Format = "0.00";
                 }
 
-                using (var rng = ws.Cells["D1:D3000"])
+
+                using (var rng = ws.Cells[$"D1:D{totalRows}"])
                     rng.AutoFitColumns();
 
-                using (var rng = ws.Cells["E1:E3000"])
+                using (var rng = ws.Cells[$"E1:E{totalRows}"])
                     rng.AutoFitColumns();
 
-                using (var rng = ws.Cells["F1:F3000"])
+                using (var rng = ws.Cells[$"F1:F{totalRows}"])
                     rng.AutoFitColumns();
 
                 using (var rng = ws.Cells["A3:F3"])
