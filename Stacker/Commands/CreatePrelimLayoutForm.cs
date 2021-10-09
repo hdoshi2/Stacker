@@ -3037,6 +3037,29 @@ namespace Stacker.Commands
                                 result.FamilyName = roomElemFamilyName;
 
                                 BuildingResults.Add(result);
+
+                            }
+
+
+
+                            var elemExistsWallTotal = BuildingResults.Where(elem1 => elem1.ElementName.Contains(elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)") && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                            if (elemExistsWallTotal != null)
+                            {
+                                double oldLength = elemExistsWallTotal.Quantity;
+                                elemExistsWallTotal.Quantity = oldLength + (length * TypFloorHeight * 2);
+                            }
+                            else
+                            {
+                                BldgResult resultFacadeSurface = new BldgResult();
+                                resultFacadeSurface.LevelName = currentLevelName;
+                                resultFacadeSurface.ElementName = elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)";
+                                resultFacadeSurface.Quantity = length * TypFloorHeight * 2;
+                                resultFacadeSurface.UnitType = "SF";
+                                resultFacadeSurface.FamilyName = "Floor";
+                                resultFacadeSurface.CategoryType = "AreaElements";
+
+                                BuildingResults.Add(resultFacadeSurface);
                             }
 
 
@@ -3218,6 +3241,29 @@ namespace Stacker.Commands
                     }
 
                 }
+                else if (bldg.ElementName.Contains("Unit Count") && !bldg.ElementName.Contains("Core"))
+                {
+                    BldgResult elemExistsUnits = categoryTotals.Where(elem1 => elem1.ElementName == "Doors_ALL").FirstOrDefault();
+
+                    if (elemExistsUnits != null)
+                    {
+                        double oldQty = elemExistsUnits.Quantity;
+                        elemExistsUnits.Quantity = oldQty + bldg.Quantity;
+                    }
+                    else
+                    {
+                        BldgResult resultWinAll = new BldgResult();
+                        resultWinAll.LevelName = "TOTAL";
+                        resultWinAll.ElementName = "Units-ALL";
+                        resultWinAll.Quantity = bldg.Quantity;
+                        resultWinAll.UnitType = bldg.UnitType;
+                        resultWinAll.FamilyName = bldg.FamilyName;
+                        resultWinAll.CategoryType = bldg.CategoryType;
+
+                        categoryTotals.Add(resultWinAll);
+                    }
+
+                }
             }
 
             BuildingResults.AddRange(categoryTotals);
@@ -3273,6 +3319,7 @@ namespace Stacker.Commands
             column3.MinimumWidth = 6;
             column3.Name = "Column3";
             column3.ReadOnly = true;
+            column3.DefaultCellStyle.Format = "N2";
 
             column4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             column4.HeaderText = "Unit";
@@ -3392,6 +3439,31 @@ namespace Stacker.Commands
 
 
 
+        private static double GetInt(object value)
+        {
+            if (value == null)
+            {
+                return 0;
+            }
+            else if (value is double)
+            {
+                var dblValue = Convert.ToDouble(value);
+                var rounded = Math.Round(dblValue, 2);
+                return rounded;
+            }
+            else if (value is string)
+            {
+                var dblValue = 0.0;
+                Double.TryParse((string)value, out dblValue);
+                var rounded = Math.Round(dblValue, 2);
+
+                return rounded;
+            }
+
+            return 0;
+
+        }
+
 
         /// <summary>
         /// Save a Datatable to an excel file
@@ -3435,6 +3507,13 @@ namespace Stacker.Commands
                 {
                     rng.AutoFitColumns();
                     rng.Style.Numberformat.Format = "0.00";
+
+                    foreach(var r in rng)
+                    {
+                        var val = GetInt(r.Value);
+                        if(val != 0)
+                            r.Value = val;
+                    }
                 }
 
 
