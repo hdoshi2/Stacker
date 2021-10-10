@@ -2720,6 +2720,9 @@ namespace Stacker.Commands
         List<BldgResult> BuildingResults;
 
 
+
+
+
         private void btnExportData_Click(object sender, EventArgs e)
         {
 
@@ -2773,15 +2776,11 @@ namespace Stacker.Commands
                             else
                             {
                                 BldgResult result = new BldgResult();
-                                result.LevelName = currentLevelName;
-                                result.ElementName = catName;
-                                result.Quantity = area;
-                                result.UnitType = "SF";
-                                result.FamilyName = "Filled Region";
-                                result.CategoryType = "AreaElements";
+                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
 
                                 BuildingResults.Add(result);
                                 twoBedCount++;
+
                             }
 
                         }
@@ -2800,12 +2799,7 @@ namespace Stacker.Commands
                             else
                             {
                                 BldgResult result = new BldgResult();
-                                result.LevelName = currentLevelName;
-                                result.ElementName = catName;
-                                result.Quantity = area;
-                                result.UnitType = "SF";
-                                result.FamilyName = "Filled Region";
-                                result.CategoryType = "AreaElements";
+                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
 
                                 BuildingResults.Add(result);
                                 oneBedCount++;
@@ -2828,12 +2822,7 @@ namespace Stacker.Commands
                             else
                             {
                                 BldgResult result = new BldgResult();
-                                result.LevelName = currentLevelName;
-                                result.ElementName = catName;
-                                result.Quantity = area;
-                                result.UnitType = "SF";
-                                result.FamilyName = "Filled Region";
-                                result.CategoryType = "AreaElements";
+                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
 
                                 BuildingResults.Add(result);
                                 studioCount++;
@@ -2856,12 +2845,7 @@ namespace Stacker.Commands
                             else
                             {
                                 BldgResult result = new BldgResult();
-                                result.LevelName = currentLevelName;
-                                result.ElementName = catName;
-                                result.Quantity = area;
-                                result.UnitType = "SF";
-                                result.FamilyName = "Filled Region";
-                                result.CategoryType = "AreaElements";
+                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
 
                                 BuildingResults.Add(result);
                                 coreCount++;
@@ -2883,16 +2867,10 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultStudio = new BldgResult();
-                        resultStudio.LevelName = currentLevelName;
-                        resultStudio.ElementName = "Unit Count - Studio";
-                        resultStudio.Quantity = studioCount;
-                        resultStudio.UnitType = "EA";
-                        resultStudio.FamilyName = "Custom";
-                        resultStudio.CategoryType = "AreaElements";
+                        resultStudio.CreateBldgResult(currentLevelName, elementNameStudio, studioCount, "EA", "Custom", "AreaElements");
+
                         BuildingResults.Add(resultStudio);
                     }
-
-
 
 
                     string elementNameOneBed = "Unit Count - One Bed";
@@ -2905,12 +2883,8 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultOneBed = new BldgResult();
-                        resultOneBed.LevelName = currentLevelName;
-                        resultOneBed.ElementName = elementNameOneBed;
-                        resultOneBed.Quantity = oneBedCount;
-                        resultOneBed.UnitType = "EA";
-                        resultOneBed.FamilyName = "Custom";
-                        resultOneBed.CategoryType = "AreaElements";
+                        resultOneBed.CreateBldgResult(currentLevelName, elementNameOneBed, oneBedCount, "EA", "Custom", "AreaElements");
+
                         BuildingResults.Add(resultOneBed);
                     }
 
@@ -2927,12 +2901,8 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultTwoBed = new BldgResult();
-                        resultTwoBed.LevelName = currentLevelName;
-                        resultTwoBed.ElementName = elementNameTwoBed;
-                        resultTwoBed.Quantity = twoBedCount;
-                        resultTwoBed.UnitType = "EA";
-                        resultTwoBed.FamilyName = "Custom";
-                        resultTwoBed.CategoryType = "AreaElements";
+                        resultTwoBed.CreateBldgResult(currentLevelName, elementNameTwoBed, twoBedCount, "EA", "Custom", "AreaElements");
+
                         BuildingResults.Add(resultTwoBed);
                     }
 
@@ -2948,12 +2918,8 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultCore = new BldgResult();
-                        resultCore.LevelName = currentLevelName;
-                        resultCore.ElementName = elementNameCore;
-                        resultCore.Quantity = coreCount;
-                        resultCore.UnitType = "EA";
-                        resultCore.FamilyName = "Custom";
-                        resultCore.CategoryType = "AreaElements";
+                        resultCore.CreateBldgResult(currentLevelName, elementNameCore, twoBedCount, "EA", "Custom", "AreaElements");
+
                         BuildingResults.Add(resultCore);
                     }
 
@@ -3000,12 +2966,7 @@ namespace Stacker.Commands
                         else
                         {
                             BldgResult result = new BldgResult();
-                            result.LevelName = currentLevelName;
-                            result.ElementName = elementNameForRecording;
-                            result.Quantity = 1;
-                            result.UnitType = "EA";
-                            result.CategoryType = "RoomElements";
-                            result.FamilyName = roomElemFamilyName;
+                            result.CreateBldgResult(currentLevelName, elementNameForRecording, 1, "EA", "RoomElements", roomElemFamilyName);
 
                             BuildingResults.Add(result);
                         }
@@ -3029,12 +2990,7 @@ namespace Stacker.Commands
                             else
                             {
                                 BldgResult result = new BldgResult();
-                                result.LevelName = currentLevelName;
-                                result.ElementName = elementNameForRecording;
-                                result.Quantity = length;
-                                result.UnitType = "LF";
-                                result.CategoryType = "RoomElements";
-                                result.FamilyName = roomElemFamilyName;
+                                result.CreateBldgResult(currentLevelName, elementNameForRecording, length, "LF", "RoomElements", roomElemFamilyName);
 
                                 BuildingResults.Add(result);
 
@@ -3052,12 +3008,9 @@ namespace Stacker.Commands
                             else
                             {
                                 BldgResult resultFacadeSurface = new BldgResult();
-                                resultFacadeSurface.LevelName = currentLevelName;
-                                resultFacadeSurface.ElementName = elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)";
-                                resultFacadeSurface.Quantity = length * TypFloorHeight * 2;
-                                resultFacadeSurface.UnitType = "SF";
-                                resultFacadeSurface.FamilyName = "Floor";
-                                resultFacadeSurface.CategoryType = "AreaElements";
+                                var elementNameWallSF = elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)";
+                                var quantityWallSF = length * TypFloorHeight * 2;
+                                resultFacadeSurface.CreateBldgResult(currentLevelName, elementNameWallSF, quantityWallSF, "SF", "Floor", "AreaElements");
 
                                 BuildingResults.Add(resultFacadeSurface);
                             }
@@ -3103,36 +3056,21 @@ namespace Stacker.Commands
                         else
                         {
                             BldgResult result = new BldgResult();
-                            result.LevelName = currentLevelName;
-                            result.ElementName = catName + " AREA";
-                            result.Quantity = area;
-                            result.UnitType = "SF";
-                            result.FamilyName = "Floor";
-                            result.CategoryType = "AreaElements";
+                            result.CreateBldgResult(currentLevelName, catName + " AREA", area, "SF", "Floor", "AreaElements");
 
                             BuildingResults.Add(result);
 
 
 
                             BldgResult resultPerimeter = new BldgResult();
-                            resultPerimeter.LevelName = currentLevelName;
-                            resultPerimeter.ElementName = catName + " PERIMETER";
-                            resultPerimeter.Quantity = perimeter;
-                            resultPerimeter.UnitType = "LF";
-                            resultPerimeter.FamilyName = "Floor";
-                            resultPerimeter.CategoryType = "AreaElements";
+                            resultPerimeter.CreateBldgResult(currentLevelName, catName + " PERIMETER", perimeter, "LF", "Floor", "AreaElements");
 
                             BuildingResults.Add(resultPerimeter);
 
 
 
                             BldgResult resultFacadeSurface = new BldgResult();
-                            resultFacadeSurface.LevelName = currentLevelName;
-                            resultFacadeSurface.ElementName = catName + " FACADE SURFACE AREA";
-                            resultFacadeSurface.Quantity = perimeter * TypFloorHeight;
-                            resultFacadeSurface.UnitType = "SF";
-                            resultFacadeSurface.FamilyName = "Floor";
-                            resultFacadeSurface.CategoryType = "AreaElements";
+                            resultFacadeSurface.CreateBldgResult(currentLevelName, catName + " FACADE SURFACE AREA", perimeter * TypFloorHeight, "SF", "Floor", "AreaElements");
 
                             BuildingResults.Add(resultFacadeSurface);
                         }
@@ -3168,12 +3106,7 @@ namespace Stacker.Commands
                         else
                         {
                             BldgResult result = new BldgResult();
-                            result.LevelName = currentLevelName;
-                            result.ElementName = catName;
-                            result.Quantity = area;
-                            result.UnitType = "SF";
-                            result.FamilyName = "Floor";
-                            result.CategoryType = "AreaElements";
+                            result.CreateBldgResult(currentLevelName, catName, area, "SF", "Floor", "AreaElements");
 
                             BuildingResults.Add(result);
                         }
@@ -3192,13 +3125,20 @@ namespace Stacker.Commands
 
             }
 
+
+
+
+            //
+            //Caclulate Totals
+            //
+
             List<BldgResult> categoryTotals = new List<BldgResult>(); ;
 
             foreach (var bldg in BuildingResults)
             {
                 if (bldg.ElementName.Contains("Windows"))
                 {
-                    BldgResult elemExistsWin = categoryTotals.Where(elem1 => elem1.ElementName == "Windows_ALL").FirstOrDefault();
+                    BldgResult elemExistsWin = categoryTotals.Where(elem1 => elem1.ElementName == "Windows-ALL").FirstOrDefault();
 
                     if (elemExistsWin != null)
                     {
@@ -3208,19 +3148,14 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultWinAll = new BldgResult();
-                        resultWinAll.LevelName = "TOTAL";
-                        resultWinAll.ElementName = "Windows-ALL";
-                        resultWinAll.Quantity = bldg.Quantity;
-                        resultWinAll.UnitType = bldg.UnitType;
-                        resultWinAll.FamilyName = bldg.FamilyName;
-                        resultWinAll.CategoryType = bldg.CategoryType;
+                        resultWinAll.CreateBldgResult("TOTAL", "Windows-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
                         categoryTotals.Add(resultWinAll);
                     }
                 }
                 else if (bldg.ElementName.Contains("Doors"))
                 {
-                    BldgResult elemExistsDoor = categoryTotals.Where(elem1 => elem1.ElementName == "Doors_ALL").FirstOrDefault();
+                    BldgResult elemExistsDoor = categoryTotals.Where(elem1 => elem1.ElementName == "Doors-ALL").FirstOrDefault();
 
                     if (elemExistsDoor != null)
                     {
@@ -3230,12 +3165,7 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultWinAll = new BldgResult();
-                        resultWinAll.LevelName = "TOTAL";
-                        resultWinAll.ElementName = "Doors-ALL";
-                        resultWinAll.Quantity = bldg.Quantity;
-                        resultWinAll.UnitType = bldg.UnitType;
-                        resultWinAll.FamilyName = bldg.FamilyName;
-                        resultWinAll.CategoryType = bldg.CategoryType;
+                        resultWinAll.CreateBldgResult("TOTAL", "Doors-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
                         categoryTotals.Add(resultWinAll);
                     }
@@ -3243,7 +3173,7 @@ namespace Stacker.Commands
                 }
                 else if (bldg.ElementName.Contains("Unit Count") && !bldg.ElementName.Contains("Core"))
                 {
-                    BldgResult elemExistsUnits = categoryTotals.Where(elem1 => elem1.ElementName == "Doors_ALL").FirstOrDefault();
+                    BldgResult elemExistsUnits = categoryTotals.Where(elem1 => elem1.ElementName == "Units-ALL").FirstOrDefault();
 
                     if (elemExistsUnits != null)
                     {
@@ -3253,12 +3183,7 @@ namespace Stacker.Commands
                     else
                     {
                         BldgResult resultWinAll = new BldgResult();
-                        resultWinAll.LevelName = "TOTAL";
-                        resultWinAll.ElementName = "Units-ALL";
-                        resultWinAll.Quantity = bldg.Quantity;
-                        resultWinAll.UnitType = bldg.UnitType;
-                        resultWinAll.FamilyName = bldg.FamilyName;
-                        resultWinAll.CategoryType = bldg.CategoryType;
+                        resultWinAll.CreateBldgResult("TOTAL", "Units-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
                         categoryTotals.Add(resultWinAll);
                     }
@@ -3272,7 +3197,7 @@ namespace Stacker.Commands
 
             foreach(var bldg in sortedBldgResults)
             {
-                BldgResult elemExists = totalBldgResults.Where(elem1 => elem1.ElementName == bldg.ElementName).FirstOrDefault();
+                BldgResult elemExists = totalBldgResults.Where(elem1 => elem1.ElementName == "TOTAL_" + bldg.ElementName).FirstOrDefault();
 
                 if (elemExists != null)
                 {
@@ -3282,12 +3207,7 @@ namespace Stacker.Commands
                 else
                 {
                     BldgResult result = new BldgResult();
-                    result.LevelName = "TOTAL";
-                    result.ElementName = bldg.ElementName;
-                    result.Quantity = bldg.Quantity;
-                    result.UnitType = bldg.UnitType;
-                    result.FamilyName = bldg.FamilyName;
-                    result.CategoryType = bldg.CategoryType;
+                    result.CreateBldgResult("TOTAL", "TOTAL_" + bldg.ElementName, bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
                     totalBldgResults.Add(result);
                 }
@@ -3439,7 +3359,13 @@ namespace Stacker.Commands
 
 
 
-        private static double GetInt(object value)
+        /// <summary>
+        /// Convert object value to double and converts to specificed decimat numbers. 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="round"></param>
+        /// <returns></returns>
+        private static double getDouble(object value, int round = 2)
         {
             if (value == null)
             {
@@ -3448,14 +3374,14 @@ namespace Stacker.Commands
             else if (value is double)
             {
                 var dblValue = Convert.ToDouble(value);
-                var rounded = Math.Round(dblValue, 2);
+                var rounded = Math.Round(dblValue, round);
                 return rounded;
             }
             else if (value is string)
             {
                 var dblValue = 0.0;
                 Double.TryParse((string)value, out dblValue);
-                var rounded = Math.Round(dblValue, 2);
+                var rounded = Math.Round(dblValue, round);
 
                 return rounded;
             }
@@ -3466,7 +3392,7 @@ namespace Stacker.Commands
 
 
         /// <summary>
-        /// Save a Datatable to an excel file
+        /// Save a Datatable to an excel file. Set Excel sheet style. 
         /// </summary>
         /// <param name="inputData">Datatable to save</param>
         /// <param name="saveHeaders">Save headers in top row?</param>
@@ -3510,7 +3436,7 @@ namespace Stacker.Commands
 
                     foreach(var r in rng)
                     {
-                        var val = GetInt(r.Value);
+                        var val = getDouble(r.Value);
                         if(val != 0)
                             r.Value = val;
                     }

@@ -23,5 +23,25 @@ namespace Stacker.ModClasses
         {
         }
 
+
+        /// <summary>
+        /// Creates a new Building Result type. 
+        /// </summary>
+        /// <param name="levelName"></param>
+        /// <param name="elementName"></param>
+        /// <param name="quantity"></param>
+        /// <param name="unitType"></param>
+        /// <param name="categoryType"></param>
+        /// <param name="familyName"></param>
+        public void CreateBldgResult(string levelName = null, string elementName = null, double quantity = 0, string unitType = null, string categoryType = null, string familyName = null)
+        {
+            LevelName = levelName;
+            ElementName = elementName;
+            Quantity = quantity;
+            UnitType = unitType;
+            CategoryType = categoryType;
+            FamilyName = familyName;
+        }
+
     }
 }
