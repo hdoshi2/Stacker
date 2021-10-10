@@ -18,6 +18,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using View = Autodesk.Revit.DB.View;
 using EPPlus = OfficeOpenXml;
+using RestSharp;
+using RestSharp.Serialization.Json;
+using Parameter = Autodesk.Revit.DB.Parameter;
 
 namespace Stacker.Commands
 {
@@ -3545,8 +3548,22 @@ namespace Stacker.Commands
         }
 
 
+
         #endregion
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var client = new RestClient("https://app.regrid.com/api/v1/search.json?query=2805 Stewart Ave, Las Vegas, NV 89101, USA&strict=1&limit=1&token=ay49YmoCTj_sV_p4MRpqnF9wwPKPRxpzSSK-EbGaMwpKipxZYy43oQoseSFMXECy");
 
+            client.ClearHandlers();
+            var jsonDeserializer = new JsonDeserializer();
+            client.AddHandler("application/json", jsonDeserializer);
+
+            var request = new RestRequest("getCatalog?token=saga001");
+
+            var queryResult = client.Execute(request);
+
+            Console.WriteLine(queryResult);
+        }
     }
 }
