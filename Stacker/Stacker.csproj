@@ -35,6 +35,9 @@
     <ApplicationManifest>Stacker.addin</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoordinateSharp, Version=2.12.1.1, Culture=neutral, PublicKeyToken=f45e02df057b7725, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoordinateSharp.2.12.1.1\lib\net40\CoordinateSharp.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus">
       <HintPath>..\Packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
     </Reference>
@@ -80,6 +83,7 @@
     <Compile Include="Commands\FormViewJsonData.Designer.cs">
       <DependentUpon>FormViewJsonData.cs</DependentUpon>
     </Compile>
+    <Compile Include="GeoJsonClasses\GeoJsonParser.cs" />
     <Compile Include="ExternalApplication.cs" />
     <Compile Include="ModClasses\BldgResult.cs" />
     <Compile Include="ModClasses\FloorLayout.cs" />
@@ -90,6 +94,10 @@
     <Compile Include="ModClasses\ModOption.cs" />
     <Compile Include="ModClasses\XYPosition.cs" />
     <Compile Include="ModClasses\XYPosition4Corners.cs" />
+    <Compile Include="GeoJsonClasses\Coordinate.cs" />
+    <Compile Include="GeoJsonClasses\GeoJsonResult.cs" />
+    <Compile Include="GeoJsonClasses\GeoJsonResultCollection.cs" />
+    <Compile Include="GeoJsonClasses\Geometry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

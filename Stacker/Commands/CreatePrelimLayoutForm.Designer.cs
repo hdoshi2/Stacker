@@ -1,5 +1,5 @@
 ﻿
-namespace Stacker.Commands
+namespace Stacker.GeoJsonClasses
 {
     partial class CreatePrelimLayoutForm
     {
@@ -107,7 +107,8 @@ namespace Stacker.Commands
             this.tbTypStoryHeight = new System.Windows.Forms.TextBox();
             this.btnExportImages = new System.Windows.Forms.Button();
             this.btnExportData = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btmTestGeoAPI = new System.Windows.Forms.Button();
+            this.btnTestGeoGeom = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -432,11 +433,11 @@ namespace Stacker.Commands
             // btnLoadDataFile
             // 
             this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnLoadDataFile.Location = new System.Drawing.Point(253, 15);
+            this.btnLoadDataFile.Location = new System.Drawing.Point(172, 15);
             this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
             this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(3);
-            this.btnLoadDataFile.Size = new System.Drawing.Size(155, 30);
+            this.btnLoadDataFile.Size = new System.Drawing.Size(165, 30);
             this.btnLoadDataFile.TabIndex = 3;
             this.btnLoadDataFile.Text = "Load JSON Data File";
             this.btnLoadDataFile.UseVisualStyleBackColor = true;
@@ -965,20 +966,35 @@ namespace Stacker.Commands
             this.btnExportData.UseVisualStyleBackColor = true;
             this.btnExportData.Click += new System.EventHandler(this.btnExportData_Click);
             // 
-            // button1
+            // btmTestGeoAPI
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button1.Location = new System.Drawing.Point(552, 525);
-            this.button1.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-            this.button1.Name = "button1";
-            this.button1.Padding = new System.Windows.Forms.Padding(2);
-            this.button1.Size = new System.Drawing.Size(92, 30);
-            this.button1.TabIndex = 91;
-            this.button1.Text = "test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btmTestGeoAPI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btmTestGeoAPI.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btmTestGeoAPI.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btmTestGeoAPI.Location = new System.Drawing.Point(482, 15);
+            this.btmTestGeoAPI.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btmTestGeoAPI.Name = "btmTestGeoAPI";
+            this.btmTestGeoAPI.Padding = new System.Windows.Forms.Padding(2);
+            this.btmTestGeoAPI.Size = new System.Drawing.Size(120, 30);
+            this.btmTestGeoAPI.TabIndex = 91;
+            this.btmTestGeoAPI.Text = "testGeoJSONAPI";
+            this.btmTestGeoAPI.UseVisualStyleBackColor = true;
+            this.btmTestGeoAPI.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnTestGeoGeom
+            // 
+            this.btnTestGeoGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestGeoGeom.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnTestGeoGeom.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnTestGeoGeom.Location = new System.Drawing.Point(349, 15);
+            this.btnTestGeoGeom.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnTestGeoGeom.Name = "btnTestGeoGeom";
+            this.btnTestGeoGeom.Padding = new System.Windows.Forms.Padding(2);
+            this.btnTestGeoGeom.Size = new System.Drawing.Size(124, 30);
+            this.btnTestGeoGeom.TabIndex = 92;
+            this.btnTestGeoGeom.Text = "testGeoJSONGeom";
+            this.btnTestGeoGeom.UseVisualStyleBackColor = true;
+            this.btnTestGeoGeom.Click += new System.EventHandler(this.button2_Click);
             // 
             // CreatePrelimLayoutForm
             // 
@@ -986,7 +1002,8 @@ namespace Stacker.Commands
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(656, 608);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnTestGeoGeom);
+            this.Controls.Add(this.btmTestGeoAPI);
             this.Controls.Add(this.btnExportData);
             this.Controls.Add(this.btnExportImages);
             this.Controls.Add(this.groupBox3);
@@ -1103,6 +1120,7 @@ namespace Stacker.Commands
         private System.Windows.Forms.Button btnApplyFloorChanges;
         private System.Windows.Forms.Button btnExportImages;
         private System.Windows.Forms.Button btnExportData;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btmTestGeoAPI;
+        private System.Windows.Forms.Button btnTestGeoGeom;
     }
 }

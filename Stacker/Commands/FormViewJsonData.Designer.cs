@@ -1,5 +1,5 @@
 ﻿
-namespace Stacker.Commands
+namespace Stacker.GeoJsonClasses
 {
     partial class FormViewJsonData
     {

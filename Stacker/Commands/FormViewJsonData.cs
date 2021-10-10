@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Stacker.Commands
+namespace Stacker.GeoJsonClasses
 {
     public partial class FormViewJsonData : Form
     {

@@ -11,7 +11,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB.Structure;
-using Stacker.Commands;
+using Stacker.GeoJsonClasses;
 using System.IO;
 using Stacker.ModClasses;
 using Newtonsoft.Json;
@@ -21,8 +21,9 @@ using EPPlus = OfficeOpenXml;
 using RestSharp;
 using RestSharp.Serialization.Json;
 using Parameter = Autodesk.Revit.DB.Parameter;
+using CoordinateSharp;
 
-namespace Stacker.Commands
+namespace Stacker.GeoJsonClasses
 {
     public partial class CreatePrelimLayoutForm : System.Windows.Forms.Form
     {
@@ -2056,7 +2057,7 @@ namespace Stacker.Commands
             {
 
                 //Pop-out new form to display beam list
-                using (Stacker.Commands.FormViewJsonData frmJsonViewer = new FormViewJsonData(DictJSON))
+                using (Stacker.GeoJsonClasses.FormViewJsonData frmJsonViewer = new FormViewJsonData(DictJSON))
                 {
                     frmJsonViewer.ShowDialog();
                 }
@@ -3551,19 +3552,140 @@ namespace Stacker.Commands
 
         #endregion
 
+
+
         private void button1_Click(object sender, EventArgs e)
         {
-            var client = new RestClient("https://app.regrid.com/api/v1/search.json?query=2805 Stewart Ave, Las Vegas, NV 89101, USA&strict=1&limit=1&token=ay49YmoCTj_sV_p4MRpqnF9wwPKPRxpzSSK-EbGaMwpKipxZYy43oQoseSFMXECy");
 
-            client.ClearHandlers();
-            var jsonDeserializer = new JsonDeserializer();
-            client.AddHandler("application/json", jsonDeserializer);
+            var client = new RestClient("https://app.regrid.com/api/v1/search.json?");
+            var request = new RestRequest(Method.GET);
 
-            var request = new RestRequest("getCatalog?token=saga001");
+            request.AddParameter("query", "1 Wall Street, New York, NY 10005, USA");
+            request.AddParameter("strict", "1");
+            request.AddParameter("limit", "1");
+            request.AddParameter("token", "ay49YmoCTj_sV_p4MRpqnF9wwPKPRxpzSSK-EbGaMwpKipxZYy43oQoseSFMXECy");
 
-            var queryResult = client.Execute(request);
+            request.AddHeader("content-type", "application/json");
+            var queryResult = client.Execute<Object>(request).Data;
+            string json = JsonConvert.SerializeObject(queryResult);
 
-            Console.WriteLine(queryResult);
+
         }
+
+
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog() { Filter = "Json file|*.json", Title = "Select GeoJson file" };
+
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            var geoJsonParser = new GeoJsonParser();
+
+            var geoJason = geoJsonParser.Parse(openFileDialog.FileName);
+
+            if (geoJason is null)
+            {
+                TaskDialog.Show("Error!", "Error reading GeoJson file");
+
+                return;
+            }
+
+            using (Transaction transaction = new Transaction(_doc))
+            {
+                if (transaction.Start("Create GeoJson Polygon") == TransactionStatus.Started)
+                {
+                    foreach (var result in geoJason.Results)
+                    {
+                        if (result.Geometry is null)
+                        {
+                            continue;
+                        }
+
+                        var profileloops = new List<CurveLoop>();
+
+                        foreach (var coordinates in result.Geometry.Coordinates)
+                        {
+                            XYZ firstPoint = null;
+                            XYZ currentPoint = null;
+
+                            var profileloop = new CurveLoop();
+
+                            foreach (var coordinate in coordinates)
+                            {
+                                var nextPoint = ConvertCoordinateToXYZ(coordinate[0], coordinate[1]);
+
+                                if (currentPoint is null)
+                                {
+                                    firstPoint = nextPoint;
+                                    currentPoint = nextPoint;
+
+                                    continue;
+                                }
+
+                                var line = Line.CreateBound(currentPoint.Subtract(firstPoint), nextPoint.Subtract(firstPoint));
+
+                                profileloop.Append(line);
+
+                                currentPoint = nextPoint;
+                            }
+
+                            profileloops.Add(profileloop);
+
+                            var filteredElementCollector = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
+                            var filledRegionPattern = filteredElementCollector.Cast<FilledRegionType>().Where(reg => reg.Name.Equals("Solid Black"));
+                            var filledRegion = FilledRegion.Create(_doc, filledRegionPattern.FirstOrDefault().Id,
+                                _doc.ActiveView.Id, profileloops);
+
+                            _doc.Regenerate();
+
+                            var selectedCollection = new ElementId[] { filledRegion.Id };
+
+                            _uidoc.Selection.SetElementIds(selectedCollection);
+                            _uidoc.ShowElements(selectedCollection);
+                            _uidoc.RefreshActiveView();
+
+                            var area = filledRegion.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsValueString();
+                            var boundingBox = filledRegion.get_BoundingBox(_doc.ActiveView);
+                            var boundingBoxWidth = Math.Round(boundingBox.Max.X - boundingBox.Min.X, 3);
+                            var boundingBoxHeight = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
+                            var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxHeight, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
+                            var summary = $"Area = {area}\nBounding Box Width = {boundingBoxWidth} ft\nBounding Box Height = {boundingBoxHeight} ft\n"
+                                + $"Bounding Box Diagonal = {boundingBoxDiagonal} ft";
+
+                            TaskDialog.Show("Summary", summary);
+                        }
+                    }
+
+                    transaction.Commit();
+                }
+            }
+
+
+        }
+
+
+        /// <summary>
+        /// The ConvertCoordinateToXYZ.
+        /// </summary>
+        /// <param name="longitude">The longitude<see cref="double"/>.</param>
+        /// <param name="latitude">The latitude<see cref="double"/>.</param>
+        /// <returns>The <see cref="XYZ"/>.</returns>
+        private XYZ ConvertCoordinateToXYZ(double longitude, double latitude)
+        {
+            var coordinate = new Coordinate(latitude, longitude);
+
+            var x = coordinate.UTM.Easting * 3.281;
+            var y = coordinate.UTM.Northing * 3.281;
+
+            return new XYZ(x, y, 0);
+        }
+
+
+
     }
 }
