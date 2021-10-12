@@ -22,6 +22,7 @@ using RestSharp;
 using RestSharp.Serialization.Json;
 using Parameter = Autodesk.Revit.DB.Parameter;
 using CoordinateSharp;
+using Stacker.Commands;
 
 namespace Stacker.GeoJsonClasses
 {
@@ -3570,6 +3571,18 @@ namespace Stacker.GeoJsonClasses
             string json = JsonConvert.SerializeObject(queryResult);
 
 
+            var client2 = new RestClient("https://www.zoneomics.com/api/get_zone_details");
+            var request2 = new RestRequest(Method.GET);
+
+            request2.AddParameter("api_key", "a9454176416681b8051d7ee5479d3e85c2afd650");
+            request2.AddParameter("address", "1 Wall Street, New York, NY 10005, USA");
+            request2.AddParameter("output_fields", "all");
+
+            request2.AddHeader("content-type", "application/json");
+            var queryResult2 = client2.Execute<Object>(request2).Data;
+            string json2 = JsonConvert.SerializeObject(queryResult2);
+
+
         }
 
 
@@ -3677,7 +3690,7 @@ namespace Stacker.GeoJsonClasses
         /// <returns>The <see cref="XYZ"/>.</returns>
         private XYZ ConvertCoordinateToXYZ(double longitude, double latitude)
         {
-            var coordinate = new Coordinate(latitude, longitude);
+            var coordinate = new CoordinateSharp.Coordinate(latitude, longitude);
 
             var x = coordinate.UTM.Easting * 3.281;
             var y = coordinate.UTM.Northing * 3.281;
@@ -3686,6 +3699,34 @@ namespace Stacker.GeoJsonClasses
         }
 
 
+        public object QueryResultRegrid { get; set; }
+        public string JsonRegrid { get; set; }
 
+
+        public object QueryResultZoneomics { get; set; }
+        public string JsonZoneomics { get; set; }
+
+
+        private void btnAPIData_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //Pop-out new form to display beam list
+                using (GeoZoningForm frmGeoZoning = new GeoZoningForm())
+                {
+                    frmGeoZoning.ShowDialog();
+
+                    frmGeoZoning.QueryResultRegrid = QueryResultRegrid;
+                    frmGeoZoning.JsonRegrid = JsonRegrid;
+                    frmGeoZoning.QueryResultZoneomics = QueryResultZoneomics;
+                    frmGeoZoning.JsonZoneomics = JsonZoneomics;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("ERROR", ex.Message);
+            }
+        }
     }
 }

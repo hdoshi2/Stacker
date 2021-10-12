@@ -83,6 +83,12 @@
     <Compile Include="Commands\FormViewJsonData.Designer.cs">
       <DependentUpon>FormViewJsonData.cs</DependentUpon>
     </Compile>
+    <Compile Include="Commands\GeoZoningForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\GeoZoningForm.Designer.cs">
+      <DependentUpon>GeoZoningForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GeoJsonClasses\GeoJsonParser.cs" />
     <Compile Include="ExternalApplication.cs" />
     <Compile Include="ModClasses\BldgResult.cs" />
@@ -117,6 +123,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Commands\FormViewJsonData.resx">
       <DependentUpon>FormViewJsonData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\GeoZoningForm.resx">
+      <DependentUpon>GeoZoningForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

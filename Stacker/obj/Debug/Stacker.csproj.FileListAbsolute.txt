@@ -17,14 +17,12 @@ C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Stacker.pdb
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Newtonsoft.Json.dll
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\Newtonsoft.Json.xml
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.AssemblyReference.cache
-C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.CreatePrelimLayoutForm.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Properties.Resources.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.GenerateResource.cache
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.CoreCompileInputs.cache
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.csproj.CopyComplete
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.dll
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.pdb
-C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.FormViewJsonData.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\EPPlus.dll
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\EPPlus.xml
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\RestSharp.dll
@@ -33,3 +31,4 @@ C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\CoordinateSharp.d
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\CoordinateSharp.xml
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.GeoJsonClasses.CreatePrelimLayoutForm.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.GeoJsonClasses.FormViewJsonData.resources
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.GeoZoningForm.resources
