@@ -16,7 +16,7 @@ namespace Stacker.GeoJsonClasses
         /// </summary>
         /// <param name="fileName">The fileName<see cref="string"/>.</param>
         /// <returns>The <see cref="GeoJsonResultCollection"/>.</returns>
-        public GeoJsonResultCollection Parse(string fileName)
+        public GeoJsonResultCollection ParseFile(string fileName)
         {
             try
             {
@@ -34,5 +34,29 @@ namespace Stacker.GeoJsonClasses
 
             return null;
         }
+
+        /// <summary>
+        /// The Parse.
+        /// </summary>
+        /// <param name="fileName">The fileName<see cref="string"/>.</param>
+        /// <returns>The <see cref="GeoJsonResultCollection"/>.</returns>
+        public GeoJsonResultCollection ParseJSON(string json)
+        {
+            try
+            {
+                var serializer = new JsonSerializer();
+                TextReader textReader = new StringReader(json);
+                return (GeoJsonResultCollection)serializer.Deserialize(textReader, typeof(GeoJsonResultCollection));
+
+            }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error!", "Error converting GeoJson file to Revit\n" + e.Message);
+            }
+
+            return null;
+        }
+
+
     }
 }

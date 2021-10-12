@@ -50,6 +50,8 @@ namespace Stacker.Commands
             this.btnLoadData = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnRandomAddress = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tbCountry = new System.Windows.Forms.TextBox();
             this.bAddress.SuspendLayout();
             this.gbAPICallData.SuspendLayout();
             this.SuspendLayout();
@@ -58,6 +60,8 @@ namespace Stacker.Commands
             // 
             this.bAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.bAddress.Controls.Add(this.label9);
+            this.bAddress.Controls.Add(this.tbCountry);
             this.bAddress.Controls.Add(this.btnRandomAddress);
             this.bAddress.Controls.Add(this.cbState);
             this.bAddress.Controls.Add(this.label3);
@@ -71,7 +75,7 @@ namespace Stacker.Commands
             this.bAddress.Controls.Add(this.tbStreedAddress1);
             this.bAddress.Location = new System.Drawing.Point(12, 12);
             this.bAddress.Name = "bAddress";
-            this.bAddress.Size = new System.Drawing.Size(308, 164);
+            this.bAddress.Size = new System.Drawing.Size(308, 195);
             this.bAddress.TabIndex = 2;
             this.bAddress.TabStop = false;
             this.bAddress.Text = "Address Data";
@@ -257,7 +261,7 @@ namespace Stacker.Commands
             // lblZoneomicsStatus
             // 
             this.lblZoneomicsStatus.AutoSize = true;
-            this.lblZoneomicsStatus.ForeColor = System.Drawing.Color.Lime;
+            this.lblZoneomicsStatus.ForeColor = System.Drawing.Color.DarkGreen;
             this.lblZoneomicsStatus.Location = new System.Drawing.Point(226, 29);
             this.lblZoneomicsStatus.Name = "lblZoneomicsStatus";
             this.lblZoneomicsStatus.Size = new System.Drawing.Size(59, 13);
@@ -279,7 +283,7 @@ namespace Stacker.Commands
             // btnClear
             // 
             this.btnClear.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnClear.Location = new System.Drawing.Point(65, 306);
+            this.btnClear.Location = new System.Drawing.Point(65, 337);
             this.btnClear.Margin = new System.Windows.Forms.Padding(6);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(222, 30);
@@ -297,7 +301,7 @@ namespace Stacker.Commands
             this.gbAPICallData.Controls.Add(this.cbRegrid);
             this.gbAPICallData.Controls.Add(this.btnAPICall);
             this.gbAPICallData.Controls.Add(this.lblZoneomicsStatus);
-            this.gbAPICallData.Location = new System.Drawing.Point(12, 182);
+            this.gbAPICallData.Location = new System.Drawing.Point(12, 213);
             this.gbAPICallData.Name = "gbAPICallData";
             this.gbAPICallData.Size = new System.Drawing.Size(308, 115);
             this.gbAPICallData.TabIndex = 21;
@@ -308,7 +312,7 @@ namespace Stacker.Commands
             // 
             this.btnLoadData.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnLoadData.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLoadData.Location = new System.Drawing.Point(22, 347);
+            this.btnLoadData.Location = new System.Drawing.Point(22, 378);
             this.btnLoadData.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadData.Name = "btnLoadData";
             this.btnLoadData.Size = new System.Drawing.Size(175, 30);
@@ -322,7 +326,7 @@ namespace Stacker.Commands
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(209, 347);
+            this.btnCancel.Location = new System.Drawing.Point(209, 378);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(6);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(102, 30);
@@ -336,7 +340,7 @@ namespace Stacker.Commands
             this.btnRandomAddress.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnRandomAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRandomAddress.Image = global::Stacker.Properties.Resources.floorStack_32;
-            this.btnRandomAddress.Location = new System.Drawing.Point(269, 125);
+            this.btnRandomAddress.Location = new System.Drawing.Point(266, 152);
             this.btnRandomAddress.Margin = new System.Windows.Forms.Padding(6);
             this.btnRandomAddress.Name = "btnRandomAddress";
             this.btnRandomAddress.Size = new System.Drawing.Size(33, 30);
@@ -344,12 +348,30 @@ namespace Stacker.Commands
             this.btnRandomAddress.UseVisualStyleBackColor = true;
             this.btnRandomAddress.Click += new System.EventHandler(this.btnRandomAddress_Click);
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(41, 161);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(46, 13);
+            this.label9.TabIndex = 26;
+            this.label9.Text = "Country:";
+            // 
+            // tbCountry
+            // 
+            this.tbCountry.Location = new System.Drawing.Point(93, 158);
+            this.tbCountry.Name = "tbCountry";
+            this.tbCountry.ReadOnly = true;
+            this.tbCountry.Size = new System.Drawing.Size(48, 20);
+            this.tbCountry.TabIndex = 25;
+            this.tbCountry.Text = "USA";
+            // 
             // GeoZoningForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(332, 392);
+            this.ClientSize = new System.Drawing.Size(332, 423);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnLoadData);
             this.Controls.Add(this.btnClear);
@@ -390,5 +412,7 @@ namespace Stacker.Commands
         private System.Windows.Forms.Button btnLoadData;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnRandomAddress;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox tbCountry;
     }
 }

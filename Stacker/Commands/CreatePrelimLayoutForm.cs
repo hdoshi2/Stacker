@@ -3554,63 +3554,60 @@ namespace Stacker.GeoJsonClasses
         #endregion
 
 
+        #region "GeoJSON and Zoning API"
 
-        private void button1_Click(object sender, EventArgs e)
+        public object QueryResultRegrid { get; set; }
+        public string JsonRegrid { get; set; }
+        public object QueryResultZoneomics { get; set; }
+        public string JsonZoneomics { get; set; }
+
+
+        private void btnDrawGeoJSONData_Click(object sender, EventArgs e)
         {
+            OpenFileDialog openFileDialog = null;
+            GeoJsonParser geoJsonParser = null;
+            GeoJsonResultCollection geoJason = null;
 
-            var client = new RestClient("https://app.regrid.com/api/v1/search.json?");
-            var request = new RestRequest(Method.GET);
-
-            request.AddParameter("query", "1 Wall Street, New York, NY 10005, USA");
-            request.AddParameter("strict", "1");
-            request.AddParameter("limit", "1");
-            request.AddParameter("token", "ay49YmoCTj_sV_p4MRpqnF9wwPKPRxpzSSK-EbGaMwpKipxZYy43oQoseSFMXECy");
-
-            request.AddHeader("content-type", "application/json");
-            var queryResult = client.Execute<Object>(request).Data;
-            string json = JsonConvert.SerializeObject(queryResult);
-
-
-            var client2 = new RestClient("https://www.zoneomics.com/api/get_zone_details");
-            var request2 = new RestRequest(Method.GET);
-
-            request2.AddParameter("api_key", "a9454176416681b8051d7ee5479d3e85c2afd650");
-            request2.AddParameter("address", "1 Wall Street, New York, NY 10005, USA");
-            request2.AddParameter("output_fields", "all");
-
-            request2.AddHeader("content-type", "application/json");
-            var queryResult2 = client2.Execute<Object>(request2).Data;
-            string json2 = JsonConvert.SerializeObject(queryResult2);
-
-
-        }
-
-
-
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog() { Filter = "Json file|*.json", Title = "Select GeoJson file" };
-
-            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+            if (cbLoadJSONFile.Checked)
             {
-                return;
+                openFileDialog = new OpenFileDialog() { Filter = "Json file|*.json", Title = "Select GeoJson file" };
+
+                if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                    return;
+
+                geoJsonParser = new GeoJsonParser();
+
+                geoJason = geoJsonParser.ParseFile(openFileDialog.FileName);
+
+            }
+            else
+            {
+                if(JsonRegrid == null)
+                {
+                    TaskDialog.Show("Error!", "GeoJson file to found.");
+                    return;
+                }
+
+                geoJsonParser = new GeoJsonParser();
+
+                var deserializeJSON = JsonConvert.DeserializeObject(JsonRegrid).ToString();
+
+                geoJason = geoJsonParser.ParseJSON(deserializeJSON);
             }
 
-            var geoJsonParser = new GeoJsonParser();
 
-            var geoJason = geoJsonParser.Parse(openFileDialog.FileName);
 
             if (geoJason is null)
             {
-                TaskDialog.Show("Error!", "Error reading GeoJson file");
+                TaskDialog.Show("Error!", "Error reading GeoJson file.");
 
                 return;
             }
 
+
             using (Transaction transaction = new Transaction(_doc))
             {
-                if (transaction.Start("Create GeoJson Polygon") == TransactionStatus.Started)
+                if (transaction.Start("MOD: Create GeoJson Polygon") == TransactionStatus.Started)
                 {
                     foreach (var result in geoJason.Results)
                     {
@@ -3699,14 +3696,6 @@ namespace Stacker.GeoJsonClasses
         }
 
 
-        public object QueryResultRegrid { get; set; }
-        public string JsonRegrid { get; set; }
-
-
-        public object QueryResultZoneomics { get; set; }
-        public string JsonZoneomics { get; set; }
-
-
         private void btnAPIData_Click(object sender, EventArgs e)
         {
             try
@@ -3716,10 +3705,10 @@ namespace Stacker.GeoJsonClasses
                 {
                     frmGeoZoning.ShowDialog();
 
-                    frmGeoZoning.QueryResultRegrid = QueryResultRegrid;
-                    frmGeoZoning.JsonRegrid = JsonRegrid;
-                    frmGeoZoning.QueryResultZoneomics = QueryResultZoneomics;
-                    frmGeoZoning.JsonZoneomics = JsonZoneomics;
+                    QueryResultRegrid = frmGeoZoning.QueryResultRegrid;
+                    JsonRegrid = frmGeoZoning.JsonRegrid;
+                    QueryResultZoneomics = frmGeoZoning.QueryResultZoneomics;
+                    JsonZoneomics = frmGeoZoning.JsonZoneomics;
                 }
 
             }
@@ -3728,5 +3717,10 @@ namespace Stacker.GeoJsonClasses
                 TaskDialog.Show("ERROR", ex.Message);
             }
         }
+
+        #endregion
+
+
+
     }
 }

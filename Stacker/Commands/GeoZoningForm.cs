@@ -33,10 +33,11 @@ namespace Stacker.Commands
             string city = cbCity.SelectedItem.ToString();
             string state = cbState.SelectedItem.ToString();
             string zip = tbZipCode.Text;
+            string country = tbCountry.Text;
 
-            string fullAddress = $"{addressLine1}, {city}, {state} {zip}, USA";
-            if(addressLine2 != "")
-                fullAddress = $"{addressLine1}, {addressLine2},{city}, {state} {zip}, USA";
+            string fullAddress = $"{addressLine1}, {city}, {state} {zip}, {country}";
+            if (addressLine2 != "")
+                fullAddress = $"{addressLine1}, {addressLine2},{city}, {state} {zip}, {country}";
 
             if (cbRegrid.Checked)
             {
@@ -55,7 +56,7 @@ namespace Stacker.Commands
                 if (JsonRegrid != null && JsonRegrid.Length > 0)
                 {
                     lblRegridStatus.Visible = true;
-                    lblRegridStatus.ForeColor = System.Drawing.Color.Lime;
+                    lblRegridStatus.ForeColor = System.Drawing.Color.DarkGreen;
                     lblRegridStatus.Text = "Successful";
                 }
                 else
@@ -83,7 +84,7 @@ namespace Stacker.Commands
                 if (JsonZoneomics != null && JsonZoneomics.Length > 0)
                 {
                     lblZoneomicsStatus.Visible = true;
-                    lblZoneomicsStatus.ForeColor = System.Drawing.Color.Lime;
+                    lblZoneomicsStatus.ForeColor = System.Drawing.Color.DarkGreen;
                     lblZoneomicsStatus.Text = "Successful";
                 }
                 else
@@ -124,13 +125,47 @@ namespace Stacker.Commands
         }
 
 
+        int selectPrefilledAddressesCount = 0;
         private void btnRandomAddress_Click(object sender, EventArgs e)
         {
-            tbStreedAddress1.Text = "17 Hanover St";
-            tbStreedAddress2.Text = "";
-            cbCity.Text = "Stamford";
-            cbState.Text = "CT";
-            tbZipCode.Text = "06902";
+            int totalAddresses = 4;
+            int interval = selectPrefilledAddressesCount % totalAddresses;
+
+            if (interval == 0)
+            {
+                tbStreedAddress1.Text = "17 Hanover St";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "Stamford";
+                cbState.Text = "CT";
+                tbZipCode.Text = "06902";
+            }
+            else if (interval == 1)
+            {
+                tbStreedAddress1.Text = "153 E Lowell Ave";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "Salt Lake-City";
+                cbState.Text = "UT";
+                tbZipCode.Text = "84111";
+            }
+            else if (interval == 2)
+            {
+                tbStreedAddress1.Text = "108 E Fairground Dr";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "Tuscon";
+                cbState.Text = "AZ";
+                tbZipCode.Text = "85714";
+            }
+            else if (interval == 3)
+            {
+                tbStreedAddress1.Text = "114 Whitney Ave";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "New Haven";
+                cbState.Text = "CT";
+                tbZipCode.Text = "06511";
+            }
+
+            selectPrefilledAddressesCount++;
+
         }
 
         private void btnLoadData_Click(object sender, EventArgs e)

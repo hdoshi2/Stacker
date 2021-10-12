@@ -107,9 +107,9 @@ namespace Stacker.GeoJsonClasses
             this.tbTypStoryHeight = new System.Windows.Forms.TextBox();
             this.btnExportImages = new System.Windows.Forms.Button();
             this.btnExportData = new System.Windows.Forms.Button();
-            this.btmTestGeoAPI = new System.Windows.Forms.Button();
-            this.btnTestGeoGeom = new System.Windows.Forms.Button();
             this.btnAPIData = new System.Windows.Forms.Button();
+            this.btnDrawGeoJSONData = new System.Windows.Forms.Button();
+            this.cbLoadJSONFile = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -122,7 +122,8 @@ namespace Stacker.GeoJsonClasses
             // btnBuildLayout
             // 
             this.btnBuildLayout.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnBuildLayout.Location = new System.Drawing.Point(237, 525);
+            this.btnBuildLayout.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuildLayout.Location = new System.Drawing.Point(218, 528);
             this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnBuildLayout.Name = "btnBuildLayout";
             this.btnBuildLayout.Size = new System.Drawing.Size(194, 30);
@@ -137,7 +138,7 @@ namespace Stacker.GeoJsonClasses
             this.pictureBox1.ErrorImage = global::Stacker.Properties.Resources.floorStack_128;
             this.pictureBox1.Image = global::Stacker.Properties.Resources.floorStack_32;
             this.pictureBox1.InitialImage = global::Stacker.Properties.Resources.floorStack_128;
-            this.pictureBox1.Location = new System.Drawing.Point(612, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(577, 15);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -197,7 +198,7 @@ namespace Stacker.GeoJsonClasses
             this.gbFloorDimension.Controls.Add(this.tbLength);
             this.gbFloorDimension.Location = new System.Drawing.Point(12, 54);
             this.gbFloorDimension.Name = "gbFloorDimension";
-            this.gbFloorDimension.Size = new System.Drawing.Size(422, 143);
+            this.gbFloorDimension.Size = new System.Drawing.Size(387, 143);
             this.gbFloorDimension.TabIndex = 1;
             this.gbFloorDimension.TabStop = false;
             this.gbFloorDimension.Text = "Floor Geometry";
@@ -265,7 +266,7 @@ namespace Stacker.GeoJsonClasses
             // tbTotalSquareFootage
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalSquareFootage.Location = new System.Drawing.Point(310, 107);
+            this.tbTotalSquareFootage.Location = new System.Drawing.Point(275, 107);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(39, 20);
@@ -275,7 +276,7 @@ namespace Stacker.GeoJsonClasses
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(178, 111);
+            this.label5.Location = new System.Drawing.Point(143, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(130, 13);
             this.label5.TabIndex = 5;
@@ -284,7 +285,7 @@ namespace Stacker.GeoJsonClasses
             // btnApplyFlrDim
             // 
             this.btnApplyFlrDim.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyFlrDim.Location = new System.Drawing.Point(358, 101);
+            this.btnApplyFlrDim.Location = new System.Drawing.Point(323, 101);
             this.btnApplyFlrDim.Margin = new System.Windows.Forms.Padding(6);
             this.btnApplyFlrDim.Name = "btnApplyFlrDim";
             this.btnApplyFlrDim.Padding = new System.Windows.Forms.Padding(3);
@@ -311,7 +312,7 @@ namespace Stacker.GeoJsonClasses
             this.gbUnitConfig.Controls.Add(this.label2);
             this.gbUnitConfig.Location = new System.Drawing.Point(12, 203);
             this.gbUnitConfig.Name = "gbUnitConfig";
-            this.gbUnitConfig.Size = new System.Drawing.Size(422, 149);
+            this.gbUnitConfig.Size = new System.Drawing.Size(387, 149);
             this.gbUnitConfig.TabIndex = 2;
             this.gbUnitConfig.TabStop = false;
             this.gbUnitConfig.Text = "Unit Configuration Priority";
@@ -434,13 +435,13 @@ namespace Stacker.GeoJsonClasses
             // btnLoadDataFile
             // 
             this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnLoadDataFile.Location = new System.Drawing.Point(172, 15);
+            this.btnLoadDataFile.Location = new System.Drawing.Point(124, 15);
             this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
             this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(3);
-            this.btnLoadDataFile.Size = new System.Drawing.Size(165, 30);
+            this.btnLoadDataFile.Size = new System.Drawing.Size(195, 30);
             this.btnLoadDataFile.TabIndex = 3;
-            this.btnLoadDataFile.Text = "Load JSON Data File";
+            this.btnLoadDataFile.Text = "Load Local GeoJSON Data File";
             this.btnLoadDataFile.UseVisualStyleBackColor = true;
             this.btnLoadDataFile.Click += new System.EventHandler(this.btnLoadDataFile_Click);
             // 
@@ -467,7 +468,7 @@ namespace Stacker.GeoJsonClasses
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Location = new System.Drawing.Point(12, 358);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(422, 157);
+            this.groupBox1.Size = new System.Drawing.Size(387, 157);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Unit Configuration Preview";
@@ -475,7 +476,7 @@ namespace Stacker.GeoJsonClasses
             // btnAddInteriorLayout
             // 
             this.btnAddInteriorLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddInteriorLayout.Location = new System.Drawing.Point(299, 80);
+            this.btnAddInteriorLayout.Location = new System.Drawing.Point(264, 80);
             this.btnAddInteriorLayout.Name = "btnAddInteriorLayout";
             this.btnAddInteriorLayout.Size = new System.Drawing.Size(116, 30);
             this.btnAddInteriorLayout.TabIndex = 20;
@@ -485,7 +486,7 @@ namespace Stacker.GeoJsonClasses
             // btnPrevious
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrevious.Location = new System.Drawing.Point(299, 116);
+            this.btnPrevious.Location = new System.Drawing.Point(264, 116);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(57, 30);
             this.btnPrevious.TabIndex = 19;
@@ -495,7 +496,7 @@ namespace Stacker.GeoJsonClasses
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(359, 116);
+            this.btnNext.Location = new System.Drawing.Point(324, 116);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(57, 30);
             this.btnNext.TabIndex = 18;
@@ -505,7 +506,7 @@ namespace Stacker.GeoJsonClasses
             // btnDeleteGeom
             // 
             this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteGeom.Location = new System.Drawing.Point(359, 19);
+            this.btnDeleteGeom.Location = new System.Drawing.Point(324, 19);
             this.btnDeleteGeom.Name = "btnDeleteGeom";
             this.btnDeleteGeom.Size = new System.Drawing.Size(57, 30);
             this.btnDeleteGeom.TabIndex = 17;
@@ -640,7 +641,7 @@ namespace Stacker.GeoJsonClasses
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnClose.Location = new System.Drawing.Point(552, 569);
+            this.btnClose.Location = new System.Drawing.Point(517, 574);
             this.btnClose.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(2);
@@ -663,7 +664,7 @@ namespace Stacker.GeoJsonClasses
             this.gbModLimitations.Controls.Add(this.label16);
             this.gbModLimitations.Controls.Add(this.tbModLengthMax);
             this.gbModLimitations.Controls.Add(this.tbModLengthMin);
-            this.gbModLimitations.Location = new System.Drawing.Point(440, 53);
+            this.gbModLimitations.Location = new System.Drawing.Point(405, 53);
             this.gbModLimitations.Name = "gbModLimitations";
             this.gbModLimitations.Size = new System.Drawing.Size(204, 144);
             this.gbModLimitations.TabIndex = 84;
@@ -793,7 +794,7 @@ namespace Stacker.GeoJsonClasses
             this.groupBox2.Controls.Add(this.cbTotalIterations);
             this.groupBox2.Controls.Add(this.tbOptionsGenerated);
             this.groupBox2.Controls.Add(this.tbLimitIterations);
-            this.groupBox2.Location = new System.Drawing.Point(440, 398);
+            this.groupBox2.Location = new System.Drawing.Point(405, 398);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(205, 117);
             this.groupBox2.TabIndex = 85;
@@ -812,10 +813,10 @@ namespace Stacker.GeoJsonClasses
             // 
             // btnViewJSON
             // 
-            this.btnViewJSON.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnViewJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnViewJSON.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnViewJSON.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnViewJSON.Location = new System.Drawing.Point(208, 569);
+            this.btnViewJSON.Location = new System.Drawing.Point(153, 574);
             this.btnViewJSON.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnViewJSON.Name = "btnViewJSON";
             this.btnViewJSON.Padding = new System.Windows.Forms.Padding(2);
@@ -837,7 +838,7 @@ namespace Stacker.GeoJsonClasses
             this.groupBox3.Controls.Add(this.label22);
             this.groupBox3.Controls.Add(this.tbTotalBuildingHeight);
             this.groupBox3.Controls.Add(this.tbTypStoryHeight);
-            this.groupBox3.Location = new System.Drawing.Point(439, 203);
+            this.groupBox3.Location = new System.Drawing.Point(404, 203);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(205, 186);
             this.groupBox3.TabIndex = 87;
@@ -942,7 +943,7 @@ namespace Stacker.GeoJsonClasses
             this.btnExportImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExportImages.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExportImages.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnExportImages.Location = new System.Drawing.Point(12, 569);
+            this.btnExportImages.Location = new System.Drawing.Point(12, 574);
             this.btnExportImages.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnExportImages.Name = "btnExportImages";
             this.btnExportImages.Padding = new System.Windows.Forms.Padding(2);
@@ -957,7 +958,7 @@ namespace Stacker.GeoJsonClasses
             this.btnExportData.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnExportData.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExportData.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnExportData.Location = new System.Drawing.Point(379, 569);
+            this.btnExportData.Location = new System.Drawing.Point(269, 574);
             this.btnExportData.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnExportData.Name = "btnExportData";
             this.btnExportData.Padding = new System.Windows.Forms.Padding(2);
@@ -967,58 +968,54 @@ namespace Stacker.GeoJsonClasses
             this.btnExportData.UseVisualStyleBackColor = true;
             this.btnExportData.Click += new System.EventHandler(this.btnExportData_Click);
             // 
-            // btmTestGeoAPI
-            // 
-            this.btmTestGeoAPI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btmTestGeoAPI.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btmTestGeoAPI.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btmTestGeoAPI.Location = new System.Drawing.Point(524, 525);
-            this.btmTestGeoAPI.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-            this.btmTestGeoAPI.Name = "btmTestGeoAPI";
-            this.btmTestGeoAPI.Padding = new System.Windows.Forms.Padding(2);
-            this.btmTestGeoAPI.Size = new System.Drawing.Size(120, 30);
-            this.btmTestGeoAPI.TabIndex = 91;
-            this.btmTestGeoAPI.Text = "testGeoJSONAPI";
-            this.btmTestGeoAPI.UseVisualStyleBackColor = true;
-            this.btmTestGeoAPI.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // btnTestGeoGeom
-            // 
-            this.btnTestGeoGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTestGeoGeom.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnTestGeoGeom.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnTestGeoGeom.Location = new System.Drawing.Point(439, 525);
-            this.btnTestGeoGeom.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-            this.btnTestGeoGeom.Name = "btnTestGeoGeom";
-            this.btnTestGeoGeom.Padding = new System.Windows.Forms.Padding(2);
-            this.btnTestGeoGeom.Size = new System.Drawing.Size(124, 30);
-            this.btnTestGeoGeom.TabIndex = 92;
-            this.btnTestGeoGeom.Text = "testGeoJSONGeom";
-            this.btnTestGeoGeom.UseVisualStyleBackColor = true;
-            this.btnTestGeoGeom.Click += new System.EventHandler(this.button2_Click);
-            // 
             // btnAPIData
             // 
             this.btnAPIData.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnAPIData.Location = new System.Drawing.Point(349, 15);
+            this.btnAPIData.Location = new System.Drawing.Point(331, 15);
             this.btnAPIData.Margin = new System.Windows.Forms.Padding(6);
             this.btnAPIData.Name = "btnAPIData";
             this.btnAPIData.Padding = new System.Windows.Forms.Padding(3);
             this.btnAPIData.Size = new System.Drawing.Size(165, 30);
             this.btnAPIData.TabIndex = 93;
-            this.btnAPIData.Text = "Get JSON Data";
+            this.btnAPIData.Text = "Load From GeoJSON API";
             this.btnAPIData.UseVisualStyleBackColor = true;
             this.btnAPIData.Click += new System.EventHandler(this.btnAPIData_Click);
+            // 
+            // btnDrawGeoJSONData
+            // 
+            this.btnDrawGeoJSONData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDrawGeoJSONData.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDrawGeoJSONData.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnDrawGeoJSONData.Location = new System.Drawing.Point(382, 574);
+            this.btnDrawGeoJSONData.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnDrawGeoJSONData.Name = "btnDrawGeoJSONData";
+            this.btnDrawGeoJSONData.Padding = new System.Windows.Forms.Padding(2);
+            this.btnDrawGeoJSONData.Size = new System.Drawing.Size(111, 30);
+            this.btnDrawGeoJSONData.TabIndex = 94;
+            this.btnDrawGeoJSONData.Text = "Draw GeoJSON";
+            this.btnDrawGeoJSONData.UseVisualStyleBackColor = true;
+            this.btnDrawGeoJSONData.Click += new System.EventHandler(this.btnDrawGeoJSONData_Click);
+            // 
+            // cbLoadJSONFile
+            // 
+            this.cbLoadJSONFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbLoadJSONFile.AutoSize = true;
+            this.cbLoadJSONFile.Location = new System.Drawing.Point(384, 609);
+            this.cbLoadJSONFile.Name = "cbLoadJSONFile";
+            this.cbLoadJSONFile.Size = new System.Drawing.Size(122, 17);
+            this.cbLoadJSONFile.TabIndex = 13;
+            this.cbLoadJSONFile.Text = "Local GeoJSON File";
+            this.cbLoadJSONFile.UseVisualStyleBackColor = true;
             // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(656, 608);
+            this.ClientSize = new System.Drawing.Size(621, 629);
+            this.Controls.Add(this.cbLoadJSONFile);
+            this.Controls.Add(this.btnDrawGeoJSONData);
             this.Controls.Add(this.btnAPIData);
-            this.Controls.Add(this.btnTestGeoGeom);
-            this.Controls.Add(this.btmTestGeoAPI);
             this.Controls.Add(this.btnExportData);
             this.Controls.Add(this.btnExportImages);
             this.Controls.Add(this.groupBox3);
@@ -1135,8 +1132,8 @@ namespace Stacker.GeoJsonClasses
         private System.Windows.Forms.Button btnApplyFloorChanges;
         private System.Windows.Forms.Button btnExportImages;
         private System.Windows.Forms.Button btnExportData;
-        private System.Windows.Forms.Button btmTestGeoAPI;
-        private System.Windows.Forms.Button btnTestGeoGeom;
         private System.Windows.Forms.Button btnAPIData;
+        private System.Windows.Forms.Button btnDrawGeoJSONData;
+        private System.Windows.Forms.CheckBox cbLoadJSONFile;
     }
 }
