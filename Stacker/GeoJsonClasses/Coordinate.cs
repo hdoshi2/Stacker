@@ -8,8 +8,13 @@ namespace Stacker.GeoJsonClasses
     public class Coordinate
     {
         /// <summary>
-        /// Gets or sets the Points.
+        /// Gets or sets the latitude.
         /// </summary>
-        public Dictionary<double, double> Points { get; set; }
+        public double latitude { get; set; }
+
+        /// <summary>
+        /// Gets or sets the longitude.
+        /// </summary>
+        public double longitude { get; set; }
     }
 }

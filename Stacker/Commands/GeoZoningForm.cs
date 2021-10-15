@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,8 +31,8 @@ namespace Stacker.Commands
         {
             string addressLine1 = tbStreedAddress1.Text;
             string addressLine2 = tbStreedAddress2.Text;
-            string city = cbCity.SelectedItem.ToString();
-            string state = cbState.SelectedItem.ToString();
+            string city = cbCity.Text;
+            string state = cbState.Text;
             string zip = tbZipCode.Text;
             string country = tbCountry.Text;
 
@@ -51,9 +52,16 @@ namespace Stacker.Commands
 
                 requestRegrid.AddHeader("content-type", "application/json");
                 QueryResultRegrid = clietRegrid.Execute<Object>(requestRegrid).Data;
-                JsonRegrid = JsonConvert.SerializeObject(QueryResultRegrid);
+                JsonRegrid = JsonConvert.SerializeObject(QueryResultRegrid, Formatting.Indented);
 
-                if (JsonRegrid != null && JsonRegrid.Length > 0)
+                string directory = $"C:\\Users\\hdosh\\Desktop\\JSON_Data\\Regrid";
+                if (Directory.Exists(directory))
+                {
+                    string path = $"{directory}\\JSON_Regrid_{fullAddress}.json";
+                    System.IO.File.WriteAllText(@path, JsonRegrid);
+                }
+
+                if (JsonRegrid != null && JsonRegrid.Length > 30)
                 {
                     lblRegridStatus.Visible = true;
                     lblRegridStatus.ForeColor = System.Drawing.Color.DarkGreen;
@@ -78,10 +86,17 @@ namespace Stacker.Commands
 
                 requestZoneomics.AddHeader("content-type", "application/json");
                 QueryResultZoneomics = clientZoneomics.Execute<Object>(requestZoneomics).Data;
-                JsonZoneomics = JsonConvert.SerializeObject(QueryResultZoneomics);
+                JsonZoneomics = JsonConvert.SerializeObject(QueryResultZoneomics, Formatting.Indented);
+                string directory = $"C:\\Users\\hdosh\\Desktop\\JSON_Data\\Zoneomics";
+                if (Directory.Exists(directory))
+                {
+                    string path = $"{directory}\\JSON_Zoneomics_{fullAddress}.json";
+                    System.IO.File.WriteAllText(@path, JsonZoneomics);
+                }
 
 
-                if (JsonZoneomics != null && JsonZoneomics.Length > 0)
+
+                if (JsonZoneomics != null && JsonZoneomics.Length > 30)
                 {
                     lblZoneomicsStatus.Visible = true;
                     lblZoneomicsStatus.ForeColor = System.Drawing.Color.DarkGreen;
@@ -128,7 +143,7 @@ namespace Stacker.Commands
         int selectPrefilledAddressesCount = 0;
         private void btnRandomAddress_Click(object sender, EventArgs e)
         {
-            int totalAddresses = 4;
+            int totalAddresses = 6;
             int interval = selectPrefilledAddressesCount % totalAddresses;
 
             if (interval == 0)
@@ -162,6 +177,22 @@ namespace Stacker.Commands
                 cbCity.Text = "New Haven";
                 cbState.Text = "CT";
                 tbZipCode.Text = "06511";
+            }
+            else if (interval == 4)
+            {
+                tbStreedAddress1.Text = "7915 Karlov Ave";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "Skokie";
+                cbState.Text = "IL";
+                tbZipCode.Text = "60076";
+            }
+            else if (interval == 5)
+            {
+                tbStreedAddress1.Text = "2546 Southern Ave";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "Jacksonville ";
+                cbState.Text = "FL";
+                tbZipCode.Text = "32207";
             }
 
             selectPrefilledAddressesCount++;

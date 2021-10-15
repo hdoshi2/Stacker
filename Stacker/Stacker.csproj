@@ -41,9 +41,11 @@
     <Reference Include="EPPlus">
       <HintPath>..\Packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="GeoJSON.Net, Version=1.2.16.0, Culture=neutral, PublicKeyToken=42c00ea87f5f14d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\GeoJSON.Net.1.2.19\lib\net45\GeoJSON.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="RestSharp, Version=106.12.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
@@ -91,6 +93,8 @@
     </Compile>
     <Compile Include="GeoJsonClasses\GeoJsonParser.cs" />
     <Compile Include="ExternalApplication.cs" />
+    <Compile Include="GeoJsonClasses\GeometryConverter.cs" />
+    <Compile Include="GeoJsonClasses\Polygon.cs" />
     <Compile Include="ModClasses\BldgResult.cs" />
     <Compile Include="ModClasses\FloorLayout.cs" />
     <Compile Include="ModClasses\FloorLayoutOption.cs" />

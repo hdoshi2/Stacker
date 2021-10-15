@@ -32,3 +32,4 @@ C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\CoordinateSharp.x
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.GeoJsonClasses.CreatePrelimLayoutForm.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.GeoJsonClasses.FormViewJsonData.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.GeoZoningForm.resources
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\GeoJSON.Net.dll

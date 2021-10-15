@@ -3584,14 +3584,23 @@ namespace Stacker.GeoJsonClasses
             {
                 if(JsonRegrid == null)
                 {
-                    TaskDialog.Show("Error!", "GeoJson file to found.");
+                    TaskDialog.Show("Error!", "GeoJson file not found.");
                     return;
                 }
 
+                //var openFileDialo = new OpenFileDialog() { Filter = "Json file|*.json", Title = "Select GeoJson file" };
+
+                //if (openFileDialo.ShowDialog() == DialogResult.Cancel)
+                //{
+                //    return;
+                //}
+
+                //geoJsonParser = new GeoJsonParser();
+                //geoJason = geoJsonParser.ParseFile(openFileDialo.FileName);
+
                 geoJsonParser = new GeoJsonParser();
-
                 var deserializeJSON = JsonConvert.DeserializeObject(JsonRegrid).ToString();
-
+                //geoJason = geoJsonParser.ParseJSON(deserializeJSON);
                 geoJason = geoJsonParser.ParseJSON(deserializeJSON);
             }
 
@@ -3616,58 +3625,78 @@ namespace Stacker.GeoJsonClasses
                             continue;
                         }
 
-                        var profileloops = new List<CurveLoop>();
+                        var isFirstPolygonSet = true;
+                        var basePoint = XYZ.Zero;
+                        var factor = 0.0;
 
-                        foreach (var coordinates in result.Geometry.Coordinates)
+                        foreach (var polygonSet in result.Geometry.PolygonsSet)
                         {
-                            XYZ firstPoint = null;
-                            XYZ currentPoint = null;
+                            var profileloops = new List<CurveLoop>();
 
-                            var profileloop = new CurveLoop();
-
-                            foreach (var coordinate in coordinates)
+                            foreach (var polygon in polygonSet)
                             {
-                                var nextPoint = ConvertCoordinateToXYZ(coordinate[0], coordinate[1]);
 
-                                if (currentPoint is null)
+                                XYZ currentPoint = null;
+
+                                var profileloop = new CurveLoop();
+                                var isFirstCoordinate = true;
+
+                                foreach (var coordinate in polygon.Coordinates)
                                 {
-                                    firstPoint = nextPoint;
-                                    currentPoint = nextPoint;
+                                    if (isFirstPolygonSet)
+                                    {
+                                        factor = Math.Abs(Math.Cos(DegreesToRadians(coordinate.latitude)));
+                                    }
 
-                                    continue;
+                                    var nextPoint = ConvertCoordinateToXYZ(coordinate.longitude, coordinate.latitude, factor);
+
+                                    if (isFirstPolygonSet)
+                                    {
+                                        basePoint = nextPoint;
+                                        isFirstPolygonSet = false;
+                                    }
+
+                                    if (isFirstCoordinate)
+                                    {
+                                        currentPoint = nextPoint;
+                                        isFirstCoordinate = false;
+
+                                        continue;
+                                    }
+
+                                    var line = Line.CreateBound(currentPoint.Subtract(basePoint), nextPoint.Subtract(basePoint));
+
+                                    profileloop.Append(line);
+
+                                    currentPoint = nextPoint;
                                 }
 
-                                var line = Line.CreateBound(currentPoint.Subtract(firstPoint), nextPoint.Subtract(firstPoint));
+                                profileloops.Add(profileloop);
 
-                                profileloop.Append(line);
+                                var filteredElementCollector = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
+                                var filledRegionPattern = filteredElementCollector.Cast<FilledRegionType>().Where(region => region.Name.Equals("Solid Black"));
+                                var filledRegion = FilledRegion.Create(_doc, filledRegionPattern.FirstOrDefault().Id,
+                                    _doc.ActiveView.Id, profileloops);
 
-                                currentPoint = nextPoint;
+                                _doc.Regenerate();
+
+                                var uiDocument = _uidoc;
+                                var selectedCollection = new ElementId[] { filledRegion.Id };
+
+                                uiDocument.Selection.SetElementIds(selectedCollection);
+                                uiDocument.ShowElements(selectedCollection);
+                                uiDocument.RefreshActiveView();
+
+                                var area = filledRegion.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsValueString();
+                                var boundingBox = filledRegion.get_BoundingBox(_doc.ActiveView);
+                                var boundingBoxWidth = Math.Round(boundingBox.Max.X - boundingBox.Min.X, 3);
+                                var boundingBoxHeight = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
+                                var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxHeight, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
+                                var summary = $"Area = {area}\nBounding Box Width = {boundingBoxWidth} ft\nBounding Box Height = {boundingBoxHeight} ft\n"
+                                    + $"Bounding Box Diagonal = {boundingBoxDiagonal} ft";
+
+                                TaskDialog.Show("Summary", summary);
                             }
-
-                            profileloops.Add(profileloop);
-
-                            var filteredElementCollector = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
-                            var filledRegionPattern = filteredElementCollector.Cast<FilledRegionType>().Where(reg => reg.Name.Equals("Solid Black"));
-                            var filledRegion = FilledRegion.Create(_doc, filledRegionPattern.FirstOrDefault().Id,
-                                _doc.ActiveView.Id, profileloops);
-
-                            _doc.Regenerate();
-
-                            var selectedCollection = new ElementId[] { filledRegion.Id };
-
-                            _uidoc.Selection.SetElementIds(selectedCollection);
-                            _uidoc.ShowElements(selectedCollection);
-                            _uidoc.RefreshActiveView();
-
-                            var area = filledRegion.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsValueString();
-                            var boundingBox = filledRegion.get_BoundingBox(_doc.ActiveView);
-                            var boundingBoxWidth = Math.Round(boundingBox.Max.X - boundingBox.Min.X, 3);
-                            var boundingBoxHeight = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
-                            var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxHeight, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
-                            var summary = $"Area = {area}\nBounding Box Width = {boundingBoxWidth} ft\nBounding Box Height = {boundingBoxHeight} ft\n"
-                                + $"Bounding Box Diagonal = {boundingBoxDiagonal} ft";
-
-                            TaskDialog.Show("Summary", summary);
                         }
                     }
 
@@ -3685,7 +3714,7 @@ namespace Stacker.GeoJsonClasses
         /// <param name="longitude">The longitude<see cref="double"/>.</param>
         /// <param name="latitude">The latitude<see cref="double"/>.</param>
         /// <returns>The <see cref="XYZ"/>.</returns>
-        private XYZ ConvertCoordinateToXYZ(double longitude, double latitude)
+        private XYZ ConvertCoordinateToXYZCoordinateSharp(double longitude, double latitude)
         {
             var coordinate = new CoordinateSharp.Coordinate(latitude, longitude);
 
@@ -3694,6 +3723,34 @@ namespace Stacker.GeoJsonClasses
 
             return new XYZ(x, y, 0);
         }
+
+
+        /// <summary>
+        /// The ConvertCoordinateToXYZ.
+        /// </summary>
+        /// <param name="longitude">The longitude<see cref="double"/>.</param>
+        /// <param name="latitude">The latitude<see cref="double"/>.</param>
+        /// <param name="factor">The factor<see cref="double"/>.</param>
+        /// <returns>The <see cref="XYZ"/>.</returns>
+        private XYZ ConvertCoordinateToXYZ(double longitude, double latitude, double factor)
+        {
+            var EarthRadius = 6378137 * 3.281 * factor;
+            var x = EarthRadius * DegreesToRadians(longitude);
+            var y = EarthRadius * Math.Log((Math.Sin(DegreesToRadians(latitude)) + 1) / Math.Cos(DegreesToRadians(latitude)));
+
+            return new XYZ(x, y, 0);
+        }
+
+        /// <summary>
+        /// The DegreesToRadians.
+        /// </summary>
+        /// <param name="val">The val<see cref="double"/>.</param>
+        /// <returns>The <see cref="double"/>.</returns>
+        private double DegreesToRadians(double val)
+        {
+            return val * Math.PI / 180;
+        }
+
 
 
         private void btnAPIData_Click(object sender, EventArgs e)
