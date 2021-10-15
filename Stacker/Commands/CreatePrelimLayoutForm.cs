@@ -3588,16 +3588,6 @@ namespace Stacker.GeoJsonClasses
                     return;
                 }
 
-                //var openFileDialo = new OpenFileDialog() { Filter = "Json file|*.json", Title = "Select GeoJson file" };
-
-                //if (openFileDialo.ShowDialog() == DialogResult.Cancel)
-                //{
-                //    return;
-                //}
-
-                //geoJsonParser = new GeoJsonParser();
-                //geoJason = geoJsonParser.ParseFile(openFileDialo.FileName);
-
                 geoJsonParser = new GeoJsonParser();
                 var deserializeJSON = JsonConvert.DeserializeObject(JsonRegrid).ToString();
                 //geoJason = geoJsonParser.ParseJSON(deserializeJSON);

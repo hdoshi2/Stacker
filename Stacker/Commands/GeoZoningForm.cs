@@ -214,5 +214,85 @@ namespace Stacker.Commands
 
             this.Close();
         }
+
+
+
+
+        private void btnMultipleAddresses_Click(object sender, EventArgs e)
+        {
+            string multipleAddressStr = "815 LINN DR, CLEVELAND, OH 44108, USA;8611 SUPERIOR AVE, CLEVELAND, OH 44106, USA;8701 BIRCHDALE AVE, CLEVELAND, OH 44106, USA;9511 LAMONT AVE, CLEVELAND, OH 44106, USA;9620 HOUGH AVE, CLEVELAND, OH 44106, USA;9700 SHAKER BLVD, CLEVELAND, OH 44104, USA;9701 LAMONT AVE, CLEVELAND, OH 44106, USA";
+            
+            OpenFileDialog openFileDialog = null;
+            openFileDialog = new OpenFileDialog() { Filter = "Text file|*.txt", Title = "Select Address Text file" };
+            
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            var filePath = openFileDialog.FileName;
+            // Read the file and display it line by line.  
+            foreach (string line in System.IO.File.ReadLines(@filePath))
+            {
+                multipleAddressStr = line;
+                System.Console.WriteLine(line);
+            }
+
+
+            var multipleAddresses = multipleAddressStr.Split(';').ToList();
+            int count = 0;
+
+            foreach (var address in multipleAddresses)
+            {
+                string fullAddress = address;
+
+                if (cbRegrid.Checked)
+                {
+                    var clietRegrid = new RestClient("https://app.regrid.com/api/v1/search.json?");
+                    var requestRegrid = new RestRequest(Method.GET);
+
+                    requestRegrid.AddParameter("query", fullAddress);
+                    requestRegrid.AddParameter("strict", "1");
+                    requestRegrid.AddParameter("limit", "1");
+                    requestRegrid.AddParameter("token", "ay49YmoCTj_sV_p4MRpqnF9wwPKPRxpzSSK-EbGaMwpKipxZYy43oQoseSFMXECy");
+
+                    requestRegrid.AddHeader("content-type", "application/json");
+                    QueryResultRegrid = clietRegrid.Execute<Object>(requestRegrid).Data;
+                    JsonRegrid = JsonConvert.SerializeObject(QueryResultRegrid, Formatting.Indented);
+
+                    string directory = $"C:\\Users\\hdosh\\Desktop\\JSON_Data\\Regrid";
+                    if (Directory.Exists(directory))
+                    {
+                        string path = $"{directory}\\JSON_Regrid_{fullAddress}.json";
+                        System.IO.File.WriteAllText(@path, JsonRegrid);
+                    }
+
+                }
+
+                if (cbZoneomics.Checked)
+                {
+                    var clientZoneomics = new RestClient("https://www.zoneomics.com/api/get_zone_details");
+                    var requestZoneomics = new RestRequest(Method.GET);
+
+                    requestZoneomics.AddParameter("api_key", "a9454176416681b8051d7ee5479d3e85c2afd650");
+                    requestZoneomics.AddParameter("address", fullAddress);
+                    requestZoneomics.AddParameter("output_fields", "all");
+
+                    requestZoneomics.AddHeader("content-type", "application/json");
+                    QueryResultZoneomics = clientZoneomics.Execute<Object>(requestZoneomics).Data;
+                    JsonZoneomics = JsonConvert.SerializeObject(QueryResultZoneomics, Formatting.Indented);
+                    string directory = $"C:\\Users\\hdosh\\Desktop\\JSON_Data\\Zoneomics";
+                    if (Directory.Exists(directory))
+                    {
+                        string path = $"{directory}\\JSON_Zoneomics_{fullAddress}.json";
+                        System.IO.File.WriteAllText(@path, JsonZoneomics);
+                    }
+
+                }
+
+                count++;
+
+            }
+
+
+        }
     }
 }
