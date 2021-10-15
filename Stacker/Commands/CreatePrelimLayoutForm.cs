@@ -23,6 +23,7 @@ using RestSharp.Serialization.Json;
 using Parameter = Autodesk.Revit.DB.Parameter;
 using CoordinateSharp;
 using Stacker.Commands;
+using GRi = GeometRi;
 
 namespace Stacker.GeoJsonClasses
 {
@@ -1364,8 +1365,105 @@ namespace Stacker.GeoJsonClasses
 
 
 
+                            //
+                            //Find exterior walls by determining which wall are overlapping with the floor edge
+                            //
+                            var floorSolids = new List<Solid>();
+                            var floorEdgeLines = new List<Line>();
+
+                            Options opt = new Options();
+                            opt.DetailLevel = ViewDetailLevel.Fine;
+                            opt.IncludeNonVisibleObjects = true;
+                            opt.ComputeReferences = true;
+
+                            var flr = _doc.GetElement(ElementsBuilt["Floor"].FirstOrDefault()) as Floor;
+                            var getGeom = flr.GetAnalyticalModel().get_Geometry(opt);
+
+                            foreach (GeometryObject elmGeometry in getGeom)
+                            {
+                                try
+                                {
+                                    if (elmGeometry.GetType() == typeof(Solid))
+                                    {
+                                        floorSolids.Add(elmGeometry as Solid);
+                                    }
+                                    else if (elmGeometry.GetType() == typeof(GeometryInstance))
+                                    {
+                                        floorSolids.AddRange(ExtractGeometryInstanceSolids(elmGeometry as GeometryInstance));
+                                    }
+                                    else if (elmGeometry.GetType() == typeof(Line))
+                                    {
+                                        floorEdgeLines.Add(elmGeometry as Line);
+                                    }
+
+                                }
+                                catch
+                                {
+                                    //ignore sometimes there are weird effects with Group objects
+                                }
+
+                            }
+
+                            var overlappingLines = new List<Line>();
+                            var overlappingWalls = new List<Wall>();
+                            var overlappingWallsIDs = new List<ElementId>();
+                            int totalWalls = 0;
+
+                            foreach (var elem in ElementsBuilt)
+                            {
+                                string elemCategoryName = elem.Key;
+                                List<ElementId> elemIDs = elem.Value;
+
+                                if (!elemCategoryName.Contains("Room Elements"))
+                                {
+                                    continue;
+                                }
+
+                                for (int i = 0; i <= elemIDs.Count() - 2; i++)
+                                {
+                                    ElementId elemID = elemIDs[i];
+
+                                    Wall wall = _doc.GetElement(elemID) as Wall;
+
+                                    if (wall == null)
+                                        continue;
+                                    totalWalls++;
+                                    LocationCurve wallCurve = (LocationCurve)wall.Location;
+                                    Line locationLine = wallCurve.Curve as Line;
+
+                                    //bool doesLineOverlap = SearchForLineInList(locationLine, floorEdgeLines);
+                                    bool doesLineOverlap = false;
+
+                                    //Iterate list and intersect
+                                    foreach (var line2 in floorEdgeLines)
+                                    {
+                                        var gLine = ConvLine3d(locationLine);
+
+                                        XYZ p = locationLine.GetEndPoint(0);
+                                        XYZ q = locationLine.GetEndPoint(1);
+                                        XYZ centerpoint = (p + q) / 2;
+
+                                        var pt1 = ConvPoint3d(p);
+                                        var pt2 = ConvPoint3d(q);
+                                        var mid = ConvPoint3d(centerpoint);
+                                        //if (gLine.IntersectionWith(ConvLine3d(line2)) != null)
+                                        //{
+                                        //    doesLineOverlap = true;
+                                        //}
+
+                                        if (pt1.BelongsTo(ConvLine3d(line2)) && pt2.BelongsTo(ConvLine3d(line2)) && mid.BelongsTo(ConvLine3d(line2)))
+                                        {
+                                            overlappingLines.Add(locationLine);
+                                            overlappingWalls.Add(wall);
+                                            overlappingWallsIDs.Add(wall.Id);
+                                        }
+                                    }
 
 
+                                }
+                            }
+
+                            _uidoc.Selection.SetElementIds(overlappingWallsIDs);
 
                             //
                             //Find an Delete Overlapping walls
@@ -3768,6 +3866,120 @@ namespace Stacker.GeoJsonClasses
         #endregion
 
 
+        public static bool SearchForLineInList(Line line, List<Line> lineList)
+        {
+            if (!lineList.Any())
+                return false;
+
+            if (line.IsBound)
+            {
+                var subList = lineList.Where(l => l.IsBound);
+
+                //Iterate list and look for input line by comparing end points in both directions
+                foreach (var line2 in subList)
+                {
+                    if (line.GetEndPoint(0).IsAlmostEqualTo(line2.GetEndPoint(0)) && line.GetEndPoint(1).IsAlmostEqualTo(line2.GetEndPoint(1)))
+                    {
+                        return true;
+                    }
+                    else if (line.GetEndPoint(0).IsAlmostEqualTo(line2.GetEndPoint(1)) && line.GetEndPoint(1).IsAlmostEqualTo(line2.GetEndPoint(0)))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                var subList = lineList.Where(l => l.IsBound == false);
+
+                //Iterate list and intersect
+                foreach (var line2 in subList)
+                {
+                    var gLine = ConvLine3d(line);
+
+                    if (gLine.IntersectionWith(ConvLine3d(line2)) != null)
+                    {
+                        return true;
+                    }
+                }
+
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Convert unbound line to Line3d
+        /// </summary>
+        /// <returns></returns>
+        public static GRi.Line3d ConvLine3d(Line line)
+        {
+            return new GRi.Line3d(ConvPoint3d(line.Origin), ConvVector3d(line.Direction));
+        }
+
+        /// <summary>
+        /// Convert XYZ point to Point3d
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static GRi.Point3d ConvPoint3d(XYZ point)
+        {
+            return new GRi.Point3d(point.X, point.Y, point.Z);
+        }
+
+        /// <summary>
+        /// Convert XYZ vector to Vector3d
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns></returns>
+        public static GRi.Vector3d ConvVector3d(XYZ vector)
+        {
+            return new GRi.Vector3d(ConvPoint3d(vector));
+        }
+
+
+
+        /// <summary>
+        /// Convert bound Line to Segment3d
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public static GRi.Segment3d ConvSegment3d(Line line)
+        {
+            var P1 = line.GetEndPoint(0);
+            var P2 = line.GetEndPoint(1);
+
+
+            var gLine = new GRi.Segment3d(ConvPoint3d(P1), ConvPoint3d(P2));
+
+            return gLine;
+        }
+
+
+        /// <summary>
+        /// Recrusively extract solids from GeometryInstance objects
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static List<Solid> ExtractGeometryInstanceSolids(GeometryInstance instance)
+        {
+            var solids = new List<Solid>();
+
+            foreach (var elmGeometry in instance.GetInstanceGeometry())
+            {
+                if (elmGeometry.GetType() == typeof(Solid))
+                {
+                    solids.Add(elmGeometry as Solid);
+                }
+                else if (elmGeometry.GetType() == typeof(GeometryInstance))
+                {
+                    solids.AddRange(ExtractGeometryInstanceSolids(elmGeometry as GeometryInstance));
+                }
+            }
+
+            return solids;
+        }
 
     }
 }

@@ -33,3 +33,5 @@ C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.GeoJsonCl
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.GeoJsonClasses.FormViewJsonData.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\obj\Debug\Stacker.Commands.GeoZoningForm.resources
 C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\GeoJSON.Net.dll
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\GeometRi.dll
+C:\Users\hdosh\Desktop\Modular\Repos\Stacker\Stacker\bin\Debug\GeometRi.xml
