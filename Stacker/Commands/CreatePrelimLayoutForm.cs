@@ -1465,11 +1465,28 @@ namespace Stacker.GeoJsonClasses
 
                             _uidoc.Selection.SetElementIds(overlappingWallsIDs);
 
+                            WallType wType = new FilteredElementCollector(_doc)
+                                                .OfClass(typeof(WallType))
+                                                .Cast<WallType>().Where(w => w.Name == "Exterior - CMU on Mtl. Stud").FirstOrDefault();
+                            List<XYZ> wallOrinentation = new List<XYZ>();
+
+                            if(wType != null)
+                            {
+                                foreach (var wall in overlappingWalls)
+                                {
+                                    wall.WallType = wType;
+                                    wallOrinentation.Add(wall.Orientation);
+                                }
+                            }
+
+
+
                             //
                             //Find an Delete Overlapping walls
                             //
 
                             //Create list of walls where bounding boxes are matching
+                            
                             List<Wall> wallsToRemove = new List<Wall>();
 
                             foreach (var elem in ElementsBuilt)
@@ -1643,6 +1660,7 @@ namespace Stacker.GeoJsonClasses
 
                             }
 
+ 
 
 
 
@@ -1682,6 +1700,82 @@ namespace Stacker.GeoJsonClasses
                                 }
                             }
 
+
+
+                            FamilySymbol doorType = null;
+                            FilteredElementCollector collector = new FilteredElementCollector(_doc);
+                            var doorCollector = collector.OfClass(typeof(FamilySymbol)).OfCategory(BuiltInCategory.OST_Doors).ToElements().ToList();
+
+                            foreach(var dr in doorCollector)
+                            {
+                                FamilySymbol sym = dr as FamilySymbol;
+                                if(sym.Name == "96\" x 84\"" && sym.FamilyName == "Door-Exterior-Double-Two_Lite")
+                                {
+                                    doorType = sym;
+                                    break;
+                                }
+                            }
+
+                            List<ElementId> idsRemoved = new List<ElementId>();
+                            List<ElementId> idsAdded = new List<ElementId>();
+
+                            foreach (var val in ElementsBuilt)
+                            {
+                                var elemList = val.Value;
+
+                                if (val.Key != "Room Elements")
+                                    continue;
+
+                                foreach (var elemId in elemList)
+                                {
+
+                                    var element = _doc.GetElement(elemId);
+                                    if (element.Category.Name == "Windows")
+                                    {
+                                        var elemCatName = element.Category.Name;
+                                        var parComments = element.LookupParameter("Comments");
+                                        string comment = parComments.AsString();
+
+                                        if (comment.Contains("CORE"))
+                                        {
+                                            var fi = element as FamilyInstance;
+                                            Wall wall = fi.Host as Wall;
+
+                                            var locationCurve = (LocationCurve)wall.Location;
+
+                                            var position = locationCurve.Curve.Evaluate(
+                                              0.5, true);
+
+                                            var level = (Level)_doc.GetElement(wall.LevelId);
+
+                                            var symbolId = _doc.GetDefaultFamilyTypeId(new ElementId(BuiltInCategory.OST_Doors));
+
+                                            var symbol = (FamilySymbol)_doc.GetElement(symbolId);
+                                            if (doorType != null)
+                                                symbol = doorType;
+
+                                            if (!symbol.IsActive)
+                                            symbol.Activate();
+
+                                            var door = _doc.Create.NewFamilyInstance(position, symbol, wall, level, StructuralType.NonStructural);
+                                            idsAdded.Add(door.Id);
+                                            idsRemoved.Add(elemId);
+
+                                            _doc.Delete(elemId);
+                                        }
+
+
+                                    }
+
+                                }
+                            }
+
+                            ElementsBuilt["Room Elements"].AddRange(idsAdded);
+                            foreach(var elemID in idsRemoved)
+                            {
+                                ElementsBuilt["Room Elements"].Remove(elemID);
+                            }
+                            
 
                             _doc.Regenerate();
                             transCreateFloors.Commit();
@@ -2446,7 +2540,7 @@ namespace Stacker.GeoJsonClasses
                         //4.Shaded with Edges
                         //5.Consistent Colors
                         //6.Realistic
-                        view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(6);
+                        view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(5);
 
                         builtMod3DViews.Add(view3DCurrent);
                         allViews.Add(view3DCurrent);
