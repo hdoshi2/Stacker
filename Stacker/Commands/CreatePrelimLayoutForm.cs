@@ -85,8 +85,8 @@ namespace Stacker.GeoJsonClasses
 
             PodLengthMin = 20;
             PodLengthMax = 35;
-            PodWidthMin = 12;
-            PodWidthMax = 16;
+            PodWidthMin = 14;
+            PodWidthMax = 20;
 
             tbModLengthMin.Text = PodLengthMin.ToString();
             tbModLengthMax.Text = PodLengthMax.ToString();

@@ -168,7 +168,7 @@ namespace Stacker.GeoJsonClasses
             this.tbWidth.Name = "tbWidth";
             this.tbWidth.Size = new System.Drawing.Size(39, 20);
             this.tbWidth.TabIndex = 3;
-            this.tbWidth.Text = "60";
+            this.tbWidth.Text = "75";
             // 
             // label1
             // 
@@ -471,7 +471,7 @@ namespace Stacker.GeoJsonClasses
             this.groupBox1.Size = new System.Drawing.Size(387, 157);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Unit Configuration Preview";
+            this.groupBox1.Text = "Building Unit Mix Metrics";
             // 
             // btnAddInteriorLayout
             // 
@@ -669,7 +669,7 @@ namespace Stacker.GeoJsonClasses
             this.gbModLimitations.Size = new System.Drawing.Size(204, 144);
             this.gbModLimitations.TabIndex = 84;
             this.gbModLimitations.TabStop = false;
-            this.gbModLimitations.Text = "Modular Limitations";
+            this.gbModLimitations.Text = "Unit Dimensional Limitations";
             // 
             // label20
             // 
@@ -686,7 +686,7 @@ namespace Stacker.GeoJsonClasses
             this.tbFixedWidth.Name = "tbFixedWidth";
             this.tbFixedWidth.Size = new System.Drawing.Size(39, 20);
             this.tbFixedWidth.TabIndex = 11;
-            this.tbFixedWidth.Text = "12";
+            this.tbFixedWidth.Text = "14";
             // 
             // tbModWidthMax
             // 
