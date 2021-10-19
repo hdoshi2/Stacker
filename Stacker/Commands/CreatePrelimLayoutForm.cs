@@ -1463,7 +1463,8 @@ namespace Stacker.GeoJsonClasses
                                 }
                             }
 
-                            _uidoc.Selection.SetElementIds(overlappingWallsIDs);
+                            //Select all overlapping walls found at level 1
+                            //_uidoc.Selection.SetElementIds(overlappingWallsIDs);
 
                             WallType wType = new FilteredElementCollector(_doc)
                                                 .OfClass(typeof(WallType))
@@ -1706,12 +1707,28 @@ namespace Stacker.GeoJsonClasses
                             FilteredElementCollector collector = new FilteredElementCollector(_doc);
                             var doorCollector = collector.OfClass(typeof(FamilySymbol)).OfCategory(BuiltInCategory.OST_Doors).ToElements().ToList();
 
-                            foreach(var dr in doorCollector)
+                            FamilySymbol windowType = null;
+                            FilteredElementCollector collectorWin = new FilteredElementCollector(_doc);
+                            var windowCollector = collectorWin.OfClass(typeof(FamilySymbol)).OfCategory(BuiltInCategory.OST_Windows).ToElements().ToList();
+
+
+                            foreach (var dr in doorCollector)
                             {
                                 FamilySymbol sym = dr as FamilySymbol;
                                 if(sym.Name == "96\" x 84\"" && sym.FamilyName == "Door-Exterior-Double-Two_Lite")
                                 {
                                     doorType = sym;
+                                    break;
+                                }
+                            }
+
+                            foreach (var wn in windowCollector)
+                            {
+                                FamilySymbol sym = wn as FamilySymbol;
+                                //if (sym.Name == "85\" x 60\"" && sym.FamilyName == "Window-Casement-Multi-Sash-Horizontal")
+                                if (sym.FamilyName == "Window-Casement-Multi-Sash-Horizontal")
+                                {
+                                    windowType = sym;
                                     break;
                                 }
                             }
@@ -1730,8 +1747,10 @@ namespace Stacker.GeoJsonClasses
                                 {
 
                                     var element = _doc.GetElement(elemId);
+
                                     if (element.Category.Name == "Windows")
                                     {
+                                        FamilyInstance window = element as FamilyInstance;
                                         var elemCatName = element.Category.Name;
                                         var parComments = element.LookupParameter("Comments");
                                         string comment = parComments.AsString();
@@ -1758,10 +1777,17 @@ namespace Stacker.GeoJsonClasses
                                             symbol.Activate();
 
                                             var door = _doc.Create.NewFamilyInstance(position, symbol, wall, level, StructuralType.NonStructural);
+                                            door.LookupParameter("Masonry Inset").Set(-0.166666);
+
                                             idsAdded.Add(door.Id);
                                             idsRemoved.Add(elemId);
 
                                             _doc.Delete(elemId);
+                                        }
+                                        else
+                                        {
+                                            if (windowType != null)
+                                                window.Symbol = windowType;
                                         }
 
 
@@ -2461,123 +2487,128 @@ namespace Stacker.GeoJsonClasses
 
                 Dictionary<string, string> sheetNames = new Dictionary<string, string>();
 
-                //
-                //Export images for all Levels created. 
-                //
-                for (int i = 0; i < AllLevels.Count; i++)
+                using (TransactionGroup transGroup = new TransactionGroup(_doc))
                 {
-                    Level currentLevel = AllLevels[i];
-                    View currentViewPlan = AllViewPlans[i] as View;
-                    
-                    allViews.Add(currentViewPlan);
-                    
-                    sheetNames[currentLevel.Name] = $"DB-00{i + 1}";
-
-                    hideElementsFromView(new List<View>() { currentViewPlan });
-
-                    if (selectedPath != "")
-                        exportViewPlanImage(currentViewPlan, selectedPath);
-                }
-
-
-                //
-                //Create Two 3D Views
-                //
-                ViewFamilyType viewFamilyType = new FilteredElementCollector(_doc)
-                                                    .OfClass(typeof(ViewFamilyType))
-                                                    .OfType<ViewFamilyType>()
-                                                    .FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
-
-                List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
-                List<string> existing3DViewNames = (from v in all3DViews
-                                                    select v.Name).ToList();
-
-
-                using (Transaction transExportImage = new Transaction(_doc))
-                {
-                    transExportImage.Start($"Mod: Create 3D Views");
-
-                    for (var i = 0; i < 2; i++)
+                    transGroup.Start("Transaction Group");
+                    //
+                    //Export images for all Levels created. 
+                    //
+                    for (int i = 0; i < AllLevels.Count; i++)
                     {
-                        View3D view3DCurrent = (viewFamilyType != null)
-                                                ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
-                                                : null;
+                        Level currentLevel = AllLevels[i];
+                        View currentViewPlan = AllViewPlans[i] as View;
 
-                        string view3DName = $"3D Mod View {i + 1}";
+                        allViews.Add(currentViewPlan);
 
-                        if (existing3DViewNames.Contains(view3DName))
-                        {
-                            builtMod3DViews.Add(view3DCurrent);
-                            allViews.Add(view3DCurrent);
-                            continue;
-                        }
+                        sheetNames[currentLevel.Name] = $"DB-00{i + 1}";
 
-                        view3DCurrent.Name = view3DName;
+                        hideElementsFromView(new List<View>() { currentViewPlan });
 
-                        if(i == 0)
-                        {
-                            var eyeDirection = new XYZ(23.5262711771655, -274.775327941385, 267.088086745375);
-                            var upDirection = new XYZ(-0.408248290463863, 0.408248290463863, 0.816496580927726);
-                            var forwardDirection = new XYZ(-0.577350269189626, 0.577350269189626, -0.577350269189626);
-
-                            view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
-                            sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
-                        }
-                        else if (i == 1)
-                        {
-                            var eyeDirection = new XYZ(-462.725440347728, 211.476383583508, 267.088086745375);
-                            var upDirection = new XYZ(0.408248290463863, -0.408248290463863, 0.816496580927726);
-                            var forwardDirection = new XYZ(0.577350269189626, -0.577350269189626, -0.577350269189626);
-
-                            view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
-                            sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
-                        }
-
-
-                        //1.Wireframe
-                        //2.Hidden line
-                        //3.Shaded
-                        //4.Shaded with Edges
-                        //5.Consistent Colors
-                        //6.Realistic
-                        view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(5);
-
-                        builtMod3DViews.Add(view3DCurrent);
-                        allViews.Add(view3DCurrent);
-
-                        ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
+                        if (selectedPath != "")
+                            exportViewPlanImage(currentViewPlan, selectedPath);
                     }
 
 
-                    transExportImage.Commit();
+                    //
+                    //Create Two 3D Views
+                    //
+                    ViewFamilyType viewFamilyType = new FilteredElementCollector(_doc)
+                                                        .OfClass(typeof(ViewFamilyType))
+                                                        .OfType<ViewFamilyType>()
+                                                        .FirstOrDefault(x => x.ViewFamily == ViewFamily.ThreeDimensional);
+
+                    List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
+                    List<string> existing3DViewNames = (from v in all3DViews
+                                                        select v.Name).ToList();
+
+
+                    using (Transaction transExportImage = new Transaction(_doc))
+                    {
+                        transExportImage.Start($"Mod: Create 3D Views");
+
+                        for (var i = 0; i < 2; i++)
+                        {
+                            View3D view3DCurrent = (viewFamilyType != null)
+                                                    ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
+                                                    : null;
+
+                            string view3DName = $"3D Mod View {i + 1}";
+
+                            if (existing3DViewNames.Contains(view3DName))
+                            {
+                                builtMod3DViews.Add(view3DCurrent);
+                                allViews.Add(view3DCurrent);
+                                continue;
+                            }
+
+                            view3DCurrent.Name = view3DName;
+
+                            if (i == 0)
+                            {
+                                var eyeDirection = new XYZ(23.5262711771655, -274.775327941385, 267.088086745375);
+                                var upDirection = new XYZ(-0.408248290463863, 0.408248290463863, 0.816496580927726);
+                                var forwardDirection = new XYZ(-0.577350269189626, 0.577350269189626, -0.577350269189626);
+
+                                view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
+                                sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
+                            }
+                            else if (i == 1)
+                            {
+                                var eyeDirection = new XYZ(-462.725440347728, 211.476383583508, 267.088086745375);
+                                var upDirection = new XYZ(0.408248290463863, -0.408248290463863, 0.816496580927726);
+                                var forwardDirection = new XYZ(0.577350269189626, -0.577350269189626, -0.577350269189626);
+
+                                view3DCurrent.SetOrientation(new ViewOrientation3D(eyeDirection, upDirection, forwardDirection));
+                                sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
+                            }
+
+
+                            //1.Wireframe
+                            //2.Hidden line
+                            //3.Shaded
+                            //4.Shaded with Edges
+                            //5.Consistent Colors
+                            //6.Realistic
+                            view3DCurrent.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(4);
+
+                            builtMod3DViews.Add(view3DCurrent);
+                            allViews.Add(view3DCurrent);
+
+                            ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
+                        }
+
+
+                        transExportImage.Commit();
+                    }
+
+
+
+                    //
+                    //Hide all elements not needed in the 3D View
+                    //
+                    for (var i = 0; i < builtMod3DViews.Count; i++)
+                    {
+                        Autodesk.Revit.DB.View current3DView = builtMod3DViews[i] as Autodesk.Revit.DB.View;
+
+                        if (selectedPath != "")
+                            hideElementsFromView(new List<View>() { current3DView });
+                    }
+
+
+
+                    //
+                    //Export 3D View Images
+                    //
+                    for (var i = 0; i < builtMod3DViews.Count; i++)
+                    {
+                        Autodesk.Revit.DB.View current3DView = builtMod3DViews[i] as Autodesk.Revit.DB.View;
+
+                        if (selectedPath != "")
+                            exportViewPlanImage(current3DView, selectedPath);
+                    }
+
+                    transGroup.Assimilate();
                 }
-
-
-
-                //
-                //Hide all elements not needed in the 3D View
-                //
-                for (var i = 0; i < builtMod3DViews.Count; i++)
-                {
-                    Autodesk.Revit.DB.View current3DView = builtMod3DViews[i] as Autodesk.Revit.DB.View;
-
-                    if (selectedPath != "")
-                        hideElementsFromView(new List<View>() { current3DView });
-                }
-
-
-
-                //
-                //Export 3D View Images
-                //
-                for (var i = 0; i < builtMod3DViews.Count; i++)
-                {
-                    Autodesk.Revit.DB.View current3DView = builtMod3DViews[i] as Autodesk.Revit.DB.View;
-
-                    if (selectedPath != "")
-                        exportViewPlanImage(current3DView, selectedPath);
-                }
-
 
 
 
@@ -3093,7 +3124,7 @@ namespace Stacker.GeoJsonClasses
 
                     if (elemExistsTwoBed != null)
                     {
-                        elemExistsOneBed.Quantity++;
+                        elemExistsTwoBed.Quantity++;
                     }
                     else
                     {
