@@ -1034,7 +1034,7 @@ namespace Stacker.GeoJsonClasses
             this.MaximizeBox = false;
             this.Name = "CreatePrelimLayoutForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Start Building Modular Layout";
+            this.Text = "Building Layout Generator";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.gbFloorDimension.ResumeLayout(false);
             this.gbFloorDimension.PerformLayout();

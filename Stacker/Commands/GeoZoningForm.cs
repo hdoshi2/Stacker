@@ -258,7 +258,7 @@ namespace Stacker.Commands
                     QueryResultRegrid = clietRegrid.Execute<Object>(requestRegrid).Data;
                     JsonRegrid = JsonConvert.SerializeObject(QueryResultRegrid, Formatting.Indented);
 
-                    string directory = $"C:\\Users\\hdosh\\Desktop\\JSON_Data\\Regrid";
+                    string directory = $"C:\\Users\\hdosh\\Desktop\\Data From Revit\\JSON_Data\\Regrid";
                     if (Directory.Exists(directory))
                     {
                         string path = $"{directory}\\JSON_Regrid_{fullAddress}.json";

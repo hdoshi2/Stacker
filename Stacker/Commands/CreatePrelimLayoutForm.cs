@@ -303,7 +303,7 @@ namespace Stacker.GeoJsonClasses
 
                             //Create a New View
                             VPlan = ViewPlan.Create(_doc, structuralvft.Id, Level.Id);
-                            VPlan.Name = Level.Name + " - TEST";
+                            VPlan.Name = Level.Name;
 
                             AllLevels.Add(Level);
                             AllViewPlans.Add(VPlan);
@@ -332,7 +332,7 @@ namespace Stacker.GeoJsonClasses
 
                                 //Create a New View
                                 var newViewPlan = ViewPlan.Create(_doc, structuralvft.Id, newLevel.Id);
-                                newViewPlan.Name = newLevel.Name + " - TEST";
+                                newViewPlan.Name = newLevel.Name;
 
                                 AllLevels.Add(newLevel);
                                 AllViewPlans.Add(newViewPlan);
@@ -1807,6 +1807,21 @@ namespace Stacker.GeoJsonClasses
                             transCreateFloors.Commit();
                         }
 
+
+                        //Hide all extra elements not being used in the model from the view. 
+                        for (int i = 0; i < AllLevels.Count; i++)
+                        {
+                            Level currentLevel = AllLevels[i];
+                            View currentViewPlan = AllViewPlans[i] as View;
+
+                            hideElementsNotBuiltFromView(new List<View>() { currentViewPlan });
+                            
+                            
+                        }
+
+                        
+                        _uidoc.RefreshActiveView();
+
                         List<UIView> openViews = _uidoc.GetOpenUIViews().ToList();
                         foreach (var v in openViews)
                         {
@@ -1817,7 +1832,7 @@ namespace Stacker.GeoJsonClasses
                                 v.ZoomAndCenterRectangle(new XYZ(-25, -25, 0), new XYZ(150, 150, 0));
                             }
                         }
-
+                        
                         currentModWidth = currentModWidth + 1;
 
                         totalOptionsGenerated++;
@@ -2489,7 +2504,7 @@ namespace Stacker.GeoJsonClasses
 
                 using (TransactionGroup transGroup = new TransactionGroup(_doc))
                 {
-                    transGroup.Start("Transaction Group");
+                    transGroup.Start("MOD: Export View Image");
                     //
                     //Export images for all Levels created. 
                     //
@@ -2635,108 +2650,126 @@ namespace Stacker.GeoJsonClasses
                                     where s.Name == sht.Key
                                     select s).FirstOrDefault();
 
-                    if(builtSheet == null)
+                    if (builtSheet != null)
                     {
-                        builtSheet = createCustomSheet(selectedTitleBlock.Id, sht.Key, sht.Value);
-                        builtSheets[sht.Value] = builtSheet;
-
-                        using (Transaction transPlaceViewPort = new Transaction(_doc))
+                        using (Transaction transDeleteOldSheet = new Transaction(_doc))
                         {
-                            transPlaceViewPort.Start($"Mod: Place ViewPort");
+                            transDeleteOldSheet.Start($"Mod: Delete Old Sheet");
+                            _doc.Delete(builtSheet.Id);
+                            transDeleteOldSheet.Commit();
+                        }
+                    }
+                        
+                    using (TransactionGroup transGroup = new TransactionGroup(_doc))
+                    {
+                        transGroup.Start("MOD: Export View Image");
 
-                            //XYZ maxPointSheet = builtSheet.get_BoundingBox(builtSheet).Max;
-                            //XYZ minPointSheet = builtSheet.get_BoundingBox(builtSheet).Min;
-                            UV maxPointSheet = builtSheet.Outline.Max;
-                            UV minPointSheet = builtSheet.Outline.Min;
-                            double sheetWidth = ((maxPointSheet.U - 0.5) - (minPointSheet.U));
-                            double sheetHeight = ((maxPointSheet.V) - (minPointSheet.V));
 
-                            Double ptX = ((maxPointSheet.U - 0.5) - (minPointSheet.U)) / 2;
-                            Double ptY = ((maxPointSheet.V) - (minPointSheet.V)) / 2;
-                            Double ptZ = 0;
-                            XYZ centerPtOfSheet = new XYZ(ptX, ptY, ptZ);
-                            centerPtSheet = centerPtOfSheet;
+                        //if (builtSheet == null)
+                        //{
+                            builtSheet = createCustomSheet(selectedTitleBlock.Id, sht.Key, sht.Value);
+                            builtSheets[sht.Value] = builtSheet;
 
-                            //Scales: 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1
-                            List<int> scales = new List<int>() { 96, 64, 48, 32, 24, 16, 12};
-
-                            var currentView = allViews[count];
-                            var currentViewWidth = Math.Abs(currentView.Outline.Max.U - currentView.Outline.Min.U);
-                            var currentViewHeight = Math.Abs(currentView.Outline.Max.V - currentView.Outline.Min.V);
-
-                            double possibleWidth = 0;
-                            double possibleHeight = 0;
-                            int usedScale = 96;
-
-                            for (int i = 0; i < scales.Count; i++)
+                            using (Transaction transPlaceViewPort = new Transaction(_doc))
                             {
-                                usedScale = scales[i];
+                                transPlaceViewPort.Start($"Mod: Place ViewPort");
 
-                                possibleWidth = (currentViewWidth * (12 / Convert.ToDouble(scales[i]))) / 0.125;
-                                possibleHeight = (currentViewHeight * (12 / Convert.ToDouble(scales[i]))) / 0.125;
+                                //XYZ maxPointSheet = builtSheet.get_BoundingBox(builtSheet).Max;
+                                //XYZ minPointSheet = builtSheet.get_BoundingBox(builtSheet).Min;
+                                UV maxPointSheet = builtSheet.Outline.Max;
+                                UV minPointSheet = builtSheet.Outline.Min;
+                                double sheetWidth = ((maxPointSheet.U - 0.5) - (minPointSheet.U));
+                                double sheetHeight = ((maxPointSheet.V) - (minPointSheet.V));
 
-                                if(possibleWidth > sheetWidth || possibleHeight > sheetHeight)
+                                Double ptX = ((maxPointSheet.U - 0.5) - (minPointSheet.U)) / 2;
+                                Double ptY = ((maxPointSheet.V) - (minPointSheet.V)) / 2;
+                                Double ptZ = 0;
+                                XYZ centerPtOfSheet = new XYZ(ptX, ptY, ptZ);
+                                centerPtSheet = centerPtOfSheet;
+
+                                //Scales: 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1
+                                List<int> scales = new List<int>() { 96, 64, 48, 32, 24, 16, 12 };
+
+                                var currentView = allViews[count];
+                                var currentViewWidth = Math.Abs(currentView.Outline.Max.U - currentView.Outline.Min.U);
+                                var currentViewHeight = Math.Abs(currentView.Outline.Max.V - currentView.Outline.Min.V);
+
+                                double possibleWidth = 0;
+                                double possibleHeight = 0;
+                                int usedScale = 96;
+
+                                for (int i = 0; i < scales.Count; i++)
                                 {
-                                    if (i == 0)
-                                        usedScale = scales[i];
-                                    else
-                                        usedScale = scales[i - 1];
+                                    usedScale = scales[i];
 
-                                    break;
+                                    possibleWidth = (currentViewWidth * (12 / Convert.ToDouble(scales[i]))) / 0.125;
+                                    possibleHeight = (currentViewHeight * (12 / Convert.ToDouble(scales[i]))) / 0.125;
+
+                                    if (possibleWidth > sheetWidth || possibleHeight > sheetHeight)
+                                    {
+                                        if (i == 0)
+                                            usedScale = scales[i];
+                                        else
+                                            usedScale = scales[i - 1];
+
+                                        break;
+                                    }
+
                                 }
 
+
+                                Viewport viewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, centerPtOfSheet);
+                                viewPort.LookupParameter("View Scale").Set(usedScale);
+
+                                builtViewPort = viewPort;
+
+                                transPlaceViewPort.Commit();
                             }
 
+                        //}
 
-                            Viewport viewPort = Viewport.Create(_doc, builtSheet.Id, allViews[count].Id, centerPtOfSheet);
-                            viewPort.LookupParameter("View Scale").Set(usedScale);
+                        count++;
 
-                            builtViewPort = viewPort;
 
-                            transPlaceViewPort.Commit();
+
+                        //Move built view port to center of sheet space
+                        using (Transaction transMoveVPs = new Transaction(_doc))
+                        {
+                            transMoveVPs.Start($"Mod: Move ViewPort");
+
+
+                            var maxViewPort = builtViewPort.GetBoxOutline().MaximumPoint;
+                            var minViewPort = builtViewPort.GetBoxOutline().MinimumPoint;
+                            double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
+                            double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
+
+                            Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
+                            Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
+                            Double ptZvp = 0;
+                            XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
+
+                            double xTrans = centerPtSheet.X - ptXvp;
+                            double yTrans = centerPtSheet.Y - ptYvp;
+                            double zTrans = centerPtSheet.Z - ptZvp;
+
+                            XYZ translation = new XYZ(xTrans, yTrans, zTrans);
+
+                            ElementTransformUtils.MoveElement(_doc, builtViewPort.Id, translation);
+
+                            transMoveVPs.Commit();
+
                         }
 
-                    }
+                        if (builtSheet == null)
+                            continue;
 
-                    count++;
+                        //Export sheet to image
+                        if (selectedPath != "")
+                            exportViewPlanImage(builtSheet, selectedPath);
 
-
-
-                    //Move built view port to center of sheet space
-                    using (Transaction transMoveVPs = new Transaction(_doc))
-                    {
-                        transMoveVPs.Start($"Mod: Move ViewPort");
-
-
-                        var maxViewPort = builtViewPort.GetBoxOutline().MaximumPoint;
-                        var minViewPort = builtViewPort.GetBoxOutline().MinimumPoint;
-                        double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
-                        double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
-
-                        Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
-                        Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
-                        Double ptZvp = 0;
-                        XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
-
-                        double xTrans = centerPtSheet.X - ptXvp;
-                        double yTrans = centerPtSheet.Y - ptYvp;
-                        double zTrans = centerPtSheet.Z - ptZvp;
-
-                        XYZ translation = new XYZ(xTrans, yTrans, zTrans);
-
-                        ElementTransformUtils.MoveElement(_doc, builtViewPort.Id, translation);
-
-                        transMoveVPs.Commit();
+                        transGroup.Assimilate();
 
                     }
-
-
-                    if (builtSheet == null)
-                        continue;
-
-                    //Export sheet to image
-                    if (selectedPath != "")
-                        exportViewPlanImage(builtSheet, selectedPath);
                 }
 
 
@@ -2772,8 +2805,7 @@ namespace Stacker.GeoJsonClasses
                 {
                     //Generate date string
                     string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
-                    string fileDateString = dateString.Replace(":", "-").Replace(".", "-") + "____" + currentViewPlan.Name;
-
+                    string fileDateString = dateString.Replace(":", "-").Replace(".", "-");
                     string fullPathAndFileName = selectedPath + @"\" + fileDateString;
 
                     var imageExportOpt = new ImageExportOptions
@@ -2869,6 +2901,58 @@ namespace Stacker.GeoJsonClasses
         }
 
 
+        /// <summary>
+        /// Hide all extra elements from the provided view. 
+        /// </summary>
+        /// <param name="views"></param>
+        private void hideElementsNotBuiltFromView(List<Autodesk.Revit.DB.View> views)
+        {
+            using (Transaction transExportImage = new Transaction(_doc))
+            {
+                transExportImage.Start($"Mod: Hide View Elems");
+
+                foreach (var view in views)
+                {
+
+                    //
+                    //Hide all elements not needed in the 3D View
+                    //
+                    FilteredElementCollector allElementsInView = new FilteredElementCollector(_doc, view.Id);
+                    List<ElementId> elementsInView = allElementsInView.ToElementIds().ToList();
+
+                    List<ElementId> elementsBuiltInView = new List<ElementId>();
+
+                    foreach (var elemList in ElementsBuilt.Values)
+                    {
+                        foreach (var elemId in elemList)
+                        {
+                            var element = _doc.GetElement(elemId);
+                            elementsBuiltInView.Add(elemId);
+                        }
+                    }
+
+                    foreach(ElementId elemId in elementsInView)
+                    {
+                        if (!elementsBuiltInView.Contains(elemId))
+                        {
+                            Element element = _doc.GetElement(elemId);
+                            if (element.CanBeHidden(view))
+                            {
+                                view.HideElements(new List<ElementId>() { elemId });
+                            }
+                        }
+                    }
+                }
+
+                _doc.Regenerate();
+
+                transExportImage.Commit();
+
+            }
+
+        }
+
+
 
 
 
@@ -2914,7 +2998,7 @@ namespace Stacker.GeoJsonClasses
         {
             using (Transaction transCreateSheets = new Transaction(_doc))
             {
-                transCreateSheets.Start("Build Sheet");
+                transCreateSheets.Start("MOD: Build Sheet");
 
                 try
                 {
