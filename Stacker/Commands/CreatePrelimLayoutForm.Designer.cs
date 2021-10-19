@@ -65,11 +65,11 @@ namespace Stacker.GeoJsonClasses
             this.btnNext = new System.Windows.Forms.Button();
             this.btnDeleteGeom = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.tb2BedSF = new System.Windows.Forms.TextBox();
+            this.tb1BedSF = new System.Windows.Forms.TextBox();
+            this.tbStudioSF = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbTotalSF = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tb2BedCount = new System.Windows.Forms.TextBox();
             this.tb1BedCount = new System.Windows.Forms.TextBox();
@@ -454,11 +454,11 @@ namespace Stacker.GeoJsonClasses
             this.groupBox1.Controls.Add(this.btnNext);
             this.groupBox1.Controls.Add(this.btnDeleteGeom);
             this.groupBox1.Controls.Add(this.label13);
-            this.groupBox1.Controls.Add(this.textBox3);
-            this.groupBox1.Controls.Add(this.textBox4);
-            this.groupBox1.Controls.Add(this.textBox5);
+            this.groupBox1.Controls.Add(this.tb2BedSF);
+            this.groupBox1.Controls.Add(this.tb1BedSF);
+            this.groupBox1.Controls.Add(this.tbStudioSF);
             this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Controls.Add(this.textBox2);
+            this.groupBox1.Controls.Add(this.tbTotalSF);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.tb2BedCount);
             this.groupBox1.Controls.Add(this.tb1BedCount);
@@ -525,29 +525,29 @@ namespace Stacker.GeoJsonClasses
             this.label13.TabIndex = 15;
             this.label13.Text = "SF";
             // 
-            // textBox3
+            // tb2BedSF
             // 
-            this.textBox3.Location = new System.Drawing.Point(118, 94);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(39, 20);
-            this.textBox3.TabIndex = 16;
+            this.tb2BedSF.Location = new System.Drawing.Point(118, 94);
+            this.tb2BedSF.Name = "tb2BedSF";
+            this.tb2BedSF.ReadOnly = true;
+            this.tb2BedSF.Size = new System.Drawing.Size(39, 20);
+            this.tb2BedSF.TabIndex = 16;
             // 
-            // textBox4
+            // tb1BedSF
             // 
-            this.textBox4.Location = new System.Drawing.Point(118, 65);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(39, 20);
-            this.textBox4.TabIndex = 14;
+            this.tb1BedSF.Location = new System.Drawing.Point(118, 65);
+            this.tb1BedSF.Name = "tb1BedSF";
+            this.tb1BedSF.ReadOnly = true;
+            this.tb1BedSF.Size = new System.Drawing.Size(39, 20);
+            this.tb1BedSF.TabIndex = 14;
             // 
-            // textBox5
+            // tbStudioSF
             // 
-            this.textBox5.Location = new System.Drawing.Point(118, 37);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(39, 20);
-            this.textBox5.TabIndex = 13;
+            this.tbStudioSF.Location = new System.Drawing.Point(118, 37);
+            this.tbStudioSF.Name = "tbStudioSF";
+            this.tbStudioSF.ReadOnly = true;
+            this.tbStudioSF.Size = new System.Drawing.Size(39, 20);
+            this.tbStudioSF.TabIndex = 13;
             // 
             // label12
             // 
@@ -560,14 +560,14 @@ namespace Stacker.GeoJsonClasses
             this.label12.TabIndex = 10;
             this.label12.Text = "UNITS";
             // 
-            // textBox2
+            // tbTotalSF
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox2.Location = new System.Drawing.Point(188, 122);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(39, 20);
-            this.textBox2.TabIndex = 12;
+            this.tbTotalSF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbTotalSF.Location = new System.Drawing.Point(188, 122);
+            this.tbTotalSF.Name = "tbTotalSF";
+            this.tbTotalSF.ReadOnly = true;
+            this.tbTotalSF.Size = new System.Drawing.Size(39, 20);
+            this.tbTotalSF.TabIndex = 12;
             // 
             // label11
             // 
@@ -1082,11 +1082,11 @@ namespace Stacker.GeoJsonClasses
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox tbHallwayWidth;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox tb2BedSF;
+        private System.Windows.Forms.TextBox tb1BedSF;
+        private System.Windows.Forms.TextBox tbStudioSF;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox tbTotalSF;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.GroupBox gbModLimitations;

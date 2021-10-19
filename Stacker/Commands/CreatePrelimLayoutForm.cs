@@ -1808,7 +1808,9 @@ namespace Stacker.GeoJsonClasses
                         }
 
 
+                        //
                         //Hide all extra elements not being used in the model from the view. 
+                        //
                         for (int i = 0; i < AllLevels.Count; i++)
                         {
                             Level currentLevel = AllLevels[i];
@@ -1816,11 +1818,9 @@ namespace Stacker.GeoJsonClasses
 
                             hideElementsNotBuiltFromView(new List<View>() { currentViewPlan });
                             
-                            
                         }
 
                         
-                        _uidoc.RefreshActiveView();
 
                         List<UIView> openViews = _uidoc.GetOpenUIViews().ToList();
                         foreach (var v in openViews)
@@ -1832,7 +1832,62 @@ namespace Stacker.GeoJsonClasses
                                 v.ZoomAndCenterRectangle(new XYZ(-25, -25, 0), new XYZ(150, 150, 0));
                             }
                         }
-                        
+
+
+                        //
+                        //Set Building metrics in form
+                        //
+                        int unitCountOneBed = 0;
+                        int unitCountTwoBed = 0;
+                        int unitCountStudio = 0;
+                        int unitCountCore = 0;
+
+                        double SFCountOneBed = 0;
+                        double SFCountTwoBed = 0;
+                        double SFCountStudio = 0;
+                        double SFCountCore = 0;
+
+                        foreach (var flr in floorLayout.FloorLayoutOptions[0].ModBlock)
+                        {
+                            foreach(var mod in flr.PlacedMods)
+                            {
+                                var t = mod.Value;
+                                if (t.ModOptionName.Contains("Studio"))
+                                {
+                                    unitCountStudio += 1;
+                                    SFCountStudio += t.OverallModArea;
+                                }
+                                else if (t.ModOptionName.Contains("OneBed"))
+                                {
+                                    unitCountOneBed += 1;
+                                    SFCountOneBed += t.OverallModArea;
+                                }
+                                else if (t.ModOptionName.Contains("TwoBed"))
+                                {
+                                    unitCountTwoBed += 1;
+                                    SFCountTwoBed += t.OverallModArea;
+                                }
+                                else if (t.ModOptionName.Contains("Core"))
+                                {
+                                    unitCountCore += 1;
+                                    SFCountCore += t.OverallModArea;
+                                }
+                            }
+                        }
+
+                        tbStudioCount.Text = Convert.ToString(unitCountStudio * TotalFloors);
+                        tb1BedCount.Text = Convert.ToString(unitCountOneBed * TotalFloors);
+                        tb2BedCount.Text = Convert.ToString(unitCountTwoBed * TotalFloors);
+
+                        tbStudioSF.Text = Convert.ToString(SFCountStudio * TotalFloors);
+                        tb1BedSF.Text = Convert.ToString(SFCountOneBed * TotalFloors);
+                        tb2BedSF.Text = Convert.ToString(SFCountTwoBed * TotalFloors);
+
+                        tbTotalSF.Text = Convert.ToString((SFCountTwoBed + SFCountStudio + SFCountOneBed) * TotalFloors);
+
+                        //
+                        //Iterate to next
+                        //
                         currentModWidth = currentModWidth + 1;
 
                         totalOptionsGenerated++;
@@ -2944,6 +2999,7 @@ namespace Stacker.GeoJsonClasses
                     }
                 }
 
+                _uidoc.RefreshActiveView();
                 _doc.Regenerate();
 
                 transExportImage.Commit();
@@ -3622,8 +3678,22 @@ namespace Stacker.GeoJsonClasses
             }
 
 
+            //
+            //Save Excel File
+            //
+            saveExcelFile(newDGV);
 
 
+        }
+
+
+
+        /// <summary>
+        /// Create an excel file
+        /// </summary>
+        /// <param name="dgv"></param>
+        private void saveExcelFile(DataGridView dgv)
+        {
             SaveFileDialog saveResults = new SaveFileDialog();
 
             saveResults.Filter = "Excel File|*.xlsx";
@@ -3634,7 +3704,7 @@ namespace Stacker.GeoJsonClasses
             {
                 DataTable sheetListResult = null;
 
-                sheetListResult = CreateDataTable(newDGV, _doc);
+                sheetListResult = CreateDataTable(dgv, _doc);
 
                 //Save
                 SaveExcelWorksheet(sheetListResult, true, saveResults.FileName, "Building Data Output");
@@ -3650,8 +3720,6 @@ namespace Stacker.GeoJsonClasses
                 return;
 
             }
-
-
         }
 
 
