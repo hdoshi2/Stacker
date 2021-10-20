@@ -1,6 +1,8 @@
-﻿using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 using Newtonsoft.Json;
 using RestSharp;
+using Stacker.GeoJsonClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,10 +13,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using View = Autodesk.Revit.DB.View;
 
 namespace Stacker.Commands
 {
-    public partial class GeoZoningForm : Form
+    public partial class GeoZoningForm : System.Windows.Forms.Form
     {
         public object QueryResultRegrid { get; set; }
         public string JsonRegrid { get; set; }
@@ -22,9 +25,20 @@ namespace Stacker.Commands
         public string JsonZoneomics { get; set; }
         private bool _winformExpanded { get; set; }
 
-        public GeoZoningForm()
+        private Document _doc;
+        private UIDocument _uidoc;
+
+
+        public double BoundingBoxArea { get; set; }
+        public double BoundingBoxWidth { get; set; }
+        public double BoundingBoxHeight { get; set; }
+
+        public GeoZoningForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
+
+            _doc = doc;
+            _uidoc = uidoc;
 
             gbJSONresults.Hide();
             this.Width = Convert.ToInt32(this.Width / 3);
@@ -128,8 +142,191 @@ namespace Stacker.Commands
             gbJSONresults.Show();
             tbFullAddress.Text = fullAddress;
 
+        }
+
+
+
+        private void btnAnalyzeGeoJSON_Click(object sender, EventArgs e)
+        {
+            if (JsonRegrid == null)
+            {
+                TaskDialog.Show("Error!", "GeoJson file not found.");
+                return;
+            }
+
+            drawPolygonFromRegridJSON(JsonRegrid, cbDrawPolygon.Checked);
 
         }
+
+
+
+        public void drawPolygonFromRegridJSON(string geoRegridGeoJSON, bool drawPolygonInModel)
+        {
+            try
+            {
+
+
+                GeoJsonParser geoJsonParser = new GeoJsonParser();
+                var deserializeJSON = JsonConvert.DeserializeObject(JsonRegrid).ToString();
+                GeoJsonResultCollection geoJason = geoJsonParser.ParseJSON(deserializeJSON);
+
+
+                if (geoJason is null)
+                {
+                    TaskDialog.Show("Error!", "Error reading GeoJson file.");
+
+                    return;
+                }
+
+
+                using (Transaction transaction = new Transaction(_doc))
+                {
+                    if (transaction.Start("MOD: Create GeoJson Polygon") == TransactionStatus.Started)
+                    {
+                        foreach (var result in geoJason.Results)
+                        {
+                            if (result.Geometry is null)
+                            {
+                                continue;
+                            }
+
+                            var isFirstPolygonSet = true;
+                            var basePoint = XYZ.Zero;
+                            var factor = 0.0;
+
+                            foreach (var polygonSet in result.Geometry.PolygonsSet)
+                            {
+                                var profileloops = new List<CurveLoop>();
+
+                                foreach (var polygon in polygonSet)
+                                {
+
+                                    XYZ currentPoint = null;
+
+                                    var profileloop = new CurveLoop();
+                                    var isFirstCoordinate = true;
+
+                                    foreach (var coordinate in polygon.Coordinates)
+                                    {
+                                        if (isFirstPolygonSet)
+                                        {
+                                            factor = Math.Abs(Math.Cos(DegreesToRadians(coordinate.latitude)));
+                                        }
+
+                                        var nextPoint = ConvertCoordinateToXYZ(coordinate.longitude, coordinate.latitude, factor);
+
+                                        if (isFirstPolygonSet)
+                                        {
+                                            basePoint = nextPoint;
+                                            isFirstPolygonSet = false;
+                                        }
+
+                                        if (isFirstCoordinate)
+                                        {
+                                            currentPoint = nextPoint;
+                                            isFirstCoordinate = false;
+
+                                            continue;
+                                        }
+
+                                        var line = Line.CreateBound(currentPoint.Subtract(basePoint), nextPoint.Subtract(basePoint));
+
+                                        profileloop.Append(line);
+
+                                        currentPoint = nextPoint;
+                                    }
+
+                                    profileloops.Add(profileloop);
+
+                                    View viewPlan = new FilteredElementCollector(_doc)
+                                         .OfClass(typeof(ViewPlan))
+                                         .Cast<View>()
+                                         .Where(q => q.ViewType == ViewType.FloorPlan && q.Name == "Level 1").FirstOrDefault();
+
+                                    if (viewPlan == null)
+                                        viewPlan = _doc.ActiveView;
+
+                                    var filteredElementCollector = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
+                                    var filledRegionPattern = filteredElementCollector.Cast<FilledRegionType>().Where(region => region.Name.Equals("Solid Black"));
+                                    var filledRegion = FilledRegion.Create(_doc, filledRegionPattern.FirstOrDefault().Id, viewPlan.Id, profileloops);
+
+                                    _doc.Regenerate();
+
+                                    var uiDocument = _uidoc;
+                                    var selectedCollection = new ElementId[] { filledRegion.Id };
+
+                                    //uiDocument.Selection.SetElementIds(selectedCollection);
+                                    //uiDocument.ShowElements(selectedCollection);
+                                    uiDocument.RefreshActiveView();
+
+                                    double area = filledRegion.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsDouble();
+                                    var boundingBox = filledRegion.get_BoundingBox(_doc.ActiveView);
+                                    double boundingBoxWidth = Math.Round(boundingBox.Max.X - boundingBox.Min.X, 3);
+                                    double boundingBoxHeight = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
+                                    var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxHeight, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
+                                    var summary = $"Area = {area}\nBounding Box Width = {boundingBoxWidth} ft\nBounding Box Height = {boundingBoxHeight} ft\n"
+                                        + $"Bounding Box Diagonal = {boundingBoxDiagonal} ft";
+
+                                    BoundingBoxArea = area;
+                                    BoundingBoxWidth = boundingBoxWidth;
+                                    BoundingBoxHeight = boundingBoxHeight;
+
+                                    tbArea.Text = Convert.ToString(area);
+                                    tbLength.Text = Convert.ToString(boundingBoxHeight);
+                                    tbWidth.Text = Convert.ToString(boundingBoxWidth);
+
+                                    TaskDialog.Show("Summary", summary);
+
+                                    if (!drawPolygonInModel)
+                                        _doc.Delete(filledRegion.Id);
+
+                                }
+                            }
+                        }
+
+                        transaction.Commit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in extracting polygon from JSON file  [" + ex.GetType().ToString() + "]. ");
+            }
+        }
+
+
+
+        /// <summary>
+        /// The ConvertCoordinateToXYZ.
+        /// </summary>
+        /// <param name="longitude">The longitude<see cref="double"/>.</param>
+        /// <param name="latitude">The latitude<see cref="double"/>.</param>
+        /// <param name="factor">The factor<see cref="double"/>.</param>
+        /// <returns>The <see cref="XYZ"/>.</returns>
+        private XYZ ConvertCoordinateToXYZ(double longitude, double latitude, double factor)
+        {
+            var EarthRadius = 6378137 * 3.281 * factor;
+            var x = EarthRadius * DegreesToRadians(longitude);
+            var y = EarthRadius * Math.Log((Math.Sin(DegreesToRadians(latitude)) + 1) / Math.Cos(DegreesToRadians(latitude)));
+
+            return new XYZ(x, y, 0);
+        }
+
+
+
+        /// <summary>
+        /// The DegreesToRadians.
+        /// </summary>
+        /// <param name="val">The val<see cref="double"/>.</param>
+        /// <returns>The <see cref="double"/>.</returns>
+        private double DegreesToRadians(double val)
+        {
+            return val * Math.PI / 180;
+        }
+
+
+
+
 
         private void btnClear_Click(object sender, EventArgs e)
         {

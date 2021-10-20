@@ -4038,18 +4038,25 @@ namespace Stacker.GeoJsonClasses
 
                                 profileloops.Add(profileloop);
 
+                                View viewPlan = new FilteredElementCollector(_doc)
+                                     .OfClass(typeof(ViewPlan))
+                                     .Cast<View>()
+                                     .Where(q => q.ViewType == ViewType.FloorPlan && q.Name == "Level 1").FirstOrDefault();
+
+                                if (viewPlan == null)
+                                    viewPlan = _doc.ActiveView;
+
                                 var filteredElementCollector = new FilteredElementCollector(_doc).OfClass(typeof(FilledRegionType));
                                 var filledRegionPattern = filteredElementCollector.Cast<FilledRegionType>().Where(region => region.Name.Equals("Solid Black"));
-                                var filledRegion = FilledRegion.Create(_doc, filledRegionPattern.FirstOrDefault().Id,
-                                    _doc.ActiveView.Id, profileloops);
+                                var filledRegion = FilledRegion.Create(_doc, filledRegionPattern.FirstOrDefault().Id, viewPlan.Id, profileloops);
 
                                 _doc.Regenerate();
 
                                 var uiDocument = _uidoc;
                                 var selectedCollection = new ElementId[] { filledRegion.Id };
 
-                                uiDocument.Selection.SetElementIds(selectedCollection);
-                                uiDocument.ShowElements(selectedCollection);
+                                //uiDocument.Selection.SetElementIds(selectedCollection);
+                                //uiDocument.ShowElements(selectedCollection);
                                 uiDocument.RefreshActiveView();
 
                                 var area = filledRegion.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsValueString();
@@ -4122,8 +4129,7 @@ namespace Stacker.GeoJsonClasses
         {
             try
             {
-                //Pop-out new form to display beam list
-                using (GeoZoningForm frmGeoZoning = new GeoZoningForm())
+                using (GeoZoningForm frmGeoZoning = new GeoZoningForm(_doc, _uidoc))
                 {
                     frmGeoZoning.ShowDialog();
 
