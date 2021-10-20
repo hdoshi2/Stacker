@@ -14,6 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using View = Autodesk.Revit.DB.View;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Stacker.Commands
 {
@@ -27,8 +29,7 @@ namespace Stacker.Commands
 
         private Document _doc;
         private UIDocument _uidoc;
-
-
+        
         public double BoundingBoxArea { get; set; }
         public double BoundingBoxWidth { get; set; }
         public double BoundingBoxHeight { get; set; }
@@ -108,6 +109,9 @@ namespace Stacker.Commands
                 requestZoneomics.AddHeader("content-type", "application/json");
                 QueryResultZoneomics = clientZoneomics.Execute<Object>(requestZoneomics).Data;
                 JsonZoneomics = JsonConvert.SerializeObject(QueryResultZoneomics, Formatting.Indented);
+
+
+
                 string directory = $"C:\\Users\\hdosh\\Desktop\\JSON_Data\\Zoneomics";
                 if (Directory.Exists(directory))
                 {
@@ -131,6 +135,30 @@ namespace Stacker.Commands
                     lblZoneomicsStatus.ForeColor = System.Drawing.Color.Red;
                     lblZoneomicsStatus.Text = "Failed";
                 }
+
+                var zoneomicsJObject = JObject.Parse(JsonZoneomics);
+                var dictZoneomicsJObject = zoneomicsJObject["data"]
+                            .Children().Cast<JProperty>()
+                            .ToDictionary(x => x.Name, x => (string)x.Value);
+
+
+                if (dictZoneomicsJObject.ContainsKey("max_building_height_ft"))
+                    tbMaxBuildingHeight.Text = dictZoneomicsJObject["max_building_height_ft"];
+
+                if (dictZoneomicsJObject.ContainsKey("maximum_lot_coverage"))
+                    tbMaxLotCoverage.Text = dictZoneomicsJObject["maximum_lot_coverage"];
+
+                if (dictZoneomicsJObject.ContainsKey("minimum_rear_yard_ft"))
+                    tbMinRearYard.Text = dictZoneomicsJObject["minimum_rear_yard_ft"];
+
+                if (dictZoneomicsJObject.ContainsKey("minimum_side_yard_ft"))
+                    tbMinSideYard.Text = dictZoneomicsJObject["minimum_side_yard_ft"];
+
+                if (dictZoneomicsJObject.ContainsKey("minimum_front_yard_ft"))
+                    tbMinFrontYard.Text = dictZoneomicsJObject["minimum_front_yard_ft"];
+
+
+
             }
 
             if (!_winformExpanded)
@@ -264,17 +292,17 @@ namespace Stacker.Commands
                                     double boundingBoxWidth = Math.Round(boundingBox.Max.X - boundingBox.Min.X, 3);
                                     double boundingBoxHeight = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
                                     var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxHeight, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
-                                    var summary = $"Area = {area}\nBounding Box Width = {boundingBoxWidth} ft\nBounding Box Height = {boundingBoxHeight} ft\n"
+                                    var summary = $"Area = {area.ToString("F")}\nBounding Box Width = {boundingBoxWidth.ToString("F")} ft\nBounding Box Height = {boundingBoxHeight.ToString("F")} ft\n"
                                         + $"Bounding Box Diagonal = {boundingBoxDiagonal} ft";
 
                                     BoundingBoxArea = area;
                                     BoundingBoxWidth = boundingBoxWidth;
                                     BoundingBoxHeight = boundingBoxHeight;
 
-                                    tbArea.Text = Convert.ToString(area);
-                                    tbLength.Text = Convert.ToString(boundingBoxHeight);
-                                    tbWidth.Text = Convert.ToString(boundingBoxWidth);
-
+                                    tbArea.Text = area.ToString("F");
+                                    tbLength.Text = boundingBoxHeight.ToString("F");
+                                    tbWidth.Text = boundingBoxWidth.ToString("F");
+                                    
                                     TaskDialog.Show("Summary", summary);
 
                                     if (!drawPolygonInModel)

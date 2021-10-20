@@ -75,11 +75,11 @@ namespace Stacker.Commands
             this.label12 = new System.Windows.Forms.Label();
             this.tbFloorHeight = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbMinFrontYard = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbMinSideYard = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.tbMinRearYard = new System.Windows.Forms.TextBox();
             this.bAddress.SuspendLayout();
             this.gbAPICallData.SuspendLayout();
             this.gbJSONresults.SuspendLayout();
@@ -410,11 +410,11 @@ namespace Stacker.Commands
             this.gbJSONresults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbJSONresults.Controls.Add(this.label13);
-            this.gbJSONresults.Controls.Add(this.textBox1);
+            this.gbJSONresults.Controls.Add(this.tbMinFrontYard);
             this.gbJSONresults.Controls.Add(this.label14);
-            this.gbJSONresults.Controls.Add(this.textBox2);
+            this.gbJSONresults.Controls.Add(this.tbMinSideYard);
             this.gbJSONresults.Controls.Add(this.label15);
-            this.gbJSONresults.Controls.Add(this.textBox3);
+            this.gbJSONresults.Controls.Add(this.tbMinRearYard);
             this.gbJSONresults.Controls.Add(this.label12);
             this.gbJSONresults.Controls.Add(this.tbFloorHeight);
             this.gbJSONresults.Controls.Add(this.label11);
@@ -616,6 +616,7 @@ namespace Stacker.Commands
             this.tbFloorHeight.Name = "tbFloorHeight";
             this.tbFloorHeight.Size = new System.Drawing.Size(56, 20);
             this.tbFloorHeight.TabIndex = 40;
+            this.tbFloorHeight.Text = "12";
             // 
             // label13
             // 
@@ -626,12 +627,12 @@ namespace Stacker.Commands
             this.label13.TabIndex = 47;
             this.label13.Text = "Min_front_yard:";
             // 
-            // textBox1
+            // tbMinFrontYard
             // 
-            this.textBox1.Location = new System.Drawing.Point(273, 417);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(56, 20);
-            this.textBox1.TabIndex = 46;
+            this.tbMinFrontYard.Location = new System.Drawing.Point(273, 417);
+            this.tbMinFrontYard.Name = "tbMinFrontYard";
+            this.tbMinFrontYard.Size = new System.Drawing.Size(56, 20);
+            this.tbMinFrontYard.TabIndex = 46;
             // 
             // label14
             // 
@@ -642,12 +643,12 @@ namespace Stacker.Commands
             this.label14.TabIndex = 45;
             this.label14.Text = "Min_side_yard:";
             // 
-            // textBox2
+            // tbMinSideYard
             // 
-            this.textBox2.Location = new System.Drawing.Point(273, 391);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(56, 20);
-            this.textBox2.TabIndex = 44;
+            this.tbMinSideYard.Location = new System.Drawing.Point(273, 391);
+            this.tbMinSideYard.Name = "tbMinSideYard";
+            this.tbMinSideYard.Size = new System.Drawing.Size(56, 20);
+            this.tbMinSideYard.TabIndex = 44;
             // 
             // label15
             // 
@@ -658,12 +659,12 @@ namespace Stacker.Commands
             this.label15.TabIndex = 43;
             this.label15.Text = "Min_rear_yard:";
             // 
-            // textBox3
+            // tbMinRearYard
             // 
-            this.textBox3.Location = new System.Drawing.Point(273, 365);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(56, 20);
-            this.textBox3.TabIndex = 42;
+            this.tbMinRearYard.Location = new System.Drawing.Point(273, 365);
+            this.tbMinRearYard.Name = "tbMinRearYard";
+            this.tbMinRearYard.Size = new System.Drawing.Size(56, 20);
+            this.tbMinRearYard.TabIndex = 42;
             // 
             // GeoZoningForm
             // 
@@ -727,11 +728,11 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label lblZonromid;
         private System.Windows.Forms.Button btnAnalyzeGeoJSON;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbMinFrontYard;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox tbMinSideYard;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox tbMinRearYard;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbFloorHeight;
         private System.Windows.Forms.Label label11;
