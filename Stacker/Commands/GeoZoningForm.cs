@@ -20,11 +20,15 @@ namespace Stacker.Commands
         public string JsonRegrid { get; set; }
         public object QueryResultZoneomics { get; set; }
         public string JsonZoneomics { get; set; }
-
+        private bool _winformExpanded { get; set; }
 
         public GeoZoningForm()
         {
             InitializeComponent();
+
+            gbJSONresults.Hide();
+            this.Width = Convert.ToInt32(this.Width / 3);
+            _winformExpanded = false;
         }
 
         private void btnAPICall_Click(object sender, EventArgs e)
@@ -39,6 +43,7 @@ namespace Stacker.Commands
             string fullAddress = $"{addressLine1}, {city}, {state} {zip}, {country}";
             if (addressLine2 != "")
                 fullAddress = $"{addressLine1}, {addressLine2},{city}, {state} {zip}, {country}";
+
 
             if (cbRegrid.Checked)
             {
@@ -66,6 +71,8 @@ namespace Stacker.Commands
                     lblRegridStatus.Visible = true;
                     lblRegridStatus.ForeColor = System.Drawing.Color.DarkGreen;
                     lblRegridStatus.Text = "Successful";
+
+                    tbRegrid.Text = JsonRegrid;
                 }
                 else
                 {
@@ -101,6 +108,8 @@ namespace Stacker.Commands
                     lblZoneomicsStatus.Visible = true;
                     lblZoneomicsStatus.ForeColor = System.Drawing.Color.DarkGreen;
                     lblZoneomicsStatus.Text = "Successful";
+
+                    tbZoneonics.Text = JsonZoneomics;
                 }
                 else
                 {
@@ -109,6 +118,15 @@ namespace Stacker.Commands
                     lblZoneomicsStatus.Text = "Failed";
                 }
             }
+
+            if (!_winformExpanded)
+            {
+                this.Width = Convert.ToInt32(this.Width * 3);
+                _winformExpanded = true;
+            }
+                
+            gbJSONresults.Show();
+            tbFullAddress.Text = fullAddress;
 
 
         }
@@ -122,6 +140,13 @@ namespace Stacker.Commands
             dialog2.AddCommandLink(TaskDialogCommandLinkId.CommandLink1, "Yes, Clear Data");
             dialog2.AddCommandLink(TaskDialogCommandLinkId.CommandLink2, "Cancel");
             TaskDialogResult dialogResult2 = dialog2.Show();
+
+            gbJSONresults.Hide();
+            if (_winformExpanded)
+            {
+                this.Width = Convert.ToInt32(this.Width / 3);
+                _winformExpanded = false;
+            }
 
             if (dialogResult2 == TaskDialogResult.CommandLink1)
             {
@@ -294,5 +319,7 @@ namespace Stacker.Commands
 
 
         }
+
+
     }
 }

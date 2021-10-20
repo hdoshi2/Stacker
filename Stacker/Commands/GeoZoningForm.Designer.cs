@@ -53,14 +53,20 @@ namespace Stacker.Commands
             this.btnLoadData = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnMultipleAddresses = new System.Windows.Forms.Button();
+            this.gbJSONresults = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbFullAddress = new System.Windows.Forms.TextBox();
+            this.tbZoneonics = new System.Windows.Forms.TextBox();
+            this.tbRegrid = new System.Windows.Forms.TextBox();
+            this.lblZonromid = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.bAddress.SuspendLayout();
             this.gbAPICallData.SuspendLayout();
+            this.gbJSONresults.SuspendLayout();
             this.SuspendLayout();
             // 
             // bAddress
             // 
-            this.bAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.bAddress.Controls.Add(this.label9);
             this.bAddress.Controls.Add(this.tbCountry);
             this.bAddress.Controls.Add(this.btnRandomAddress);
@@ -76,7 +82,7 @@ namespace Stacker.Commands
             this.bAddress.Controls.Add(this.tbStreedAddress1);
             this.bAddress.Location = new System.Drawing.Point(12, 53);
             this.bAddress.Name = "bAddress";
-            this.bAddress.Size = new System.Drawing.Size(308, 195);
+            this.bAddress.Size = new System.Drawing.Size(310, 195);
             this.bAddress.TabIndex = 2;
             this.bAddress.TabStop = false;
             this.bAddress.Text = "Address Data";
@@ -104,7 +110,7 @@ namespace Stacker.Commands
             this.btnRandomAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRandomAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRandomAddress.Image = global::Stacker.Properties.Resources.floorStack_32;
-            this.btnRandomAddress.Location = new System.Drawing.Point(266, 152);
+            this.btnRandomAddress.Location = new System.Drawing.Point(268, 152);
             this.btnRandomAddress.Margin = new System.Windows.Forms.Padding(6);
             this.btnRandomAddress.Name = "btnRandomAddress";
             this.btnRandomAddress.Size = new System.Drawing.Size(33, 30);
@@ -196,7 +202,7 @@ namespace Stacker.Commands
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStreedAddress2.Location = new System.Drawing.Point(93, 52);
             this.tbStreedAddress2.Name = "tbStreedAddress2";
-            this.tbStreedAddress2.Size = new System.Drawing.Size(209, 20);
+            this.tbStreedAddress2.Size = new System.Drawing.Size(211, 20);
             this.tbStreedAddress2.TabIndex = 11;
             // 
             // cbCity
@@ -254,14 +260,14 @@ namespace Stacker.Commands
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStreedAddress1.Location = new System.Drawing.Point(93, 26);
             this.tbStreedAddress1.Name = "tbStreedAddress1";
-            this.tbStreedAddress1.Size = new System.Drawing.Size(209, 20);
+            this.tbStreedAddress1.Size = new System.Drawing.Size(211, 20);
             this.tbStreedAddress1.TabIndex = 1;
             // 
             // btnAPICall
             // 
             this.btnAPICall.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnAPICall.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAPICall.Location = new System.Drawing.Point(9, 75);
+            this.btnAPICall.Location = new System.Drawing.Point(10, 75);
             this.btnAPICall.Margin = new System.Windows.Forms.Padding(6);
             this.btnAPICall.Name = "btnAPICall";
             this.btnAPICall.Size = new System.Drawing.Size(290, 30);
@@ -318,7 +324,6 @@ namespace Stacker.Commands
             // 
             // btnClear
             // 
-            this.btnClear.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnClear.Location = new System.Drawing.Point(65, 379);
             this.btnClear.Margin = new System.Windows.Forms.Padding(6);
             this.btnClear.Name = "btnClear";
@@ -330,8 +335,6 @@ namespace Stacker.Commands
             // 
             // gbAPICallData
             // 
-            this.gbAPICallData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbAPICallData.Controls.Add(this.cbZoneomics);
             this.gbAPICallData.Controls.Add(this.lblRegridStatus);
             this.gbAPICallData.Controls.Add(this.cbRegrid);
@@ -339,14 +342,13 @@ namespace Stacker.Commands
             this.gbAPICallData.Controls.Add(this.lblZoneomicsStatus);
             this.gbAPICallData.Location = new System.Drawing.Point(12, 256);
             this.gbAPICallData.Name = "gbAPICallData";
-            this.gbAPICallData.Size = new System.Drawing.Size(308, 115);
+            this.gbAPICallData.Size = new System.Drawing.Size(310, 115);
             this.gbAPICallData.TabIndex = 21;
             this.gbAPICallData.TabStop = false;
             this.gbAPICallData.Text = "Zoning and GeoJSON Data API";
             // 
             // btnLoadData
             // 
-            this.btnLoadData.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnLoadData.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLoadData.Location = new System.Drawing.Point(22, 420);
             this.btnLoadData.Margin = new System.Windows.Forms.Padding(6);
@@ -359,7 +361,6 @@ namespace Stacker.Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.Location = new System.Drawing.Point(209, 420);
@@ -373,7 +374,6 @@ namespace Stacker.Commands
             // 
             // btnMultipleAddresses
             // 
-            this.btnMultipleAddresses.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnMultipleAddresses.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnMultipleAddresses.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMultipleAddresses.Location = new System.Drawing.Point(58, 12);
@@ -385,12 +385,84 @@ namespace Stacker.Commands
             this.btnMultipleAddresses.UseVisualStyleBackColor = true;
             this.btnMultipleAddresses.Click += new System.EventHandler(this.btnMultipleAddresses_Click);
             // 
+            // gbJSONresults
+            // 
+            this.gbJSONresults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbJSONresults.Controls.Add(this.label5);
+            this.gbJSONresults.Controls.Add(this.lblZonromid);
+            this.gbJSONresults.Controls.Add(this.tbRegrid);
+            this.gbJSONresults.Controls.Add(this.tbZoneonics);
+            this.gbJSONresults.Controls.Add(this.tbFullAddress);
+            this.gbJSONresults.Controls.Add(this.label4);
+            this.gbJSONresults.Location = new System.Drawing.Point(341, 12);
+            this.gbJSONresults.Name = "gbJSONresults";
+            this.gbJSONresults.Size = new System.Drawing.Size(682, 437);
+            this.gbJSONresults.TabIndex = 25;
+            this.gbJSONresults.TabStop = false;
+            this.gbJSONresults.Text = "JSON File Results";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 26);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Full Address:";
+            // 
+            // tbFullAddress
+            // 
+            this.tbFullAddress.Location = new System.Drawing.Point(75, 23);
+            this.tbFullAddress.Name = "tbFullAddress";
+            this.tbFullAddress.ReadOnly = true;
+            this.tbFullAddress.Size = new System.Drawing.Size(601, 20);
+            this.tbFullAddress.TabIndex = 27;
+            // 
+            // tbZoneonics
+            // 
+            this.tbZoneonics.Location = new System.Drawing.Point(6, 70);
+            this.tbZoneonics.Multiline = true;
+            this.tbZoneonics.Name = "tbZoneonics";
+            this.tbZoneonics.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbZoneonics.Size = new System.Drawing.Size(326, 350);
+            this.tbZoneonics.TabIndex = 28;
+            // 
+            // tbRegrid
+            // 
+            this.tbRegrid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbRegrid.Location = new System.Drawing.Point(350, 70);
+            this.tbRegrid.Multiline = true;
+            this.tbRegrid.Name = "tbRegrid";
+            this.tbRegrid.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbRegrid.Size = new System.Drawing.Size(326, 350);
+            this.tbRegrid.TabIndex = 29;
+            // 
+            // lblZonromid
+            // 
+            this.lblZonromid.AutoSize = true;
+            this.lblZonromid.Location = new System.Drawing.Point(8, 52);
+            this.lblZonromid.Name = "lblZonromid";
+            this.lblZonromid.Size = new System.Drawing.Size(123, 13);
+            this.lblZonromid.TabIndex = 31;
+            this.lblZonromid.Text = "Zoneomics JSON Result";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(347, 52);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 13);
+            this.label5.TabIndex = 32;
+            this.label5.Text = "Regrid JSON Result";
+            // 
             // GeoZoningForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(332, 465);
+            this.ClientSize = new System.Drawing.Size(1034, 465);
+            this.Controls.Add(this.gbJSONresults);
             this.Controls.Add(this.btnMultipleAddresses);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnLoadData);
@@ -405,6 +477,8 @@ namespace Stacker.Commands
             this.bAddress.PerformLayout();
             this.gbAPICallData.ResumeLayout(false);
             this.gbAPICallData.PerformLayout();
+            this.gbJSONresults.ResumeLayout(false);
+            this.gbJSONresults.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -435,5 +509,12 @@ namespace Stacker.Commands
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox tbCountry;
         private System.Windows.Forms.Button btnMultipleAddresses;
+        private System.Windows.Forms.GroupBox gbJSONresults;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbFullAddress;
+        private System.Windows.Forms.TextBox tbZoneonics;
+        private System.Windows.Forms.TextBox tbRegrid;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblZonromid;
     }
 }
