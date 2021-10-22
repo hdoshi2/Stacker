@@ -2426,6 +2426,12 @@ namespace Stacker.GeoJsonClasses
         /// <param name="e"></param>
         private void btnApplyFloorChanges_Click(object sender, EventArgs e)
         {
+            calculateTotalFloors();
+        }
+
+
+        private void calculateTotalFloors()
+        {
             string error1 = "";
             string error2 = "";
 
@@ -2444,8 +2450,6 @@ namespace Stacker.GeoJsonClasses
                 if (!cbTotalFloors.Checked)
                     tbFloorsTotal.Text = tbMaxFloors.Text;
             }
-
-
         }
 
 
@@ -3937,6 +3941,17 @@ namespace Stacker.GeoJsonClasses
         public string JsonZoneomics { get; set; }
 
 
+        public double BoundingBoxArea { get; set; }
+        public double BoundingBoxWidth { get; set; }
+        public double BoundingBoxLength { get; set; }
+
+        public double ResultsBldgZoningWidth { get; set; }
+        public double ResultsBldgZoningLength { get; set; }
+        public double ResultsBldgZoningMaxStories { get; set; }
+        public double ResultsBldgZoningMaxHeight { get; set; }
+        public double ResultsBldgStoryHeight { get; set; }
+
+
         private void btnDrawGeoJSONData_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = null;
@@ -4137,6 +4152,31 @@ namespace Stacker.GeoJsonClasses
                     JsonRegrid = frmGeoZoning.JsonRegrid;
                     QueryResultZoneomics = frmGeoZoning.QueryResultZoneomics;
                     JsonZoneomics = frmGeoZoning.JsonZoneomics;
+
+                    BoundingBoxArea = frmGeoZoning.BoundingBoxArea;
+                    BoundingBoxWidth = frmGeoZoning.BoundingBoxWidth;
+                    BoundingBoxLength = frmGeoZoning.BoundingBoxLength;
+
+                    ResultsBldgZoningWidth = frmGeoZoning.ResultsBldgZoningWidth;
+                    ResultsBldgZoningLength = frmGeoZoning.ResultsBldgZoningLength;
+                    ResultsBldgZoningMaxStories = frmGeoZoning.ResultsBldgZoningMaxStories;
+                    ResultsBldgZoningMaxHeight = frmGeoZoning.ResultsBldgZoningMaxHeight;
+                    ResultsBldgStoryHeight = frmGeoZoning.ResultsBldgStoryHeight;
+
+                    if (ResultsBldgZoningWidth != 0)
+                        tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
+
+                    if (ResultsBldgZoningLength != 0)
+                        tbLength.Text = ResultsBldgZoningLength.ToString("F");
+
+                    if (ResultsBldgZoningMaxHeight != 0)
+                        tbTotalBuildingHeight.Text = ResultsBldgZoningMaxHeight.ToString("F");
+
+                    if(ResultsBldgStoryHeight != 0)
+                        tbTypStoryHeight.Text = ResultsBldgStoryHeight.ToString("F");
+
+                    calculateTotalFloors();
+
                 }
 
             }

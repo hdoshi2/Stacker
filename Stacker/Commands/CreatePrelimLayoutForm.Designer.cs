@@ -435,7 +435,7 @@ namespace Stacker.GeoJsonClasses
             // btnLoadDataFile
             // 
             this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnLoadDataFile.Location = new System.Drawing.Point(124, 15);
+            this.btnLoadDataFile.Location = new System.Drawing.Point(121, 15);
             this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
             this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(3);
@@ -971,7 +971,7 @@ namespace Stacker.GeoJsonClasses
             // btnAPIData
             // 
             this.btnAPIData.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnAPIData.Location = new System.Drawing.Point(331, 15);
+            this.btnAPIData.Location = new System.Drawing.Point(334, 15);
             this.btnAPIData.Margin = new System.Windows.Forms.Padding(6);
             this.btnAPIData.Name = "btnAPIData";
             this.btnAPIData.Padding = new System.Windows.Forms.Padding(3);

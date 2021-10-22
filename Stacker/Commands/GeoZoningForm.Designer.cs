@@ -90,6 +90,7 @@ namespace Stacker.Commands
             this.tbZoneonics = new System.Windows.Forms.TextBox();
             this.tbFullAddress = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.bAddress.SuspendLayout();
             this.gbAPICallData.SuspendLayout();
             this.gbJSONresults.SuspendLayout();
@@ -419,6 +420,7 @@ namespace Stacker.Commands
             // 
             this.gbJSONresults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbJSONresults.Controls.Add(this.btnRefresh);
             this.gbJSONresults.Controls.Add(this.label19);
             this.gbJSONresults.Controls.Add(this.tbMaxStories);
             this.gbJSONresults.Controls.Add(this.label20);
@@ -550,7 +552,7 @@ namespace Stacker.Commands
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(169, 431);
+            this.label13.Location = new System.Drawing.Point(169, 458);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(80, 13);
             this.label13.TabIndex = 47;
@@ -558,7 +560,7 @@ namespace Stacker.Commands
             // 
             // tbMinFrontYard
             // 
-            this.tbMinFrontYard.Location = new System.Drawing.Point(252, 429);
+            this.tbMinFrontYard.Location = new System.Drawing.Point(252, 456);
             this.tbMinFrontYard.Name = "tbMinFrontYard";
             this.tbMinFrontYard.Size = new System.Drawing.Size(41, 20);
             this.tbMinFrontYard.TabIndex = 46;
@@ -566,7 +568,7 @@ namespace Stacker.Commands
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(170, 406);
+            this.label14.Location = new System.Drawing.Point(170, 433);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(78, 13);
             this.label14.TabIndex = 45;
@@ -574,7 +576,7 @@ namespace Stacker.Commands
             // 
             // tbMinSideYard
             // 
-            this.tbMinSideYard.Location = new System.Drawing.Point(252, 403);
+            this.tbMinSideYard.Location = new System.Drawing.Point(252, 430);
             this.tbMinSideYard.Name = "tbMinSideYard";
             this.tbMinSideYard.Size = new System.Drawing.Size(41, 20);
             this.tbMinSideYard.TabIndex = 44;
@@ -582,7 +584,7 @@ namespace Stacker.Commands
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(170, 380);
+            this.label15.Location = new System.Drawing.Point(170, 407);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(77, 13);
             this.label15.TabIndex = 43;
@@ -590,7 +592,7 @@ namespace Stacker.Commands
             // 
             // tbMinRearYard
             // 
-            this.tbMinRearYard.Location = new System.Drawing.Point(252, 377);
+            this.tbMinRearYard.Location = new System.Drawing.Point(252, 404);
             this.tbMinRearYard.Name = "tbMinRearYard";
             this.tbMinRearYard.Size = new System.Drawing.Size(41, 20);
             this.tbMinRearYard.TabIndex = 42;
@@ -598,7 +600,7 @@ namespace Stacker.Commands
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(46, 432);
+            this.label12.Location = new System.Drawing.Point(46, 459);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(67, 13);
             this.label12.TabIndex = 41;
@@ -606,7 +608,7 @@ namespace Stacker.Commands
             // 
             // tbFloorHeight
             // 
-            this.tbFloorHeight.Location = new System.Drawing.Point(117, 428);
+            this.tbFloorHeight.Location = new System.Drawing.Point(117, 455);
             this.tbFloorHeight.Name = "tbFloorHeight";
             this.tbFloorHeight.Size = new System.Drawing.Size(42, 20);
             this.tbFloorHeight.TabIndex = 40;
@@ -615,7 +617,7 @@ namespace Stacker.Commands
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(15, 405);
+            this.label11.Location = new System.Drawing.Point(15, 432);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(98, 13);
             this.label11.TabIndex = 39;
@@ -623,7 +625,7 @@ namespace Stacker.Commands
             // 
             // tbMaxLotCoverage
             // 
-            this.tbMaxLotCoverage.Location = new System.Drawing.Point(117, 402);
+            this.tbMaxLotCoverage.Location = new System.Drawing.Point(117, 429);
             this.tbMaxLotCoverage.Name = "tbMaxLotCoverage";
             this.tbMaxLotCoverage.Size = new System.Drawing.Size(42, 20);
             this.tbMaxLotCoverage.TabIndex = 38;
@@ -631,7 +633,7 @@ namespace Stacker.Commands
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(4, 379);
+            this.label10.Location = new System.Drawing.Point(4, 406);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(109, 13);
             this.label10.TabIndex = 28;
@@ -648,7 +650,7 @@ namespace Stacker.Commands
             // 
             // tbMaxBuildingHeight
             // 
-            this.tbMaxBuildingHeight.Location = new System.Drawing.Point(117, 376);
+            this.tbMaxBuildingHeight.Location = new System.Drawing.Point(117, 403);
             this.tbMaxBuildingHeight.Name = "tbMaxBuildingHeight";
             this.tbMaxBuildingHeight.Size = new System.Drawing.Size(42, 20);
             this.tbMaxBuildingHeight.TabIndex = 27;
@@ -690,7 +692,7 @@ namespace Stacker.Commands
             // cbDrawPolygon
             // 
             this.cbDrawPolygon.AutoSize = true;
-            this.cbDrawPolygon.Location = new System.Drawing.Point(533, 372);
+            this.cbDrawPolygon.Location = new System.Drawing.Point(498, 375);
             this.cbDrawPolygon.Name = "cbDrawPolygon";
             this.cbDrawPolygon.Size = new System.Drawing.Size(143, 17);
             this.cbDrawPolygon.TabIndex = 33;
@@ -708,7 +710,7 @@ namespace Stacker.Commands
             // btnAnalyzeGeoJSON
             // 
             this.btnAnalyzeGeoJSON.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAnalyzeGeoJSON.Location = new System.Drawing.Point(366, 366);
+            this.btnAnalyzeGeoJSON.Location = new System.Drawing.Point(350, 367);
             this.btnAnalyzeGeoJSON.Margin = new System.Windows.Forms.Padding(6);
             this.btnAnalyzeGeoJSON.Name = "btnAnalyzeGeoJSON";
             this.btnAnalyzeGeoJSON.Size = new System.Drawing.Size(144, 30);
@@ -770,6 +772,18 @@ namespace Stacker.Commands
             this.label4.Size = new System.Drawing.Size(67, 13);
             this.label4.TabIndex = 3;
             this.label4.Text = "Full Address:";
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefresh.Location = new System.Drawing.Point(645, 367);
+            this.btnRefresh.Margin = new System.Windows.Forms.Padding(6);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(30, 30);
+            this.btnRefresh.TabIndex = 58;
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // GeoZoningForm
             // 
@@ -861,5 +875,6 @@ namespace Stacker.Commands
         private System.Windows.Forms.TextBox tbTotalWidth;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox tbTotalSF;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }

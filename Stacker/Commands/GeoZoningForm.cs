@@ -32,7 +32,13 @@ namespace Stacker.Commands
         
         public double BoundingBoxArea { get; set; }
         public double BoundingBoxWidth { get; set; }
-        public double BoundingBoxHeight { get; set; }
+        public double BoundingBoxLength { get; set; }
+
+        public double ResultsBldgZoningWidth { get; set; }
+        public double ResultsBldgZoningLength { get; set; }
+        public double ResultsBldgZoningMaxStories { get; set; }
+        public double ResultsBldgZoningMaxHeight { get; set; }
+        public double ResultsBldgStoryHeight { get; set; }
 
         public GeoZoningForm(Document doc, UIDocument uidoc)
         {
@@ -44,6 +50,17 @@ namespace Stacker.Commands
             gbJSONresults.Hide();
             this.Width = Convert.ToInt32(this.Width / 3);
             _winformExpanded = false;
+
+
+            BoundingBoxArea = 0;
+            BoundingBoxWidth = 0;
+            BoundingBoxLength = 0;
+
+            ResultsBldgZoningWidth = 0;
+            ResultsBldgZoningLength = 0;
+            ResultsBldgZoningMaxStories = 0;
+            ResultsBldgZoningMaxHeight = 0;
+            ResultsBldgStoryHeight = 0;
         }
 
         private void btnAPICall_Click(object sender, EventArgs e)
@@ -55,9 +72,44 @@ namespace Stacker.Commands
             string zip = tbZipCode.Text;
             string country = tbCountry.Text;
 
-            string fullAddress = $"{addressLine1}, {city}, {state} {zip}, {country}";
-            if (addressLine2 != "")
-                fullAddress = $"{addressLine1}, {addressLine2},{city}, {state} {zip}, {country}";
+            BoundingBoxArea = 0;
+            BoundingBoxWidth = 0;
+            BoundingBoxLength = 0;
+
+            ResultsBldgZoningWidth = 0;
+            ResultsBldgZoningLength = 0;
+            ResultsBldgZoningMaxStories = 0;
+            ResultsBldgZoningMaxHeight = 0;
+            ResultsBldgStoryHeight = 0;
+
+            tbMaxBuildingHeight.Text = "";
+            tbMaxLotCoverage.Text = "";
+            tbMinRearYard.Text = "";
+            tbMinSideYard.Text = "";
+            tbMinFrontYard.Text = "";
+            tbArea.Text = "";
+            tbWidth.Text = "";
+            tbLength.Text = "";
+            tbTotalSF.Text = "";
+            tbTotalWidth.Text = "";
+            tbTotalLength.Text = "";
+            tbGrndFlrSF.Text = "";
+            tbMaxStories.Text = "";
+
+            string fullAddress = "";
+
+            if (tbZipCode.Text == "")
+            {
+                fullAddress = $"{addressLine1}, {city}, {state}, {country}";
+                if (addressLine2 != "")
+                    fullAddress = $"{addressLine1}, {addressLine2},{city}, {state}, {country}";
+            }
+            else
+            {
+                fullAddress = $"{addressLine1}, {city}, {state} {zip}, {country}";
+                if (addressLine2 != "")
+                    fullAddress = $"{addressLine1}, {addressLine2},{city}, {state} {zip}, {country}";
+            }
 
 
             if (cbRegrid.Checked)
@@ -290,66 +342,79 @@ namespace Stacker.Commands
                                     double area = filledRegion.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsDouble();
                                     var boundingBox = filledRegion.get_BoundingBox(_doc.ActiveView);
                                     double boundingBoxWidth = Math.Round(boundingBox.Max.X - boundingBox.Min.X, 3);
-                                    double boundingBoxHeight = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
-                                    var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxHeight, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
-                                    var summary = $"Area = {area.ToString("F")}\nBounding Box Width = {boundingBoxWidth.ToString("F")} ft\nBounding Box Height = {boundingBoxHeight.ToString("F")} ft\n"
+                                    double boundingBoxLength = Math.Round(boundingBox.Max.Y - boundingBox.Min.Y, 3);
+                                    var boundingBoxDiagonal = Math.Round(Math.Sqrt(Math.Pow(boundingBoxLength, 2) + Math.Pow(boundingBoxWidth, 2)), 3);
+                                    var summary = $"Area = {area.ToString("F")}\nBounding Box Width = {boundingBoxWidth.ToString("F")} ft\nBounding Box Length = {boundingBoxLength.ToString("F")} ft\n"
                                         + $"Bounding Box Diagonal = {boundingBoxDiagonal} ft";
 
                                     TaskDialog.Show("Summary", summary);
 
+                                    if (!drawPolygonInModel)
+                                        _doc.Delete(filledRegion.Id);
 
                                     BoundingBoxArea = area;
                                     BoundingBoxWidth = boundingBoxWidth;
-                                    BoundingBoxHeight = boundingBoxHeight;
+                                    BoundingBoxLength = boundingBoxLength;
 
                                     tbArea.Text = area.ToString("F");
-                                    tbLength.Text = boundingBoxHeight.ToString("F");
+                                    tbLength.Text = boundingBoxLength.ToString("F");
                                     tbWidth.Text = boundingBoxWidth.ToString("F");
 
-                                    double maxLotCoverage = 0;
-                                    double groundSF = 0;
-                                    if (tbMaxLotCoverage.Text != "" && double.TryParse(tbMaxLotCoverage.Text, out maxLotCoverage))
-                                    {
-                                        groundSF = area * (maxLotCoverage/100);
-                                        tbGrndFlrSF.Text = groundSF.ToString("F");
-                                    }
+                                    calcuateMetrics(boundingBoxLength, boundingBoxWidth, area);
 
-                                    double maxBldgHeight = 0;
-                                    int maxFloors = 0;
-                                    if (tbMaxBuildingHeight.Text != "" && double.TryParse(tbMaxBuildingHeight.Text, out maxBldgHeight))
-                                    {
-                                        maxFloors = Convert.ToInt32(Math.Floor(maxBldgHeight / Convert.ToDouble(tbFloorHeight.Text)));
-                                        tbMaxStories.Text = maxFloors.ToString("F");
-                                    }
+                                    //double maxLotCoverage = 0;
+                                    //double groundSF = 0;
+                                    //if (tbMaxLotCoverage.Text != "" && double.TryParse(tbMaxLotCoverage.Text, out maxLotCoverage))
+                                    //{
+                                    //    groundSF = area * (maxLotCoverage/100);
+                                    //    tbGrndFlrSF.Text = groundSF.ToString("F");
+                                    //}
 
-                                    double totalBldgSF = 0;
-                                    if (groundSF != 0 && maxFloors != 0)
-                                    {
-                                        totalBldgSF = groundSF * maxFloors;
-                                        tbTotalSF.Text = totalBldgSF.ToString("F");
-                                    }
+                                    //double maxBldgHeight = 0;
+                                    //int maxFloors = 0;
+                                    //if (tbMaxBuildingHeight.Text != "" && double.TryParse(tbMaxBuildingHeight.Text, out maxBldgHeight))
+                                    //{
+                                    //    maxFloors = Convert.ToInt32(Math.Floor(maxBldgHeight / Convert.ToDouble(tbFloorHeight.Text)));
+                                    //    tbMaxStories.Text = maxFloors.ToString("F");
+                                    //}
+
+                                    //ResultsBldgZoningMaxHeight = maxBldgHeight;
+                                    //ResultsBldgZoningMaxStories = maxFloors;
+
+                                    //double totalBldgSF = 0;
+                                    //if (groundSF != 0 && maxFloors != 0)
+                                    //{
+                                    //    totalBldgSF = groundSF * maxFloors;
+                                    //    tbTotalSF.Text = totalBldgSF.ToString("F");
+                                    //}
 
 
-                                    double totalBldgWidth = 0;
-                                    if (boundingBoxWidth != 0)
-                                    {
-                                        if (boundingBoxWidth > 90)
-                                            totalBldgWidth = 90;
-                                        else
-                                            totalBldgWidth = boundingBoxWidth;
+                                    //double totalBldgWidth = 0;
+                                    //if (boundingBoxWidth != 0)
+                                    //{
+                                    //    if (boundingBoxWidth > 90)
+                                    //        totalBldgWidth = 90;
+                                    //    else
+                                    //        totalBldgWidth = boundingBoxWidth;
 
-                                        tbTotalWidth.Text = totalBldgWidth.ToString("F");
-                                    }
+                                    //    tbTotalWidth.Text = totalBldgWidth.ToString("F");
+                                    //}
+                                    //ResultsBldgZoningWidth = totalBldgWidth;
 
-                                    double totalBldgLength = 0;
-                                    if (boundingBoxHeight != 0)
-                                    {
-                                        totalBldgLength = groundSF / totalBldgWidth;
-                                        tbTotalLength.Text = totalBldgLength.ToString("F");
-                                    }
+                                    //double totalBldgLength = 0;
+                                    //if (boundingBoxLength != 0)
+                                    //{
+                                    //    if (groundSF == 0 || totalBldgWidth == 0)
+                                    //        totalBldgLength = boundingBoxLength;
+                                    //    else
+                                    //        totalBldgLength = groundSF / totalBldgWidth;
 
-                                    if (!drawPolygonInModel)
-                                        _doc.Delete(filledRegion.Id);
+                                    //    tbTotalLength.Text = totalBldgLength.ToString("F");
+                                    //}
+                                    //ResultsBldgZoningLength = totalBldgLength;
+
+                                    //ResultsBldgStoryHeight = Convert.ToDouble(tbFloorHeight.Text);
+
 
                                 }
                             }
@@ -587,6 +652,78 @@ namespace Stacker.Commands
 
 
         }
+
+
+        private void calcuateMetrics(double boundingBoxLength, double boundingBoxWidth, double area)
+        {
+            double maxLotCoverage = 0;
+            double groundSF = 0;
+            if (tbMaxLotCoverage.Text != "" && double.TryParse(tbMaxLotCoverage.Text, out maxLotCoverage))
+            {
+                groundSF = area * (maxLotCoverage / 100);
+                tbGrndFlrSF.Text = groundSF.ToString("F");
+            }
+
+            double maxBldgHeight = 0;
+            int maxFloors = 0;
+            if (tbMaxBuildingHeight.Text != "" && double.TryParse(tbMaxBuildingHeight.Text, out maxBldgHeight))
+            {
+                maxFloors = Convert.ToInt32(Math.Floor(maxBldgHeight / Convert.ToDouble(tbFloorHeight.Text)));
+                tbMaxStories.Text = maxFloors.ToString("F");
+            }
+
+            ResultsBldgZoningMaxHeight = maxBldgHeight;
+            ResultsBldgZoningMaxStories = maxFloors;
+
+            double totalBldgSF = 0;
+            if (groundSF != 0 && maxFloors != 0)
+            {
+                totalBldgSF = groundSF * maxFloors;
+                tbTotalSF.Text = totalBldgSF.ToString("F");
+            }
+
+
+            double totalBldgWidth = 0;
+            if (boundingBoxWidth != 0)
+            {
+                if (boundingBoxWidth > 90)
+                    totalBldgWidth = 90;
+                else
+                    totalBldgWidth = boundingBoxWidth;
+
+                tbTotalWidth.Text = totalBldgWidth.ToString("F");
+            }
+            ResultsBldgZoningWidth = totalBldgWidth;
+
+            double totalBldgLength = 0;
+            if (boundingBoxLength != 0)
+            {
+                if (groundSF == 0 || totalBldgWidth == 0)
+                    totalBldgLength = boundingBoxLength;
+                else
+                    totalBldgLength = groundSF / totalBldgWidth;
+
+                tbTotalLength.Text = totalBldgLength.ToString("F");
+            }
+            ResultsBldgZoningLength = totalBldgLength;
+
+            ResultsBldgStoryHeight = Convert.ToDouble(tbFloorHeight.Text);
+
+        }
+
+
+
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+
+            double boundingBoxArea = Convert.ToDouble(tbArea.Text);
+            double boundingBoxWidth = Convert.ToDouble(tbWidth.Text);
+            double boundingBoxLength = Convert.ToDouble(tbLength.Text);
+
+            calcuateMetrics(boundingBoxLength, boundingBoxWidth, boundingBoxArea);
+        }
+
 
 
     }
