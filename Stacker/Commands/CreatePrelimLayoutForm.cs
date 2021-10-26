@@ -4167,13 +4167,13 @@ namespace Stacker.GeoJsonClasses
                     {
                         if(ResultsBldgZoningWidth > ResultsBldgZoningLength)
                         {
-                            tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
-                            tbLength.Text = ResultsBldgZoningLength.ToString("F");
+                            tbWidth.Text = ResultsBldgZoningLength.ToString("F");
+                            tbLength.Text = ResultsBldgZoningWidth.ToString("F");
                         }
                         else
                         {
-                            tbWidth.Text = ResultsBldgZoningLength.ToString("F");
-                            tbLength.Text = ResultsBldgZoningWidth.ToString("F");
+                            tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
+                            tbLength.Text = ResultsBldgZoningLength.ToString("F");
                         }
                     }
 
@@ -4183,8 +4183,8 @@ namespace Stacker.GeoJsonClasses
                     //if (ResultsBldgZoningWidth != 0)
                     //    tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
 
-                    if (ResultsBldgZoningLength != 0)
-                        tbLength.Text = ResultsBldgZoningLength.ToString("F");
+                    //if (ResultsBldgZoningLength != 0)
+                    //    tbLength.Text = ResultsBldgZoningLength.ToString("F");
 
                     if (ResultsBldgZoningMaxHeight != 0)
                         tbTotalBuildingHeight.Text = ResultsBldgZoningMaxHeight.ToString("F");

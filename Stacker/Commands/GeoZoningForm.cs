@@ -258,7 +258,7 @@ namespace Stacker.Commands
                     return;
                 }
 
-
+                int count = 0;
                 using (Transaction transaction = new Transaction(_doc))
                 {
                     if (transaction.Start("MOD: Create GeoJson Polygon") == TransactionStatus.Started)
@@ -270,6 +270,7 @@ namespace Stacker.Commands
                                 continue;
                             }
 
+
                             var isFirstPolygonSet = true;
                             var basePoint = XYZ.Zero;
                             var factor = 0.0;
@@ -277,6 +278,9 @@ namespace Stacker.Commands
                             foreach (var polygonSet in result.Geometry.PolygonsSet)
                             {
                                 var profileloops = new List<CurveLoop>();
+
+                                if (count > 0)
+                                    break;
 
                                 foreach (var polygon in polygonSet)
                                 {
@@ -417,6 +421,8 @@ namespace Stacker.Commands
 
 
                                 }
+
+                                count++;
                             }
                         }
 
