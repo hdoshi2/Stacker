@@ -256,9 +256,28 @@ namespace Stacker.Commands
                         count++;
                     }
                 }
+                else if (city.Trim() == "Washington")
+                {
+                    int count = 0;
+                    foreach (var metricName in dataWashingtonDC)
+                    {
+                        if (count > 4)
+                            break;
 
+                        if (DictZoneomicsJObject.ContainsKey(metricName))
+                        {
+                            textBoxes[count].Text = DictZoneomicsJObject[metricName];
+                            metricTextBox[metricName] = textBoxes[count];
+                        }
 
+                        labels[count].Text = metricName;
+
+                        count++;
+                    }
                 }
+
+
+            }
 
             if (!_winformExpanded)
             {
@@ -501,7 +520,7 @@ namespace Stacker.Commands
         int selectPrefilledAddressesCount = 0;
         private void btnRandomAddress_Click(object sender, EventArgs e)
         {
-            int totalAddresses = 6;
+            int totalAddresses = 7;
             int interval = selectPrefilledAddressesCount % totalAddresses;
 
             if (interval == 0)
@@ -551,6 +570,14 @@ namespace Stacker.Commands
                 cbCity.Text = "Jacksonville ";
                 cbState.Text = "FL";
                 tbZipCode.Text = "32207";
+            }
+            else if (interval == 6)
+            {
+                tbStreedAddress1.Text = "1841 COLUMBIA RD NW";
+                tbStreedAddress2.Text = "";
+                cbCity.Text = "Washington ";
+                cbState.Text = "DC";
+                tbZipCode.Text = "20009";
             }
 
             selectPrefilledAddressesCount++;
@@ -653,7 +680,7 @@ namespace Stacker.Commands
         }
 
         List<string> dataJacksonville = new List<string>() { "max_building_height_ft", "maximum_lot_coverage", "minimum_rear_yard_ft", "minimum_side_yard_ft", "minimum_front_yard_ft" };
-        List<string> dataWashingtonDC = new List<string>() { "max_building_height_ft", "max_lot_coverage", "Max_far", "rear_yard_ft", "side_yard_ft"};
+        List<string> dataWashingtonDC = new List<string>() { "max_building_height_ft", "max_lot_coverage", "max_far", "rear_yard_ft", "side_yard_ft"};
         List<string> dataSanAntonio = new List<string>() { "max_building_height_ft", "min_rear_setback", "min_side_setback", "max_front_setback", "max_density_units_acre" };
 
 
@@ -790,7 +817,7 @@ namespace Stacker.Commands
 
                 double maxLotCoverage = 0;
                 double groundSF = 0;
-                if (metricTextBox["maximum_lot_coverage"].Text != "" && double.TryParse(metricTextBox["maximum_lot_coverage"].Text, out maxLotCoverage))
+                if (metricTextBox["max_lot_coverage"].Text != "" && double.TryParse(metricTextBox["max_lot_coverage"].Text, out maxLotCoverage))
                 {
                     groundSF = area * (maxLotCoverage / 100);
                     tbGrndFlrSF.Text = groundSF.ToString("F");
@@ -798,13 +825,15 @@ namespace Stacker.Commands
 
                 double maxFAR = 0;
                 int maxFloors = 0;
-                if (metricTextBox["Max_far"].Text != "" && double.TryParse(metricTextBox["Max_far"].Text, out maxFAR))
+                if (metricTextBox["max_far"].Text != "" && double.TryParse(metricTextBox["max_far"].Text, out maxFAR))
                 {
                     maxFloors = Convert.ToInt32(Math.Floor(area * maxFAR / groundSF));
                     tbMaxStories.Text = maxFloors.ToString("F");
                 }
 
-                ResultsBldgZoningMaxHeight = maxFAR;
+                double resultsBldgZoningMaxHeight = 0;
+                double.TryParse(metricTextBox["max_building_height_ft"].Text, out resultsBldgZoningMaxHeight);
+                ResultsBldgZoningMaxHeight = resultsBldgZoningMaxHeight;
                 ResultsBldgZoningMaxStories = maxFloors;
 
                 double totalBldgSF = 0;
