@@ -40,6 +40,9 @@ namespace Stacker.Commands
         public double ResultsBldgZoningMaxHeight { get; set; }
         public double ResultsBldgStoryHeight { get; set; }
 
+        Dictionary<string, string> DictZoneomicsJObject { get; set; }
+
+
         public GeoZoningForm(Document doc, UIDocument uidoc)
         {
             InitializeComponent();
@@ -65,6 +68,7 @@ namespace Stacker.Commands
 
         private void btnAPICall_Click(object sender, EventArgs e)
         {
+            DictZoneomicsJObject = new Dictionary<string, string>();
             string addressLine1 = tbStreedAddress1.Text;
             string addressLine2 = tbStreedAddress2.Text;
             string city = cbCity.Text;
@@ -82,11 +86,11 @@ namespace Stacker.Commands
             ResultsBldgZoningMaxHeight = 0;
             ResultsBldgStoryHeight = 0;
 
-            tbMaxBuildingHeight.Text = "";
-            tbMaxLotCoverage.Text = "";
-            tbMinRearYard.Text = "";
-            tbMinSideYard.Text = "";
-            tbMinFrontYard.Text = "";
+            tbData1.Text = "";
+            tbData2.Text = "";
+            tbData3.Text = "";
+            tbData4.Text = "";
+            tbData5.Text = "";
             tbArea.Text = "";
             tbWidth.Text = "";
             tbLength.Text = "";
@@ -193,25 +197,68 @@ namespace Stacker.Commands
                             .Children().Cast<JProperty>()
                             .ToDictionary(x => x.Name, x => (string)x.Value);
 
+                DictZoneomicsJObject = dictZoneomicsJObject;
 
-                if (dictZoneomicsJObject.ContainsKey("max_building_height_ft"))
-                    tbMaxBuildingHeight.Text = dictZoneomicsJObject["max_building_height_ft"];
+                //if (dictZoneomicsJObject.ContainsKey("max_building_height_ft"))
+                //    tbData1.Text = dictZoneomicsJObject["max_building_height_ft"];
 
-                if (dictZoneomicsJObject.ContainsKey("maximum_lot_coverage"))
-                    tbMaxLotCoverage.Text = dictZoneomicsJObject["maximum_lot_coverage"];
+                //if (dictZoneomicsJObject.ContainsKey("maximum_lot_coverage"))
+                //    tbData2.Text = dictZoneomicsJObject["maximum_lot_coverage"];
 
-                if (dictZoneomicsJObject.ContainsKey("minimum_rear_yard_ft"))
-                    tbMinRearYard.Text = dictZoneomicsJObject["minimum_rear_yard_ft"];
+                //if (dictZoneomicsJObject.ContainsKey("minimum_rear_yard_ft"))
+                //    tbData3.Text = dictZoneomicsJObject["minimum_rear_yard_ft"];
 
-                if (dictZoneomicsJObject.ContainsKey("minimum_side_yard_ft"))
-                    tbMinSideYard.Text = dictZoneomicsJObject["minimum_side_yard_ft"];
+                //if (dictZoneomicsJObject.ContainsKey("minimum_side_yard_ft"))
+                //    tbData4.Text = dictZoneomicsJObject["minimum_side_yard_ft"];
 
-                if (dictZoneomicsJObject.ContainsKey("minimum_front_yard_ft"))
-                    tbMinFrontYard.Text = dictZoneomicsJObject["minimum_front_yard_ft"];
+                //if (dictZoneomicsJObject.ContainsKey("minimum_front_yard_ft"))
+                //    tbData5.Text = dictZoneomicsJObject["minimum_front_yard_ft"];
+
+                List<System.Windows.Forms.TextBox> textBoxes = new List<System.Windows.Forms.TextBox>();
+                List<System.Windows.Forms.Label> labels = new List<System.Windows.Forms.Label>();
+                Dictionary<string, System.Windows.Forms.TextBox> metricTextBox = new Dictionary<string, System.Windows.Forms.TextBox>();
+
+                textBoxes.Add(tbData1);
+                textBoxes.Add(tbData2);
+                textBoxes.Add(tbData3);
+                textBoxes.Add(tbData4);
+                textBoxes.Add(tbData5);
+
+                labels.Add(lblData1);
+                labels.Add(lblData2);
+                labels.Add(lblData3);
+                labels.Add(lblData4);
+                labels.Add(lblData5);
+
+                //Reset all text and label boxes
+                for(var i = 0; i <= 4; i++)
+                {
+                    labels[i].Text = "JSON Data Point";
+                    textBoxes[i].Text = "";
+                }
+
+                if (city.Trim() == "Jacksonville")
+                {
+                    int count = 0;
+                    foreach (var metricName in dataJacksonville)
+                    {
+                        if (count > 4)
+                            break;
+
+                        if (DictZoneomicsJObject.ContainsKey(metricName))
+                        {
+                            textBoxes[count].Text = DictZoneomicsJObject[metricName];
+                            metricTextBox[metricName] = textBoxes[count];
+                        }
+
+                        labels[count].Text = metricName;
+
+                        count++;
+                    }
+                }
 
 
-
-            }
+                }
 
             if (!_winformExpanded)
             {
@@ -365,59 +412,6 @@ namespace Stacker.Commands
                                     tbWidth.Text = boundingBoxWidth.ToString("F");
 
                                     calcuateMetrics(boundingBoxLength, boundingBoxWidth, area);
-
-                                    //double maxLotCoverage = 0;
-                                    //double groundSF = 0;
-                                    //if (tbMaxLotCoverage.Text != "" && double.TryParse(tbMaxLotCoverage.Text, out maxLotCoverage))
-                                    //{
-                                    //    groundSF = area * (maxLotCoverage/100);
-                                    //    tbGrndFlrSF.Text = groundSF.ToString("F");
-                                    //}
-
-                                    //double maxBldgHeight = 0;
-                                    //int maxFloors = 0;
-                                    //if (tbMaxBuildingHeight.Text != "" && double.TryParse(tbMaxBuildingHeight.Text, out maxBldgHeight))
-                                    //{
-                                    //    maxFloors = Convert.ToInt32(Math.Floor(maxBldgHeight / Convert.ToDouble(tbFloorHeight.Text)));
-                                    //    tbMaxStories.Text = maxFloors.ToString("F");
-                                    //}
-
-                                    //ResultsBldgZoningMaxHeight = maxBldgHeight;
-                                    //ResultsBldgZoningMaxStories = maxFloors;
-
-                                    //double totalBldgSF = 0;
-                                    //if (groundSF != 0 && maxFloors != 0)
-                                    //{
-                                    //    totalBldgSF = groundSF * maxFloors;
-                                    //    tbTotalSF.Text = totalBldgSF.ToString("F");
-                                    //}
-
-
-                                    //double totalBldgWidth = 0;
-                                    //if (boundingBoxWidth != 0)
-                                    //{
-                                    //    if (boundingBoxWidth > 90)
-                                    //        totalBldgWidth = 90;
-                                    //    else
-                                    //        totalBldgWidth = boundingBoxWidth;
-
-                                    //    tbTotalWidth.Text = totalBldgWidth.ToString("F");
-                                    //}
-                                    //ResultsBldgZoningWidth = totalBldgWidth;
-
-                                    //double totalBldgLength = 0;
-                                    //if (boundingBoxLength != 0)
-                                    //{
-                                    //    if (groundSF == 0 || totalBldgWidth == 0)
-                                    //        totalBldgLength = boundingBoxLength;
-                                    //    else
-                                    //        totalBldgLength = groundSF / totalBldgWidth;
-
-                                    //    tbTotalLength.Text = totalBldgLength.ToString("F");
-                                    //}
-                                    //ResultsBldgZoningLength = totalBldgLength;
-
-                                    //ResultsBldgStoryHeight = Convert.ToDouble(tbFloorHeight.Text);
 
 
                                 }
@@ -658,61 +652,207 @@ namespace Stacker.Commands
 
         }
 
+        List<string> dataJacksonville = new List<string>() { "max_building_height_ft", "maximum_lot_coverage", "minimum_rear_yard_ft", "minimum_side_yard_ft", "minimum_front_yard_ft" };
+        List<string> dataWashingtonDC = new List<string>() { "max_building_height_ft", "max_lot_coverage", "Max_far", "rear_yard_ft", "side_yard_ft"};
+        List<string> dataSanAntonio = new List<string>() { "max_building_height_ft", "min_rear_setback", "min_side_setback", "max_front_setback", "max_density_units_acre" };
+
+
+
+
 
         private void calcuateMetrics(double boundingBoxLength, double boundingBoxWidth, double area)
         {
-            double maxLotCoverage = 0;
-            double groundSF = 0;
-            if (tbMaxLotCoverage.Text != "" && double.TryParse(tbMaxLotCoverage.Text, out maxLotCoverage))
+            List<System.Windows.Forms.TextBox> textBoxes = new List<System.Windows.Forms.TextBox>();
+            List<System.Windows.Forms.Label> labels = new List<System.Windows.Forms.Label>();
+            Dictionary<string, System.Windows.Forms.TextBox> metricTextBox = new Dictionary<string, System.Windows.Forms.TextBox>();
+
+            textBoxes.Add(tbData1);
+            textBoxes.Add(tbData2);
+            textBoxes.Add(tbData3);
+            textBoxes.Add(tbData4);
+            textBoxes.Add(tbData5);
+
+            labels.Add(lblData1);
+            labels.Add(lblData2);
+            labels.Add(lblData3);
+            labels.Add(lblData4);
+            labels.Add(lblData5);
+
+            //Reset all text and label boxes
+            for (var i = 0; i <= 4; i++)
             {
-                groundSF = area * (maxLotCoverage / 100);
-                tbGrndFlrSF.Text = groundSF.ToString("F");
+                labels[i].Text = "JSON Data Point";
+                textBoxes[i].Text = "";
             }
 
-            double maxBldgHeight = 0;
-            int maxFloors = 0;
-            if (tbMaxBuildingHeight.Text != "" && double.TryParse(tbMaxBuildingHeight.Text, out maxBldgHeight))
+            string city = cbCity.Text;
+
+
+
+            if (city.Trim() == "Jacksonville")
             {
-                maxFloors = Convert.ToInt32(Math.Floor(maxBldgHeight / Convert.ToDouble(tbFloorHeight.Text)));
-                tbMaxStories.Text = maxFloors.ToString("F");
+                int count = 0;
+                foreach(var metricName in dataJacksonville)
+                {
+                    if (count > 4)
+                        break;
+
+                    if (DictZoneomicsJObject.ContainsKey(metricName))
+                    {
+                        textBoxes[count].Text = DictZoneomicsJObject[metricName];
+                        metricTextBox[metricName] = textBoxes[count];
+                    }
+
+                    labels[count].Text = metricName;
+
+                    count++;
+                }
+
+
+                double maxLotCoverage = 0;
+                double groundSF = 0;
+                if (metricTextBox["maximum_lot_coverage"].Text != "" && double.TryParse(metricTextBox["maximum_lot_coverage"].Text, out maxLotCoverage))
+                {
+                    groundSF = area * (maxLotCoverage / 100);
+                    tbGrndFlrSF.Text = groundSF.ToString("F");
+                }
+
+                double maxBldgHeight = 0;
+                int maxFloors = 0;
+                if (metricTextBox["max_building_height_ft"].Text != "" && double.TryParse(metricTextBox["max_building_height_ft"].Text, out maxBldgHeight))
+                {
+                    maxFloors = Convert.ToInt32(Math.Floor(maxBldgHeight / Convert.ToDouble(tbFloorHeight.Text)));
+                    tbMaxStories.Text = maxFloors.ToString("F");
+                }
+
+                ResultsBldgZoningMaxHeight = maxBldgHeight;
+                ResultsBldgZoningMaxStories = maxFloors;
+
+                double totalBldgSF = 0;
+                if (groundSF != 0 && maxFloors != 0)
+                {
+                    totalBldgSF = groundSF * maxFloors;
+                    tbTotalSF.Text = totalBldgSF.ToString("F");
+                }
+
+
+                double totalBldgWidth = 0;
+                if (boundingBoxWidth != 0)
+                {
+                    if (boundingBoxWidth > 90)
+                        totalBldgWidth = 90;
+                    else
+                        totalBldgWidth = boundingBoxWidth;
+
+                    tbTotalWidth.Text = totalBldgWidth.ToString("F");
+                }
+                ResultsBldgZoningWidth = totalBldgWidth;
+
+                double totalBldgLength = 0;
+                if (boundingBoxLength != 0)
+                {
+                    if (groundSF == 0 || totalBldgWidth == 0)
+                        totalBldgLength = boundingBoxLength;
+                    else if (groundSF / totalBldgWidth > boundingBoxLength)
+                        totalBldgLength = boundingBoxLength * 0.9;
+                    else
+                        totalBldgLength = boundingBoxLength;
+
+                    tbTotalLength.Text = totalBldgLength.ToString("F");
+                }
+                ResultsBldgZoningLength = totalBldgLength;
+
+                ResultsBldgStoryHeight = Convert.ToDouble(tbFloorHeight.Text);
             }
 
-            ResultsBldgZoningMaxHeight = maxBldgHeight;
-            ResultsBldgZoningMaxStories = maxFloors;
 
-            double totalBldgSF = 0;
-            if (groundSF != 0 && maxFloors != 0)
+
+
+            if (city.Trim() == "Washington")
             {
-                totalBldgSF = groundSF * maxFloors;
-                tbTotalSF.Text = totalBldgSF.ToString("F");
+                int count = 0;
+                foreach (var metricName in dataWashingtonDC)
+                {
+                    if (count > 4)
+                        break;
+
+                    if (DictZoneomicsJObject.ContainsKey(metricName))
+                    {
+                        textBoxes[count].Text = DictZoneomicsJObject[metricName];
+                        metricTextBox[metricName] = textBoxes[count];
+                    }
+
+                    labels[count].Text = metricName;
+
+                    count++;
+                }
+
+
+                double maxLotCoverage = 0;
+                double groundSF = 0;
+                if (metricTextBox["maximum_lot_coverage"].Text != "" && double.TryParse(metricTextBox["maximum_lot_coverage"].Text, out maxLotCoverage))
+                {
+                    groundSF = area * (maxLotCoverage / 100);
+                    tbGrndFlrSF.Text = groundSF.ToString("F");
+                }
+
+                double maxFAR = 0;
+                int maxFloors = 0;
+                if (metricTextBox["Max_far"].Text != "" && double.TryParse(metricTextBox["Max_far"].Text, out maxFAR))
+                {
+                    maxFloors = Convert.ToInt32(Math.Floor(area * maxFAR / groundSF));
+                    tbMaxStories.Text = maxFloors.ToString("F");
+                }
+
+                ResultsBldgZoningMaxHeight = maxFAR;
+                ResultsBldgZoningMaxStories = maxFloors;
+
+                double totalBldgSF = 0;
+                if (groundSF != 0 && maxFloors != 0)
+                {
+                    totalBldgSF = groundSF * maxFloors;
+                    tbTotalSF.Text = totalBldgSF.ToString("F");
+                }
+
+                double maxRearYardFt = 0;
+                double.TryParse(metricTextBox["rear_yard_ft"].Text, out maxRearYardFt);
+                double totalBldgWidth = 0;
+                if (boundingBoxWidth != 0)
+                {
+                    if((boundingBoxWidth - maxRearYardFt) < 90)
+                    {
+                        totalBldgWidth = boundingBoxWidth - maxRearYardFt;
+                    }
+                    else
+                    {
+                        totalBldgWidth = 90;
+                    }
+
+                    tbTotalWidth.Text = totalBldgWidth.ToString("F");
+                }
+                ResultsBldgZoningWidth = totalBldgWidth;
+
+
+
+                double maxSideYardFt = 0;
+                double.TryParse(metricTextBox["side_yard_ft"].Text, out maxSideYardFt);
+                double totalBldgLength = 0;
+                if (boundingBoxLength != 0)
+                {
+                    if (groundSF == 0 || totalBldgWidth == 0)
+                        totalBldgLength = boundingBoxLength;
+                    else if (totalBldgWidth < 90)
+                        totalBldgLength = boundingBoxLength - maxSideYardFt;
+                    else
+                        totalBldgLength = groundSF / totalBldgWidth;
+
+                    tbTotalLength.Text = totalBldgLength.ToString("F");
+                }
+                ResultsBldgZoningLength = totalBldgLength;
+
+                ResultsBldgStoryHeight = Convert.ToDouble(tbFloorHeight.Text);
             }
 
-
-            double totalBldgWidth = 0;
-            if (boundingBoxWidth != 0)
-            {
-                if (boundingBoxWidth > 90)
-                    totalBldgWidth = 90;
-                else
-                    totalBldgWidth = boundingBoxWidth;
-
-                tbTotalWidth.Text = totalBldgWidth.ToString("F");
-            }
-            ResultsBldgZoningWidth = totalBldgWidth;
-
-            double totalBldgLength = 0;
-            if (boundingBoxLength != 0)
-            {
-                if (groundSF == 0 || totalBldgWidth == 0)
-                    totalBldgLength = boundingBoxLength;
-                else
-                    totalBldgLength = groundSF / totalBldgWidth;
-
-                tbTotalLength.Text = totalBldgLength.ToString("F");
-            }
-            ResultsBldgZoningLength = totalBldgLength;
-
-            ResultsBldgStoryHeight = Convert.ToDouble(tbFloorHeight.Text);
 
         }
 
@@ -728,7 +868,6 @@ namespace Stacker.Commands
 
             calcuateMetrics(boundingBoxLength, boundingBoxWidth, boundingBoxArea);
         }
-
 
 
     }

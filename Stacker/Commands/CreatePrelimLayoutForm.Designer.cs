@@ -519,7 +519,7 @@ namespace Stacker.GeoJsonClasses
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(127, 19);
+            this.label13.Location = new System.Drawing.Point(136, 19);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(20, 13);
             this.label13.TabIndex = 15;
@@ -530,7 +530,7 @@ namespace Stacker.GeoJsonClasses
             this.tb2BedSF.Location = new System.Drawing.Point(118, 94);
             this.tb2BedSF.Name = "tb2BedSF";
             this.tb2BedSF.ReadOnly = true;
-            this.tb2BedSF.Size = new System.Drawing.Size(39, 20);
+            this.tb2BedSF.Size = new System.Drawing.Size(58, 20);
             this.tb2BedSF.TabIndex = 16;
             // 
             // tb1BedSF
@@ -538,7 +538,7 @@ namespace Stacker.GeoJsonClasses
             this.tb1BedSF.Location = new System.Drawing.Point(118, 65);
             this.tb1BedSF.Name = "tb1BedSF";
             this.tb1BedSF.ReadOnly = true;
-            this.tb1BedSF.Size = new System.Drawing.Size(39, 20);
+            this.tb1BedSF.Size = new System.Drawing.Size(58, 20);
             this.tb1BedSF.TabIndex = 14;
             // 
             // tbStudioSF
@@ -546,7 +546,7 @@ namespace Stacker.GeoJsonClasses
             this.tbStudioSF.Location = new System.Drawing.Point(118, 37);
             this.tbStudioSF.Name = "tbStudioSF";
             this.tbStudioSF.ReadOnly = true;
-            this.tbStudioSF.Size = new System.Drawing.Size(39, 20);
+            this.tbStudioSF.Size = new System.Drawing.Size(58, 20);
             this.tbStudioSF.TabIndex = 13;
             // 
             // label12
@@ -563,10 +563,10 @@ namespace Stacker.GeoJsonClasses
             // tbTotalSF
             // 
             this.tbTotalSF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbTotalSF.Location = new System.Drawing.Point(188, 122);
+            this.tbTotalSF.Location = new System.Drawing.Point(181, 122);
             this.tbTotalSF.Name = "tbTotalSF";
             this.tbTotalSF.ReadOnly = true;
-            this.tbTotalSF.Size = new System.Drawing.Size(39, 20);
+            this.tbTotalSF.Size = new System.Drawing.Size(76, 20);
             this.tbTotalSF.TabIndex = 12;
             // 
             // label11
