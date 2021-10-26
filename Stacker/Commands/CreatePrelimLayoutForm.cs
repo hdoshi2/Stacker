@@ -582,7 +582,7 @@ namespace Stacker.GeoJsonClasses
                                 currentBlockOption.AddModToBlock(optionsStudio[currentModWidth]);
                                 roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
 
-                                if (addCoreToBlock && !coreModAdded && roomAreaFilledRatio > Convert.ToDecimal(0.50))
+                                if (addCoreToBlock && !coreModAdded)
                                 {
                                     currentBlockOption.AddModToBlock(optionsCore[currentModWidth]);
                                     roomAreaFilledRatio = Decimal.Divide(Convert.ToDecimal(currentBlockOption.SFModFilled), Convert.ToDecimal(currentBlockOption.SFModTotal));
@@ -4163,8 +4163,25 @@ namespace Stacker.GeoJsonClasses
                     ResultsBldgZoningMaxHeight = frmGeoZoning.ResultsBldgZoningMaxHeight;
                     ResultsBldgStoryHeight = frmGeoZoning.ResultsBldgStoryHeight;
 
-                    if (ResultsBldgZoningWidth != 0)
-                        tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
+                    if (ResultsBldgZoningWidth != 0 && ResultsBldgZoningLength != 0)
+                    {
+                        if(ResultsBldgZoningWidth > ResultsBldgZoningLength)
+                        {
+                            tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
+                            tbLength.Text = ResultsBldgZoningLength.ToString("F");
+                        }
+                        else
+                        {
+                            tbWidth.Text = ResultsBldgZoningLength.ToString("F");
+                            tbLength.Text = ResultsBldgZoningWidth.ToString("F");
+                        }
+                    }
+
+                    //if (ResultsBldgZoningLength != 0)
+                    //    tbLength.Text = ResultsBldgZoningLength.ToString("F");
+
+                    //if (ResultsBldgZoningWidth != 0)
+                    //    tbWidth.Text = ResultsBldgZoningWidth.ToString("F");
 
                     if (ResultsBldgZoningLength != 0)
                         tbLength.Text = ResultsBldgZoningLength.ToString("F");

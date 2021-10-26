@@ -692,7 +692,7 @@ namespace Stacker.Commands
             // cbDrawPolygon
             // 
             this.cbDrawPolygon.AutoSize = true;
-            this.cbDrawPolygon.Location = new System.Drawing.Point(498, 375);
+            this.cbDrawPolygon.Location = new System.Drawing.Point(499, 375);
             this.cbDrawPolygon.Name = "cbDrawPolygon";
             this.cbDrawPolygon.Size = new System.Drawing.Size(143, 17);
             this.cbDrawPolygon.TabIndex = 33;

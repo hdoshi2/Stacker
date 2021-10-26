@@ -594,7 +594,6 @@ namespace Stacker.Commands
                 System.Console.WriteLine(line);
             }
 
-
             var multipleAddresses = multipleAddressStr.Split(';').ToList();
             int count = 0;
 
