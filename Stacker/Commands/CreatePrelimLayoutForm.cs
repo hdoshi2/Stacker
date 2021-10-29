@@ -2995,6 +2995,18 @@ namespace Stacker.GeoJsonClasses
                         if (!elementsBuiltInView.Contains(elemId))
                         {
                             Element element = _doc.GetElement(elemId);
+
+                            //Confirm that selected element is not part of a super family that needs to be displayed
+                            FamilyInstance familyInst = element as FamilyInstance;
+                            if (familyInst != null)
+                            {
+                                Element superComponent = familyInst.SuperComponent;
+                                if (superComponent != null && elementsBuiltInView.Contains(superComponent.Id))
+                                {
+                                    continue;
+                                }
+                            }
+
                             if (element.CanBeHidden(view))
                             {
                                 view.HideElements(new List<ElementId>() { elemId });
