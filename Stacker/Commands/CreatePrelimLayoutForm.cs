@@ -259,6 +259,7 @@ namespace Stacker.GeoJsonClasses
 
                 TotalFloors = Convert.ToInt32(tbFloorsTotal.Text);
 
+                
                 double maxFloorLength = Convert.ToDouble(tbLength.Text) + 50;
 
                 double totalSF = FloorOverallSquareFootage;
@@ -285,8 +286,6 @@ namespace Stacker.GeoJsonClasses
                 tbOptionsGenerated.Text = totalOptionsGenerated.ToString();
 
 
-
-
                 ///Start Optimization Process
                 while (FloorOverallLength <= maxFloorLength)
                 {
@@ -294,6 +293,35 @@ namespace Stacker.GeoJsonClasses
 
                     if (cbTotalIterations.Checked && totalOptionsGenerated >= Convert.ToInt32(tbLimitIterations.Text))
                         break;
+
+
+                    //
+                    //Delete all old elements, if they exist
+                    //
+                    if (ElementsBuilt.Count > 0)
+                    {
+                        using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
+                        {
+                            transDeleteOldMods.Start();
+
+                            foreach (var elemCat in ElementsBuilt)
+                            {
+                                foreach (var elem in elemCat.Value)
+                                {
+                                    Element searchElem = _doc.GetElement(elem);
+
+                                    if (searchElem != null)
+                                        _doc.Delete(elem);
+                                }
+                            }
+
+                            ElementsBuilt = new Dictionary<string, List<ElementId>>();
+
+                            transDeleteOldMods.Commit();
+                        }
+                    }
+
+
 
 
                     if (!LevelBuilt)
@@ -304,6 +332,9 @@ namespace Stacker.GeoJsonClasses
 
                             Dictionary<string, Dictionary<Level, ViewPlan>> Level_VPlan_Collection = new Dictionary<string, Dictionary<Level, ViewPlan>>();
 
+                            
+                            AllLevels = new List<Level>();
+                            AllViewPlans = new List<ViewPlan>();
 
                             //
                             //First FLoor
@@ -366,35 +397,6 @@ namespace Stacker.GeoJsonClasses
                         _uidoc.RefreshActiveView();
                     }
 
-
-
-
-
-                    //
-                    //Delete all old elements, if they exist
-                    //
-                    if (ElementsBuilt.Count > 0)
-                    {
-                        using (Transaction transDeleteOldMods = new Transaction(_doc, "Mod: Delete Old Mods"))
-                        {
-                            transDeleteOldMods.Start();
-
-                            foreach (var elemCat in ElementsBuilt)
-                            {
-                                foreach (var elem in elemCat.Value)
-                                {
-                                    Element searchElem = _doc.GetElement(elem);
-
-                                    if (searchElem != null)
-                                        _doc.Delete(elem);
-                                }
-                            }
-
-                            ElementsBuilt = new Dictionary<string, List<ElementId>>();
-
-                            transDeleteOldMods.Commit();
-                        }
-                    }
 
 
 
@@ -1919,7 +1921,17 @@ namespace Stacker.GeoJsonClasses
 
                 }
 
+                //
+                //Create Plan Views/Sheets and Export Images
+                //
+                if(cbExportViewImages.Checked)
+                    exportImages(true);
 
+                //
+                //Export Build Data to Excel
+                //
+                if (cbExportExcelData.Checked)
+                    exportExcelData();
 
             }
             catch (Exception ex)
@@ -2557,18 +2569,28 @@ namespace Stacker.GeoJsonClasses
 
         private void btnExportImages_Click(object sender, EventArgs e)
         {
+            exportImages(true);
+        }
+
+
+
+        private void exportImages(bool buildSheets)
+        {
             try
             {
                 //
                 //Select folder path
                 //
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
-                fbd.Description = "Select folder to save plan image file:";
+                fbd.Description = "Select folder to save image file:";
                 string selectedPath = "";
 
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
+                ElementsBuilt["Views Plan"] = new List<ElementId>();
+                ElementsBuilt["Views 3D"] = new List<ElementId>();
+                ElementsBuilt["Sheets"] = new List<ElementId>();
 
                 List<View3D> builtMod3DViews = new List<View3D>();
                 List<View> allViews = new List<View>();
@@ -2586,6 +2608,7 @@ namespace Stacker.GeoJsonClasses
                     {
                         Level currentLevel = AllLevels[i];
                         View currentViewPlan = AllViewPlans[i] as View;
+                        ElementsBuilt["Views Plan"].Add(currentViewPlan.Id);
 
                         allViews.Add(currentViewPlan);
 
@@ -2596,7 +2619,6 @@ namespace Stacker.GeoJsonClasses
                         if (selectedPath != "")
                             exportViewPlanImage(currentViewPlan, selectedPath);
                     }
-
 
                     //
                     //Create Two 3D Views
@@ -2609,7 +2631,6 @@ namespace Stacker.GeoJsonClasses
                     List<View3D> all3DViews = new FilteredElementCollector(_doc).OfClass(typeof(View3D)).OfType<View3D>().ToList();
                     List<string> existing3DViewNames = (from v in all3DViews
                                                         select v.Name).ToList();
-
 
                     using (Transaction transExportImage = new Transaction(_doc))
                     {
@@ -2651,7 +2672,6 @@ namespace Stacker.GeoJsonClasses
                                 sheetNames[view3DCurrent.Name] = $"DB-30{i + 1}";
                             }
 
-
                             //1.Wireframe
                             //2.Hidden line
                             //3.Shaded
@@ -2663,14 +2683,12 @@ namespace Stacker.GeoJsonClasses
                             builtMod3DViews.Add(view3DCurrent);
                             allViews.Add(view3DCurrent);
 
-                            ElementsBuilt["Views 3D"] = new List<ElementId>() { view3DCurrent.Id };
+                            ElementsBuilt["Views 3D"].Add(view3DCurrent.Id);
                         }
 
 
                         transExportImage.Commit();
                     }
-
-
 
                     //
                     //Hide all elements not needed in the 3D View
@@ -2682,8 +2700,6 @@ namespace Stacker.GeoJsonClasses
                         if (selectedPath != "")
                             hideElementsFromView(new List<View>() { current3DView });
                     }
-
-
 
                     //
                     //Export 3D View Images
@@ -2700,49 +2716,51 @@ namespace Stacker.GeoJsonClasses
                 }
 
 
-
                 //
                 //Create and Export Sheet Images
                 //
-                List<Element> titleBlocks = loadTitleBlocks();
-                Element selectedTitleBlock = (from tb in titleBlocks
-                                              where tb.Name == "E1 30x42 Horizontal"
-                                              select tb).FirstOrDefault();
-
-                Dictionary<string, ViewSheet> builtSheets = new Dictionary<string, ViewSheet>();
-
-                bool moveVPs = true;
-                int count = 0;
-
-                foreach (var sht in sheetNames)
+                if (buildSheets)
                 {
-                    ViewSheet builtSheet = null;
-                    Viewport builtViewPort = null;
-                    XYZ centerPtSheet = null;
+                    List<Element> titleBlocks = loadTitleBlocks();
+                    Element selectedTitleBlock = (from tb in titleBlocks
+                                                  where tb.Name == "E1 30x42 Horizontal"
+                                                  select tb).FirstOrDefault();
 
-                    builtSheet = (from s in allSheets
-                                    where s.Name == sht.Key
-                                    select s).FirstOrDefault();
+                    Dictionary<string, ViewSheet> builtSheets = new Dictionary<string, ViewSheet>();
 
-                    if (builtSheet != null)
+                    bool moveVPs = true;
+                    int count = 0;
+
+                    foreach (var sht in sheetNames)
                     {
-                        using (Transaction transDeleteOldSheet = new Transaction(_doc))
+                        ViewSheet builtSheet = null;
+                        Viewport builtViewPort = null;
+                        XYZ centerPtSheet = null;
+
+                        builtSheet = (from s in allSheets
+                                      where s.Name == sht.Key
+                                      select s).FirstOrDefault();
+
+                        if (builtSheet != null)
                         {
-                            transDeleteOldSheet.Start($"Mod: Delete Old Sheet");
-                            _doc.Delete(builtSheet.Id);
-                            transDeleteOldSheet.Commit();
+                            using (Transaction transDeleteOldSheet = new Transaction(_doc))
+                            {
+                                transDeleteOldSheet.Start($"Mod: Delete Old Sheet");
+                                _doc.Delete(builtSheet.Id);
+                                transDeleteOldSheet.Commit();
+                            }
                         }
-                    }
-                        
-                    using (TransactionGroup transGroup = new TransactionGroup(_doc))
-                    {
-                        transGroup.Start("MOD: Export View Image");
+
+                        using (TransactionGroup transGroup = new TransactionGroup(_doc))
+                        {
+                            transGroup.Start("MOD: Export View Image");
 
 
-                        //if (builtSheet == null)
-                        //{
+                            //if (builtSheet == null)
+                            //{
                             builtSheet = createCustomSheet(selectedTitleBlock.Id, sht.Key, sht.Value);
                             builtSheets[sht.Value] = builtSheet;
+                            ElementsBuilt["Sheets"].Add(builtSheet.Id);
 
                             using (Transaction transPlaceViewPort = new Transaction(_doc))
                             {
@@ -2800,61 +2818,60 @@ namespace Stacker.GeoJsonClasses
                                 transPlaceViewPort.Commit();
                             }
 
-                        //}
+                            //}
 
-                        count++;
-
-
-
-                        //Move built view port to center of sheet space
-                        using (Transaction transMoveVPs = new Transaction(_doc))
-                        {
-                            transMoveVPs.Start($"Mod: Move ViewPort");
+                            count++;
 
 
-                            var maxViewPort = builtViewPort.GetBoxOutline().MaximumPoint;
-                            var minViewPort = builtViewPort.GetBoxOutline().MinimumPoint;
-                            double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
-                            double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
 
-                            Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
-                            Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
-                            Double ptZvp = 0;
-                            XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
+                            //Move built view port to center of sheet space
+                            using (Transaction transMoveVPs = new Transaction(_doc))
+                            {
+                                transMoveVPs.Start($"Mod: Move ViewPort");
 
-                            double xTrans = centerPtSheet.X - ptXvp;
-                            double yTrans = centerPtSheet.Y - ptYvp;
-                            double zTrans = centerPtSheet.Z - ptZvp;
 
-                            XYZ translation = new XYZ(xTrans, yTrans, zTrans);
+                                var maxViewPort = builtViewPort.GetBoxOutline().MaximumPoint;
+                                var minViewPort = builtViewPort.GetBoxOutline().MinimumPoint;
+                                double viewPortWidth = ((maxViewPort.X) - (minViewPort.X));
+                                double viewPortHeight = ((maxViewPort.Y) - (minViewPort.Y));
 
-                            ElementTransformUtils.MoveElement(_doc, builtViewPort.Id, translation);
+                                Double ptXvp = (((maxViewPort.X) - (minViewPort.X)) / 2) + minViewPort.X;
+                                Double ptYvp = (((maxViewPort.Y) - (minViewPort.Y)) / 2) + minViewPort.Y;
+                                Double ptZvp = 0;
+                                XYZ pointToInsertvp = new XYZ(ptXvp, ptYvp, ptZvp);
 
-                            transMoveVPs.Commit();
+                                double xTrans = centerPtSheet.X - ptXvp;
+                                double yTrans = centerPtSheet.Y - ptYvp;
+                                double zTrans = centerPtSheet.Z - ptZvp;
+
+                                XYZ translation = new XYZ(xTrans, yTrans, zTrans);
+
+                                ElementTransformUtils.MoveElement(_doc, builtViewPort.Id, translation);
+
+                                transMoveVPs.Commit();
+
+                            }
+
+                            if (builtSheet == null)
+                                continue;
+
+                            //Export sheet to image
+                            if (selectedPath != "")
+                                exportViewPlanImage(builtSheet, selectedPath);
+
+                            transGroup.Assimilate();
 
                         }
-
-                        if (builtSheet == null)
-                            continue;
-
-                        //Export sheet to image
-                        if (selectedPath != "")
-                            exportViewPlanImage(builtSheet, selectedPath);
-
-                        transGroup.Assimilate();
-
                     }
                 }
-
+                
 
             }
             catch (Exception ex)
             {
                 throw new Exception("Exception in Exporting View Image  [" + ex.GetType().ToString() + "]. ");
             }
-
         }
-
 
 
         /// <summary>
@@ -2880,7 +2897,8 @@ namespace Stacker.GeoJsonClasses
                     //Generate date string
                     string dateString = DateTime.Now.ToUniversalTime().ToString("s", System.Globalization.CultureInfo.InvariantCulture);
                     string fileDateString = dateString.Replace(":", "-").Replace(".", "-");
-                    string fullPathAndFileName = selectedPath + @"\" + fileDateString;
+                    //string fullPathAndFileName = selectedPath + @"\" + fileDateString;
+                    string fullPathAndFileName = selectedPath + @"\" + currentViewPlan.Name;
 
                     var imageExportOpt = new ImageExportOptions
                     {
@@ -3120,604 +3138,610 @@ namespace Stacker.GeoJsonClasses
 
 
 
-
-
         private void btnExportData_Click(object sender, EventArgs e)
         {
+            exportExcelData();
+        }
 
-            BuildingResults = new List<BldgResult>();
 
-            int floorCount = 0;
-
-            int studioCount = 0;
-            int oneBedCount = 0;
-            int twoBedCount = 0;
-            int coreCount = 0;
-            //
-            //Loop through all elements and itemize for Excel export
-            //
-            foreach (KeyValuePair<string, List<ElementId>> elem in ElementsBuilt)
+        private void exportExcelData()
+        {
+            try
             {
-                string elemCategoryName = elem.Key;
-                List<ElementId> elemIDs = elem.Value;
-                string currentLevelName = $"LVL_{floorCount}";
+                BuildingResults = new List<BldgResult>();
 
+                int floorCount = 0;
 
+                int studioCount = 0;
+                int oneBedCount = 0;
+                int twoBedCount = 0;
+                int coreCount = 0;
                 //
-                //If elements are Mod Regions
+                //Loop through all elements and itemize for Excel export
                 //
-                if (elemCategoryName.Contains("Mod Regions"))
+                foreach (KeyValuePair<string, List<ElementId>> elem in ElementsBuilt)
                 {
+                    string elemCategoryName = elem.Key;
+                    List<ElementId> elemIDs = elem.Value;
+                    string currentLevelName = $"LVL_{floorCount}";
 
-                    foreach (ElementId elemID in elemIDs)
+
+                    //
+                    //If elements are Mod Regions
+                    //
+                    if (elemCategoryName.Contains("Mod Regions"))
                     {
-                        FilledRegion filledRegion = _doc.GetElement(elemID) as FilledRegion;
 
-                        Parameter parComments = filledRegion.LookupParameter("Comments");
-                        Parameter parArea = filledRegion.LookupParameter("Area");
-
-                        string comment = parComments.AsString();
-                        double area = parArea.AsDouble();
-
-
-                        if (comment.Contains("MOD_3"))
+                        foreach (ElementId elemID in elemIDs)
                         {
-                            string catName = $"Floor - Two Bed";
+                            FilledRegion filledRegion = _doc.GetElement(elemID) as FilledRegion;
 
-                            BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+                            Parameter parComments = filledRegion.LookupParameter("Comments");
+                            Parameter parArea = filledRegion.LookupParameter("Area");
 
-                            if (elemExists != null)
+                            string comment = parComments.AsString();
+                            double area = parArea.AsDouble();
+
+
+                            if (comment.Contains("MOD_3"))
                             {
-                                double oldArea = elemExists.Quantity;
-                                elemExists.Quantity = oldArea + area;
-                                twoBedCount++;
+                                string catName = $"Floor - Two Bed";
+
+                                BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                                if (elemExists != null)
+                                {
+                                    double oldArea = elemExists.Quantity;
+                                    elemExists.Quantity = oldArea + area;
+                                    twoBedCount++;
+                                }
+                                else
+                                {
+                                    BldgResult result = new BldgResult();
+                                    result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
+
+                                    BuildingResults.Add(result);
+                                    twoBedCount++;
+
+                                }
+
                             }
-                            else
+                            else if (comment.Contains("MOD_2"))
                             {
-                                BldgResult result = new BldgResult();
-                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
+                                string catName = $"Floor - One Bed";
 
-                                BuildingResults.Add(result);
-                                twoBedCount++;
+                                BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                                if (elemExists != null)
+                                {
+                                    double oldArea = elemExists.Quantity;
+                                    elemExists.Quantity = oldArea + area;
+                                    oneBedCount++;
+                                }
+                                else
+                                {
+                                    BldgResult result = new BldgResult();
+                                    result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
+
+                                    BuildingResults.Add(result);
+                                    oneBedCount++;
+
+                                }
+
+                            }
+                            else if (comment.Contains("MOD_1"))
+                            {
+                                string catName = $"Floor - Studio";
+
+                                BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                                if (elemExists != null)
+                                {
+                                    double oldArea = elemExists.Quantity;
+                                    elemExists.Quantity = oldArea + area;
+                                    studioCount++;
+                                }
+                                else
+                                {
+                                    BldgResult result = new BldgResult();
+                                    result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
+
+                                    BuildingResults.Add(result);
+                                    studioCount++;
+                                }
+
+
+                            }
+                            else if (comment.Contains("CORE"))
+                            {
+                                string catName = $"Floor - Core";
+
+                                BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                                if (elemExists != null)
+                                {
+                                    double oldArea = elemExists.Quantity;
+                                    elemExists.Quantity = oldArea + area;
+                                    coreCount++;
+                                }
+                                else
+                                {
+                                    BldgResult result = new BldgResult();
+                                    result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
+
+                                    BuildingResults.Add(result);
+                                    coreCount++;
+                                }
 
                             }
 
                         }
-                        else if (comment.Contains("MOD_2"))
+
+
+
+                        string elementNameStudio = "Unit Count - Studio";
+                        BldgResult elemExistsStudio = BuildingResults.Where(elem1 => elem1.ElementName == elementNameStudio && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsStudio != null)
                         {
-                            string catName = $"Floor - One Bed";
-
-                            BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                            if (elemExists != null)
-                            {
-                                double oldArea = elemExists.Quantity;
-                                elemExists.Quantity = oldArea + area;
-                                oneBedCount++;
-                            }
-                            else
-                            {
-                                BldgResult result = new BldgResult();
-                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
-
-                                BuildingResults.Add(result);
-                                oneBedCount++;
-
-                            }
-
-                        }
-                        else if (comment.Contains("MOD_1"))
-                        {
-                            string catName = $"Floor - Studio";
-
-                            BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                            if (elemExists != null)
-                            {
-                                double oldArea = elemExists.Quantity;
-                                elemExists.Quantity = oldArea + area;
-                                studioCount++;
-                            }
-                            else
-                            {
-                                BldgResult result = new BldgResult();
-                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
-
-                                BuildingResults.Add(result);
-                                studioCount++;
-                            }
-
-
-                        }
-                        else if (comment.Contains("CORE"))
-                        {
-                            string catName = $"Floor - Core";
-
-                            BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                            if (elemExists != null)
-                            {
-                                double oldArea = elemExists.Quantity;
-                                elemExists.Quantity = oldArea + area;
-                                coreCount++;
-                            }
-                            else
-                            {
-                                BldgResult result = new BldgResult();
-                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Filled Region", "AreaElements");
-
-                                BuildingResults.Add(result);
-                                coreCount++;
-                            }
-
-                        }
-
-                    }
-
-
-
-                    string elementNameStudio = "Unit Count - Studio";
-                    BldgResult elemExistsStudio = BuildingResults.Where(elem1 => elem1.ElementName == elementNameStudio && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                    if (elemExistsStudio != null)
-                    {
-                        elemExistsStudio.Quantity++;
-                    }
-                    else
-                    {
-                        BldgResult resultStudio = new BldgResult();
-                        resultStudio.CreateBldgResult(currentLevelName, elementNameStudio, studioCount, "EA", "Custom", "AreaElements");
-
-                        BuildingResults.Add(resultStudio);
-                    }
-
-
-                    string elementNameOneBed = "Unit Count - One Bed";
-                    BldgResult elemExistsOneBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameOneBed && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                    if (elemExistsStudio != null)
-                    {
-                        elemExistsOneBed.Quantity++;
-                    }
-                    else
-                    {
-                        BldgResult resultOneBed = new BldgResult();
-                        resultOneBed.CreateBldgResult(currentLevelName, elementNameOneBed, oneBedCount, "EA", "Custom", "AreaElements");
-
-                        BuildingResults.Add(resultOneBed);
-                    }
-
-
-
-
-                    string elementNameTwoBed = "Unit Count - Two Bed";
-                    BldgResult elemExistsTwoBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameTwoBed && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                    if (elemExistsTwoBed != null)
-                    {
-                        elemExistsTwoBed.Quantity++;
-                    }
-                    else
-                    {
-                        BldgResult resultTwoBed = new BldgResult();
-                        resultTwoBed.CreateBldgResult(currentLevelName, elementNameTwoBed, twoBedCount, "EA", "Custom", "AreaElements");
-
-                        BuildingResults.Add(resultTwoBed);
-                    }
-
-
-
-                    string elementNameCore = "Unit Count - Core";
-                    BldgResult elemExistsCore = BuildingResults.Where(elem1 => elem1.ElementName == elementNameCore && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                    if (elemExistsCore != null)
-                    {
-                        elemExistsCore.Quantity++;
-                    }
-                    else
-                    {
-                        BldgResult resultCore = new BldgResult();
-                        resultCore.CreateBldgResult(currentLevelName, elementNameCore, twoBedCount, "EA", "Custom", "AreaElements");
-
-                        BuildingResults.Add(resultCore);
-                    }
-
-
-
-                }
-                //
-                //If elements are Room Elements
-                //
-                else if (elemCategoryName.Contains("Room Elements"))
-                {
-
-                    foreach (ElementId elemID in elemIDs)
-                    {
-                        Element roomElem = _doc.GetElement(elemID) as Element;
-                        string elementCatName = roomElem.Category.Name;
-                        string elementName = roomElem.Name;
-                        FamilyInstance roomElemFamilyInstance = roomElem as FamilyInstance;
-                        FamilySymbol roomElemFamilySymbol = null;
-                        Family roomElemFamily = null;
-                        string roomElemFamilyName = "";
-
-                        if (roomElemFamilyInstance != null)
-                        {
-                            roomElemFamilySymbol = roomElemFamilyInstance.Symbol;
-                            if(roomElemFamilySymbol != null)
-                                roomElemFamily = roomElemFamilySymbol.Family;
-                        }
-
-                        if (roomElemFamily != null)
-                            roomElemFamilyName = roomElemFamily.Name;
-
-                        
-
-
-                        string elementNameForRecording = $"{elementCatName}_{elementName}_{roomElemFamilyName}";
-
-                        var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExists != null)
-                        {
-                            elemExists.Quantity++;
+                            elemExistsStudio.Quantity++;
                         }
                         else
                         {
-                            BldgResult result = new BldgResult();
-                            result.CreateBldgResult(currentLevelName, elementNameForRecording, 1, "EA", "RoomElements", roomElemFamilyName);
+                            BldgResult resultStudio = new BldgResult();
+                            resultStudio.CreateBldgResult(currentLevelName, elementNameStudio, studioCount, "EA", "Custom", "AreaElements");
 
-                            BuildingResults.Add(result);
+                            BuildingResults.Add(resultStudio);
+                        }
+
+
+                        string elementNameOneBed = "Unit Count - One Bed";
+                        BldgResult elemExistsOneBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameOneBed && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsStudio != null)
+                        {
+                            elemExistsOneBed.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultOneBed = new BldgResult();
+                            resultOneBed.CreateBldgResult(currentLevelName, elementNameOneBed, oneBedCount, "EA", "Custom", "AreaElements");
+
+                            BuildingResults.Add(resultOneBed);
                         }
 
 
 
-                        if (elementCatName == "Walls")
+
+                        string elementNameTwoBed = "Unit Count - Two Bed";
+                        BldgResult elemExistsTwoBed = BuildingResults.Where(elem1 => elem1.ElementName == elementNameTwoBed && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsTwoBed != null)
                         {
-                            Parameter parWallLength = roomElem.LookupParameter("Length");
-                            elementNameForRecording = elementNameForRecording + " - Length";
+                            elemExistsTwoBed.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultTwoBed = new BldgResult();
+                            resultTwoBed.CreateBldgResult(currentLevelName, elementNameTwoBed, twoBedCount, "EA", "Custom", "AreaElements");
 
-                            double length = parWallLength.AsDouble();
+                            BuildingResults.Add(resultTwoBed);
+                        }
 
-                            var elemExistsWall = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording && elem1.LevelName == currentLevelName).FirstOrDefault();
 
-                            if (elemExistsWall != null)
+
+                        string elementNameCore = "Unit Count - Core";
+                        BldgResult elemExistsCore = BuildingResults.Where(elem1 => elem1.ElementName == elementNameCore && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                        if (elemExistsCore != null)
+                        {
+                            elemExistsCore.Quantity++;
+                        }
+                        else
+                        {
+                            BldgResult resultCore = new BldgResult();
+                            resultCore.CreateBldgResult(currentLevelName, elementNameCore, twoBedCount, "EA", "Custom", "AreaElements");
+
+                            BuildingResults.Add(resultCore);
+                        }
+
+
+
+                    }
+                    //
+                    //If elements are Room Elements
+                    //
+                    else if (elemCategoryName.Contains("Room Elements"))
+                    {
+
+                        foreach (ElementId elemID in elemIDs)
+                        {
+                            Element roomElem = _doc.GetElement(elemID) as Element;
+                            string elementCatName = roomElem.Category.Name;
+                            string elementName = roomElem.Name;
+                            FamilyInstance roomElemFamilyInstance = roomElem as FamilyInstance;
+                            FamilySymbol roomElemFamilySymbol = null;
+                            Family roomElemFamily = null;
+                            string roomElemFamilyName = "";
+
+                            if (roomElemFamilyInstance != null)
                             {
-                                double oldLength = elemExistsWall.Quantity;
-                                elemExistsWall.Quantity = oldLength + length;
+                                roomElemFamilySymbol = roomElemFamilyInstance.Symbol;
+                                if (roomElemFamilySymbol != null)
+                                    roomElemFamily = roomElemFamilySymbol.Family;
+                            }
+
+                            if (roomElemFamily != null)
+                                roomElemFamilyName = roomElemFamily.Name;
+
+
+
+
+                            string elementNameForRecording = $"{elementCatName}_{elementName}_{roomElemFamilyName}";
+
+                            var elemExists = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                            if (elemExists != null)
+                            {
+                                elemExists.Quantity++;
                             }
                             else
                             {
                                 BldgResult result = new BldgResult();
-                                result.CreateBldgResult(currentLevelName, elementNameForRecording, length, "LF", "RoomElements", roomElemFamilyName);
+                                result.CreateBldgResult(currentLevelName, elementNameForRecording, 1, "EA", "RoomElements", roomElemFamilyName);
 
                                 BuildingResults.Add(result);
+                            }
+
+
+
+                            if (elementCatName == "Walls")
+                            {
+                                Parameter parWallLength = roomElem.LookupParameter("Length");
+                                elementNameForRecording = elementNameForRecording + " - Length";
+
+                                double length = parWallLength.AsDouble();
+
+                                var elemExistsWall = BuildingResults.Where(elem1 => elem1.ElementName == elementNameForRecording && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                                if (elemExistsWall != null)
+                                {
+                                    double oldLength = elemExistsWall.Quantity;
+                                    elemExistsWall.Quantity = oldLength + length;
+                                }
+                                else
+                                {
+                                    BldgResult result = new BldgResult();
+                                    result.CreateBldgResult(currentLevelName, elementNameForRecording, length, "LF", "RoomElements", roomElemFamilyName);
+
+                                    BuildingResults.Add(result);
+
+                                }
+
+
+
+                                var elemExistsWallTotal = BuildingResults.Where(elem1 => elem1.ElementName.Contains(elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)") && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                                if (elemExistsWallTotal != null)
+                                {
+                                    double oldLength = elemExistsWallTotal.Quantity;
+                                    elemExistsWallTotal.Quantity = oldLength + (length * TypFloorHeight * 2);
+                                }
+                                else
+                                {
+                                    BldgResult resultFacadeSurface = new BldgResult();
+                                    var elementNameWallSF = elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)";
+                                    var quantityWallSF = length * TypFloorHeight * 2;
+                                    resultFacadeSurface.CreateBldgResult(currentLevelName, elementNameWallSF, quantityWallSF, "SF", "Floor", "AreaElements");
+
+                                    BuildingResults.Add(resultFacadeSurface);
+                                }
+
 
                             }
 
 
 
-                            var elemExistsWallTotal = BuildingResults.Where(elem1 => elem1.ElementName.Contains(elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)") && elem1.LevelName == currentLevelName).FirstOrDefault();
+                        }
 
-                            if (elemExistsWallTotal != null)
+
+                    }
+                    else if (elemCategoryName.Contains("Floor"))
+                    {
+
+                        foreach (ElementId elemID in elemIDs)
+                        {
+                            Floor floorElement = _doc.GetElement(elemID) as Floor;
+
+                            if (floorElement == null)
+                                continue;
+
+                            Parameter parComments = floorElement.LookupParameter("Comments");
+                            Parameter parArea = floorElement.LookupParameter("Area");
+                            Parameter parPerimeter = floorElement.LookupParameter("Perimeter");
+
+                            string comment = parComments.AsString();
+                            double area = parArea.AsDouble();
+                            double perimeter = parPerimeter.AsDouble();
+
+                            string catName = $"Floor - TOTAL";
+                            if (floorCount == TotalFloors - 1)
+                                catName = $"Floor - Roof - TOTAL";
+
+                            BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                            if (elemExists != null)
                             {
-                                double oldLength = elemExistsWallTotal.Quantity;
-                                elemExistsWallTotal.Quantity = oldLength + (length * TypFloorHeight * 2);
+                                double oldArea = elemExists.Quantity;
+                                elemExists.Quantity = oldArea + area;
                             }
                             else
                             {
+                                BldgResult result = new BldgResult();
+                                result.CreateBldgResult(currentLevelName, catName + " AREA", area, "SF", "Floor", "AreaElements");
+
+                                BuildingResults.Add(result);
+
+
+
+                                BldgResult resultPerimeter = new BldgResult();
+                                resultPerimeter.CreateBldgResult(currentLevelName, catName + " PERIMETER", perimeter, "LF", "Floor", "AreaElements");
+
+                                BuildingResults.Add(resultPerimeter);
+
+
+
                                 BldgResult resultFacadeSurface = new BldgResult();
-                                var elementNameWallSF = elementNameForRecording + " WALL SURFACE AREA (TWO SIDED)";
-                                var quantityWallSF = length * TypFloorHeight * 2;
-                                resultFacadeSurface.CreateBldgResult(currentLevelName, elementNameWallSF, quantityWallSF, "SF", "Floor", "AreaElements");
+                                resultFacadeSurface.CreateBldgResult(currentLevelName, catName + " FACADE SURFACE AREA", perimeter * TypFloorHeight, "SF", "Floor", "AreaElements");
 
                                 BuildingResults.Add(resultFacadeSurface);
                             }
 
 
                         }
+                    }
+                    else if (elemCategoryName.Contains("Hallway Elements"))
+                    {
+
+                        foreach (ElementId elemID in elemIDs)
+                        {
+                            Floor floorElement = _doc.GetElement(elemID) as Floor;
+
+                            if (floorElement == null)
+                                continue;
+
+                            Parameter parComments = floorElement.LookupParameter("Comments");
+                            Parameter parArea = floorElement.LookupParameter("Area");
+
+                            string comment = parComments.AsString();
+                            double area = parArea.AsDouble();
+
+                            string catName = $"Floor - Hallway";
+
+                            BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
+
+                            if (elemExists != null)
+                            {
+                                double oldArea = elemExists.Quantity;
+                                elemExists.Quantity = oldArea + area;
+                            }
+                            else
+                            {
+                                BldgResult result = new BldgResult();
+                                result.CreateBldgResult(currentLevelName, catName, area, "SF", "Floor", "AreaElements");
+
+                                BuildingResults.Add(result);
+                            }
+                        }
 
 
+                        floorCount++;
 
+                        studioCount = 0;
+                        oneBedCount = 0;
+                        twoBedCount = 0;
+                        coreCount = 0;
                     }
 
 
+
                 }
-                else if (elemCategoryName.Contains("Floor"))
+
+
+
+
+                //
+                //Caclulate Totals
+                //
+
+                List<BldgResult> categoryTotals = new List<BldgResult>(); ;
+
+                foreach (var bldg in BuildingResults)
                 {
-
-                    foreach (ElementId elemID in elemIDs)
+                    if (bldg.ElementName.Contains("Windows"))
                     {
-                        Floor floorElement = _doc.GetElement(elemID) as Floor;
+                        BldgResult elemExistsWin = categoryTotals.Where(elem1 => elem1.ElementName == "Windows-ALL").FirstOrDefault();
 
-                        if (floorElement == null)
-                            continue;
-
-                        Parameter parComments = floorElement.LookupParameter("Comments");
-                        Parameter parArea = floorElement.LookupParameter("Area");
-                        Parameter parPerimeter = floorElement.LookupParameter("Perimeter");
-
-                        string comment = parComments.AsString();
-                        double area = parArea.AsDouble();
-                        double perimeter = parPerimeter.AsDouble();
-
-                        string catName = $"Floor - TOTAL";
-                        if(floorCount == TotalFloors - 1)
-                            catName = $"Floor - Roof - TOTAL";
-
-                        BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExists != null)
+                        if (elemExistsWin != null)
                         {
-                            double oldArea = elemExists.Quantity;
-                            elemExists.Quantity = oldArea + area;
+                            double oldQty = elemExistsWin.Quantity;
+                            elemExistsWin.Quantity = oldQty + bldg.Quantity;
                         }
                         else
                         {
-                            BldgResult result = new BldgResult();
-                            result.CreateBldgResult(currentLevelName, catName + " AREA", area, "SF", "Floor", "AreaElements");
+                            BldgResult resultWinAll = new BldgResult();
+                            resultWinAll.CreateBldgResult("TOTAL", "Windows-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
-                            BuildingResults.Add(result);
-
-
-
-                            BldgResult resultPerimeter = new BldgResult();
-                            resultPerimeter.CreateBldgResult(currentLevelName, catName + " PERIMETER", perimeter, "LF", "Floor", "AreaElements");
-
-                            BuildingResults.Add(resultPerimeter);
-
-
-
-                            BldgResult resultFacadeSurface = new BldgResult();
-                            resultFacadeSurface.CreateBldgResult(currentLevelName, catName + " FACADE SURFACE AREA", perimeter * TypFloorHeight, "SF", "Floor", "AreaElements");
-
-                            BuildingResults.Add(resultFacadeSurface);
+                            categoryTotals.Add(resultWinAll);
                         }
-
-
                     }
-                }
-                else if (elemCategoryName.Contains("Hallway Elements"))
-                {
-
-                    foreach (ElementId elemID in elemIDs)
+                    else if (bldg.ElementName.Contains("Doors"))
                     {
-                        Floor floorElement = _doc.GetElement(elemID) as Floor;
+                        BldgResult elemExistsDoor = categoryTotals.Where(elem1 => elem1.ElementName == "Doors-ALL").FirstOrDefault();
 
-                        if (floorElement == null)
-                            continue;
-
-                        Parameter parComments = floorElement.LookupParameter("Comments");
-                        Parameter parArea = floorElement.LookupParameter("Area");
-
-                        string comment = parComments.AsString();
-                        double area = parArea.AsDouble();
-
-                        string catName = $"Floor - Hallway";
-
-                        BldgResult elemExists = BuildingResults.Where(elem1 => elem1.ElementName == catName && elem1.LevelName == currentLevelName).FirstOrDefault();
-
-                        if (elemExists != null)
+                        if (elemExistsDoor != null)
                         {
-                            double oldArea = elemExists.Quantity;
-                            elemExists.Quantity = oldArea + area;
+                            double oldQty = elemExistsDoor.Quantity;
+                            elemExistsDoor.Quantity = oldQty + bldg.Quantity;
                         }
                         else
                         {
-                            BldgResult result = new BldgResult();
-                            result.CreateBldgResult(currentLevelName, catName, area, "SF", "Floor", "AreaElements");
+                            BldgResult resultWinAll = new BldgResult();
+                            resultWinAll.CreateBldgResult("TOTAL", "Doors-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
-                            BuildingResults.Add(result);
+                            categoryTotals.Add(resultWinAll);
                         }
+
                     }
-
-
-                    floorCount++;
-
-                    studioCount = 0;
-                    oneBedCount = 0;
-                    twoBedCount = 0;
-                    coreCount = 0;
-                }
-                
-
-
-            }
-
-
-
-
-            //
-            //Caclulate Totals
-            //
-
-            List<BldgResult> categoryTotals = new List<BldgResult>(); ;
-
-            foreach (var bldg in BuildingResults)
-            {
-                if (bldg.ElementName.Contains("Windows"))
-                {
-                    BldgResult elemExistsWin = categoryTotals.Where(elem1 => elem1.ElementName == "Windows-ALL").FirstOrDefault();
-
-                    if (elemExistsWin != null)
+                    else if (bldg.ElementName.Contains("Unit Count") && !bldg.ElementName.Contains("Core"))
                     {
-                        double oldQty = elemExistsWin.Quantity;
-                        elemExistsWin.Quantity = oldQty + bldg.Quantity;
+                        BldgResult elemExistsUnits = categoryTotals.Where(elem1 => elem1.ElementName == "Units-ALL").FirstOrDefault();
+
+                        if (elemExistsUnits != null)
+                        {
+                            double oldQty = elemExistsUnits.Quantity;
+                            elemExistsUnits.Quantity = oldQty + bldg.Quantity;
+                        }
+                        else
+                        {
+                            BldgResult resultWinAll = new BldgResult();
+                            resultWinAll.CreateBldgResult("TOTAL", "Units-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
+
+                            categoryTotals.Add(resultWinAll);
+                        }
+
+                    }
+                }
+
+                BuildingResults.AddRange(categoryTotals);
+                List<BldgResult> sortedBldgResults = BuildingResults.OrderBy(x => x.ElementName).ToList();
+                List<BldgResult> totalBldgResults = new List<BldgResult>();
+
+                foreach (var bldg in sortedBldgResults)
+                {
+                    BldgResult elemExists = totalBldgResults.Where(elem1 => elem1.ElementName == "TOTAL_" + bldg.ElementName).FirstOrDefault();
+
+                    if (elemExists != null)
+                    {
+                        double oldQty = elemExists.Quantity;
+                        elemExists.Quantity = oldQty + bldg.Quantity;
                     }
                     else
                     {
-                        BldgResult resultWinAll = new BldgResult();
-                        resultWinAll.CreateBldgResult("TOTAL", "Windows-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
+                        BldgResult result = new BldgResult();
+                        result.CreateBldgResult("TOTAL", "TOTAL_" + bldg.ElementName, bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
 
-                        categoryTotals.Add(resultWinAll);
+                        totalBldgResults.Add(result);
                     }
                 }
-                else if (bldg.ElementName.Contains("Doors"))
+
+
+                DataGridView newDGV = new DataGridView();
+                var column1 = new DataGridViewTextBoxColumn();
+                var column2 = new DataGridViewTextBoxColumn();
+                var column3 = new DataGridViewTextBoxColumn();
+                var column4 = new DataGridViewTextBoxColumn();
+                var column5 = new DataGridViewTextBoxColumn();
+                var column6 = new DataGridViewTextBoxColumn();
+
+                column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+                column1.HeaderText = "Revit Floor";
+                column1.MinimumWidth = 6;
+                column1.Name = "Column1";
+                column1.ReadOnly = true;
+
+                column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+                column2.HeaderText = "Revit Element";
+                column2.MinimumWidth = 6;
+                column2.Name = "Column2";
+                column2.ReadOnly = true;
+
+                column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+                column3.HeaderText = "Quantity";
+                column3.MinimumWidth = 6;
+                column3.Name = "Column3";
+                column3.ReadOnly = true;
+                column3.DefaultCellStyle.Format = "N2";
+
+                column4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+                column4.HeaderText = "Unit";
+                column4.MinimumWidth = 6;
+                column4.Name = "column4";
+                column4.ReadOnly = true;
+
+                column5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+                column5.HeaderText = "Category";
+                column5.MinimumWidth = 6;
+                column5.Name = "column5";
+                column5.ReadOnly = true;
+
+                column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+                column6.HeaderText = "Family";
+                column6.MinimumWidth = 6;
+                column6.Name = "column6";
+                column6.ReadOnly = true;
+
+                newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3, column4, column5, column6 });
+
+
+                int n = 0;
+                for (int i = 0; i <= floorCount; i++)
                 {
-                    BldgResult elemExistsDoor = categoryTotals.Where(elem1 => elem1.ElementName == "Doors-ALL").FirstOrDefault();
-
-                    if (elemExistsDoor != null)
-                    {
-                        double oldQty = elemExistsDoor.Quantity;
-                        elemExistsDoor.Quantity = oldQty + bldg.Quantity;
-                    }
-                    else
-                    {
-                        BldgResult resultWinAll = new BldgResult();
-                        resultWinAll.CreateBldgResult("TOTAL", "Doors-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
-
-                        categoryTotals.Add(resultWinAll);
-                    }
-
-                }
-                else if (bldg.ElementName.Contains("Unit Count") && !bldg.ElementName.Contains("Core"))
-                {
-                    BldgResult elemExistsUnits = categoryTotals.Where(elem1 => elem1.ElementName == "Units-ALL").FirstOrDefault();
-
-                    if (elemExistsUnits != null)
-                    {
-                        double oldQty = elemExistsUnits.Quantity;
-                        elemExistsUnits.Quantity = oldQty + bldg.Quantity;
-                    }
-                    else
-                    {
-                        BldgResult resultWinAll = new BldgResult();
-                        resultWinAll.CreateBldgResult("TOTAL", "Units-ALL", bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
-
-                        categoryTotals.Add(resultWinAll);
-                    }
-
-                }
-            }
-
-            BuildingResults.AddRange(categoryTotals);
-            List<BldgResult> sortedBldgResults = BuildingResults.OrderBy(x => x.ElementName).ToList();
-            List<BldgResult> totalBldgResults = new List<BldgResult>();
-
-            foreach(var bldg in sortedBldgResults)
-            {
-                BldgResult elemExists = totalBldgResults.Where(elem1 => elem1.ElementName == "TOTAL_" + bldg.ElementName).FirstOrDefault();
-
-                if (elemExists != null)
-                {
-                    double oldQty = elemExists.Quantity;
-                    elemExists.Quantity = oldQty + bldg.Quantity;
-                }
-                else
-                {
-                    BldgResult result = new BldgResult();
-                    result.CreateBldgResult("TOTAL", "TOTAL_" + bldg.ElementName, bldg.Quantity, bldg.UnitType, bldg.FamilyName, bldg.CategoryType);
-
-                    totalBldgResults.Add(result);
-                }
-            }
-
-
-            DataGridView newDGV = new DataGridView();
-            var column1 = new DataGridViewTextBoxColumn();
-            var column2 = new DataGridViewTextBoxColumn();
-            var column3 = new DataGridViewTextBoxColumn();
-            var column4 = new DataGridViewTextBoxColumn();
-            var column5 = new DataGridViewTextBoxColumn();
-            var column6 = new DataGridViewTextBoxColumn();
-
-            column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            column1.HeaderText = "Revit Floor";
-            column1.MinimumWidth = 6;
-            column1.Name = "Column1";
-            column1.ReadOnly = true;
-
-            column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            column2.HeaderText = "Revit Element";
-            column2.MinimumWidth = 6;
-            column2.Name = "Column2";
-            column2.ReadOnly = true;
-
-            column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            column3.HeaderText = "Quantity";
-            column3.MinimumWidth = 6;
-            column3.Name = "Column3";
-            column3.ReadOnly = true;
-            column3.DefaultCellStyle.Format = "N2";
-
-            column4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            column4.HeaderText = "Unit";
-            column4.MinimumWidth = 6;
-            column4.Name = "column4";
-            column4.ReadOnly = true;
-
-            column5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            column5.HeaderText = "Category";
-            column5.MinimumWidth = 6;
-            column5.Name = "column5";
-            column5.ReadOnly = true;
-
-            column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            column6.HeaderText = "Family";
-            column6.MinimumWidth = 6;
-            column6.Name = "column6";
-            column6.ReadOnly = true;
-
-            newDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { column1, column2, column3, column4, column5, column6 });
-
-
-            int n = 0;
-            for (int i = 0; i <= floorCount; i++)
-            {
-                string lvl = $"LVL_{i}";
-
-                n = newDGV.Rows.Add();
-                newDGV.Rows[n].Cells[0].Value = $"-----{lvl}-----";
-
-                foreach (BldgResult elem in sortedBldgResults)
-                {
-                    if (!elem.LevelName.Contains(lvl))
-                        continue;
+                    string lvl = $"LVL_{i}";
 
                     n = newDGV.Rows.Add();
+                    newDGV.Rows[n].Cells[0].Value = $"-----{lvl}-----";
 
-                    newDGV.Rows[n].Cells[0].Value = lvl;
+                    foreach (BldgResult elem in sortedBldgResults)
+                    {
+                        if (!elem.LevelName.Contains(lvl))
+                            continue;
+
+                        n = newDGV.Rows.Add();
+
+                        newDGV.Rows[n].Cells[0].Value = lvl;
+                        newDGV.Rows[n].Cells[1].Value = elem.ElementName;
+                        newDGV.Rows[n].Cells[2].Value = elem.Quantity;
+                        newDGV.Rows[n].Cells[3].Value = elem.UnitType;
+                        newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
+                        newDGV.Rows[n].Cells[5].Value = elem.FamilyName;
+                    }
+                }
+
+
+                for (int j = 0; j <= 1; j++)
+                {
+                    n = newDGV.Rows.Add();
+
+                    newDGV.Rows[n].Cells[0].Value = "";
+                }
+
+                n = newDGV.Rows.Add();
+                newDGV.Rows[n].Cells[0].Value = "-----TOTAL VALUES------";
+
+                foreach (BldgResult elem in totalBldgResults)
+                {
+                    n = newDGV.Rows.Add();
+
+                    newDGV.Rows[n].Cells[0].Value = "";
                     newDGV.Rows[n].Cells[1].Value = elem.ElementName;
                     newDGV.Rows[n].Cells[2].Value = elem.Quantity;
                     newDGV.Rows[n].Cells[3].Value = elem.UnitType;
                     newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
                     newDGV.Rows[n].Cells[5].Value = elem.FamilyName;
                 }
+
+
+                //
+                //Save Excel File
+                //
+                saveExcelFile(newDGV);
             }
-
-
-            for (int j = 0; j <= 1; j++)
+            catch (Exception ex)
             {
-                n = newDGV.Rows.Add();
-
-                newDGV.Rows[n].Cells[0].Value = "";
+                throw new Exception("Exception in Exporting Model Data  [" + ex.GetType().ToString() + "]. ");
             }
-
-            n = newDGV.Rows.Add();
-            newDGV.Rows[n].Cells[0].Value = "-----TOTAL VALUES------";
-
-            foreach (BldgResult elem in totalBldgResults)
-            {
-                n = newDGV.Rows.Add();
-
-                newDGV.Rows[n].Cells[0].Value = "";
-                newDGV.Rows[n].Cells[1].Value = elem.ElementName;
-                newDGV.Rows[n].Cells[2].Value = elem.Quantity;
-                newDGV.Rows[n].Cells[3].Value = elem.UnitType;
-                newDGV.Rows[n].Cells[4].Value = elem.CategoryType;
-                newDGV.Rows[n].Cells[5].Value = elem.FamilyName;
-            }
-
-
-            //
-            //Save Excel File
-            //
-            saveExcelFile(newDGV);
-
-
         }
-
-
 
         /// <summary>
         /// Create an excel file

@@ -110,6 +110,8 @@ namespace Stacker.GeoJsonClasses
             this.btnAPIData = new System.Windows.Forms.Button();
             this.btnDrawGeoJSONData = new System.Windows.Forms.Button();
             this.cbLoadJSONFile = new System.Windows.Forms.CheckBox();
+            this.cbExportViewImages = new System.Windows.Forms.CheckBox();
+            this.cbExportExcelData = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -1007,12 +1009,40 @@ namespace Stacker.GeoJsonClasses
             this.cbLoadJSONFile.Text = "Local GeoJSON File";
             this.cbLoadJSONFile.UseVisualStyleBackColor = true;
             // 
+            // cbExportViewImages
+            // 
+            this.cbExportViewImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbExportViewImages.AutoSize = true;
+            this.cbExportViewImages.Checked = true;
+            this.cbExportViewImages.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbExportViewImages.Location = new System.Drawing.Point(425, 525);
+            this.cbExportViewImages.Name = "cbExportViewImages";
+            this.cbExportViewImages.Size = new System.Drawing.Size(119, 17);
+            this.cbExportViewImages.TabIndex = 95;
+            this.cbExportViewImages.Text = "Export View Images";
+            this.cbExportViewImages.UseVisualStyleBackColor = true;
+            // 
+            // cbExportExcelData
+            // 
+            this.cbExportExcelData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbExportExcelData.AutoSize = true;
+            this.cbExportExcelData.Checked = true;
+            this.cbExportExcelData.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbExportExcelData.Location = new System.Drawing.Point(424, 548);
+            this.cbExportExcelData.Name = "cbExportExcelData";
+            this.cbExportExcelData.Size = new System.Drawing.Size(105, 17);
+            this.cbExportExcelData.TabIndex = 96;
+            this.cbExportExcelData.Text = "Export Built Data";
+            this.cbExportExcelData.UseVisualStyleBackColor = true;
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(621, 629);
+            this.Controls.Add(this.cbExportExcelData);
+            this.Controls.Add(this.cbExportViewImages);
             this.Controls.Add(this.cbLoadJSONFile);
             this.Controls.Add(this.btnDrawGeoJSONData);
             this.Controls.Add(this.btnAPIData);
@@ -1135,5 +1165,7 @@ namespace Stacker.GeoJsonClasses
         private System.Windows.Forms.Button btnAPIData;
         private System.Windows.Forms.Button btnDrawGeoJSONData;
         private System.Windows.Forms.CheckBox cbLoadJSONFile;
+        private System.Windows.Forms.CheckBox cbExportViewImages;
+        private System.Windows.Forms.CheckBox cbExportExcelData;
     }
 }
