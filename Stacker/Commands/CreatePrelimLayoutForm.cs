@@ -103,13 +103,25 @@ namespace Stacker.GeoJsonClasses
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS1");
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS2");
             cbOptionsStudio.Items.Add("ModLab_BD_0_MOD_1_TYPS3");
+            cbOptionsStudio.SelectedIndex = 1;
 
             cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA1");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA2");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA3");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA4");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA5");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA6");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA7");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA8");
+            cbOptions1Bed.Items.Add("ModLab_BD_1_MOD_2_TYPA9");
+            cbOptions1Bed.SelectedIndex = 1;
 
             cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPA");
             cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB1");
             cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB2");
             cbOptions2Bed.Items.Add("ModLab_BD_2_MOD_3_TYPB3");
+            cbOptions2Bed.SelectedIndex = 1;
 
             double flrHeight = Convert.ToDouble(tbTypStoryHeight.Text);
             double bldgHeight = Convert.ToDouble(tbTotalBuildingHeight.Text);
@@ -249,13 +261,16 @@ namespace Stacker.GeoJsonClasses
 
                 double maxFloorLength = Convert.ToDouble(tbLength.Text) + 50;
 
-
                 double totalSF = FloorOverallSquareFootage;
                 double totalSFForUnits = FloorOverallSquareFootage - (FloorHallwayWidth * FloorOverallLength);
 
 
                 double fixedModWidth = Convert.ToDouble(tbFixedWidth.Text);
 
+
+                string selectedStudioOption = cbOptionsStudio.Text;
+                string selectedOneBedOption = cbOptions1Bed.Text;
+                string selectedTwoBedOption = cbOptions2Bed.Text;
 
                 // Begin to create a level
                 List<Level> levels = new FilteredElementCollector(_doc).OfClass(typeof(Level)).Cast<Level>().ToList();
@@ -748,11 +763,11 @@ namespace Stacker.GeoJsonClasses
                             var commentInfo = parComments.AsString();
 
                             //ModLab_BD_0_MOD_1_TYPA
-                            if (parMark.AsString() == "ModLab_BD_0_MOD_1_TYPA_Center")
+                            if (parMark.AsString() == $"{selectedStudioOption}_Center")
                                 centralColModLab0BDTYPA = elem;
-                            else if (parMark.AsString() == "ModLab_BD_1_MOD_2_TYPA_Center")
+                            else if (parMark.AsString() == $"{selectedOneBedOption}_Center")
                                 centralColModLab1BDTYPA = elem;
-                            else if (parMark.AsString() == "ModLab_BD_2_MOD_3_TYPA_Center")
+                            else if (parMark.AsString() == $"{selectedTwoBedOption}_Center")
                                 centralColModLab2BDTYPA = elem;
                             else if (parMark.AsString() == "ModLab_CORE_TYPA_Center")
                                 centralColModLabCoreTYPA = elem;
@@ -775,7 +790,7 @@ namespace Stacker.GeoJsonClasses
                                     }
                                 }
                             }
-                            else if (commentInfo == "ModLab_BD_1_MOD_2_TYPA")
+                            else if (commentInfo == selectedOneBedOption)
                             {
                                 selectedElemsModLab1BDTYPA.Add(elem.Id);
 
@@ -783,18 +798,18 @@ namespace Stacker.GeoJsonClasses
                                 {
                                     var markInfo = parMark.AsString();
 
-                                    if (markInfo == "ModLab_BD_1_MOD_2_TYPA_WallX")
+                                    if (markInfo == $"{selectedOneBedOption}_WallX")
                                     {
                                         wallToMoveModLab1BDTYPA_X = elem;
                                     }
-                                    else if (markInfo == "ModLab_BD_1_MOD_2_TYPA_WallY")
+                                    else if (markInfo == $"{selectedOneBedOption}_WallY")
                                     {
                                         wallToMoveModLab1BDTYPA_Y = elem;
                                     }
 
                                 }
                             }
-                            else if (commentInfo == "ModLab_BD_2_MOD_3_TYPA")
+                            else if (commentInfo == selectedTwoBedOption)
                             {
                                 selectedElemsModLab2BDTYPA.Add(elem.Id);
 
@@ -802,18 +817,18 @@ namespace Stacker.GeoJsonClasses
                                 {
                                     var markInfo = parMark.AsString();
 
-                                    if (markInfo == "ModLab_BD_2_MOD_3_TYPA_WallX")
+                                    if (markInfo == $"{selectedTwoBedOption}_WallX")
                                     {
                                         wallToMoveModLab2BDTYPA_X = elem;
                                     }
-                                    else if (markInfo == "ModLab_BD_2_MOD_3_TYPA_WallY")
+                                    else if (markInfo == $"{selectedTwoBedOption}_WallY")
                                     {
                                         wallToMoveModLab2BDTYPA_Y = elem;
                                     }
 
                                 }
                             }
-                            else if (commentInfo == "ModLab_BD_0_MOD_1_TYPA")
+                            else if (commentInfo == selectedStudioOption)
                             {
                                 selectedElemsModLab0BDTYPA.Add(elem.Id);
 
@@ -821,11 +836,11 @@ namespace Stacker.GeoJsonClasses
                                 {
                                     var markInfo = parMark.AsString();
 
-                                    if (markInfo == "ModLab_BD_0_MOD_1_TYPA_WallX")
+                                    if (markInfo == $"{selectedStudioOption}_WallX")
                                     {
                                         wallToMoveModLab0BDTYPA_X = elem;
                                     }
-                                    else if (markInfo == "ModLab_BD_0_MOD_1_TYPA_WallY")
+                                    else if (markInfo == $"{selectedStudioOption}_WallY")
                                     {
                                         wallToMoveModLab0BDTYPA_Y = elem;
                                     }
