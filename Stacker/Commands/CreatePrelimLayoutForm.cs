@@ -24,6 +24,7 @@ using Parameter = Autodesk.Revit.DB.Parameter;
 using CoordinateSharp;
 using Stacker.Commands;
 using GRi = GeometRi;
+using System.Diagnostics;
 
 namespace Stacker.GeoJsonClasses
 {
@@ -178,7 +179,11 @@ namespace Stacker.GeoJsonClasses
                             Element searchElem = _doc.GetElement(elem);
 
                             if (searchElem != null)
-                                _doc.Delete(elem);
+                            {
+                                bool canDeleteElem = DocumentValidation.CanDeleteElement(_doc, elem);
+                                if (canDeleteElem)
+                                    _doc.Delete(elem);
+                            }
                         }
                     }
 
@@ -311,7 +316,11 @@ namespace Stacker.GeoJsonClasses
                                     Element searchElem = _doc.GetElement(elem);
 
                                     if (searchElem != null)
-                                        _doc.Delete(elem);
+                                    {
+                                        bool canDeleteElem = DocumentValidation.CanDeleteElement(_doc, elem);
+                                        if (canDeleteElem)
+                                            _doc.Delete(elem);
+                                    }
                                 }
                             }
 
@@ -504,7 +513,11 @@ namespace Stacker.GeoJsonClasses
                                         Element searchElem = _doc.GetElement(elem);
 
                                         if (searchElem != null)
-                                            _doc.Delete(elem);
+                                        {
+                                            bool canDeleteElem = DocumentValidation.CanDeleteElement(_doc, elem);
+                                            if(canDeleteElem)
+                                                _doc.Delete(elem);
+                                        }
                                     }
                                 }
 
@@ -1663,6 +1676,8 @@ namespace Stacker.GeoJsonClasses
                                         if (elemList.Count == 0)
                                             continue;
 
+                                        Element test111 = _doc.GetElement(VPlan.Id);
+                                        
                                         ICollection<ElementId> elemIds = ElementTransformUtils.CopyElements(VPlan, elemList, currentViewPlan, null, null);
 
                                         copiedElements[elemType + $"_{i + 1}"] = elemIds.ToList();
@@ -1928,7 +1943,7 @@ namespace Stacker.GeoJsonClasses
                     exportImages(true);
 
                 //
-                //Export Build Data to Excel
+                //Export Build Data to Excel_doc
                 //
                 if (cbExportExcelData.Checked)
                     exportExcelData();
@@ -1937,7 +1952,16 @@ namespace Stacker.GeoJsonClasses
             catch (Exception ex)
             {
                 var message = ex.Message;
-                TaskDialog.Show("Error", message);
+                // Get stack trace for the exception with source file information
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(0);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+
+                var str = ex.ToString();
+
+                TaskDialog.Show("Error", message + $"Line: {line}");
             }
             
         }
@@ -2588,7 +2612,7 @@ namespace Stacker.GeoJsonClasses
                 if (fbd.ShowDialog() == DialogResult.OK)
                     selectedPath = fbd.SelectedPath;
 
-                ElementsBuilt["Views Plan"] = new List<ElementId>();
+                //ElementsBuilt["Views Plan"] = new List<ElementId>();
                 ElementsBuilt["Views 3D"] = new List<ElementId>();
                 ElementsBuilt["Sheets"] = new List<ElementId>();
 
@@ -2608,7 +2632,7 @@ namespace Stacker.GeoJsonClasses
                     {
                         Level currentLevel = AllLevels[i];
                         View currentViewPlan = AllViewPlans[i] as View;
-                        ElementsBuilt["Views Plan"].Add(currentViewPlan.Id);
+                        //ElementsBuilt["Views Plan"].Add(currentViewPlan.Id);
 
                         allViews.Add(currentViewPlan);
 
@@ -2797,7 +2821,7 @@ namespace Stacker.GeoJsonClasses
                                     possibleWidth = (currentViewWidth * (12 / Convert.ToDouble(scales[i]))) / 0.125;
                                     possibleHeight = (currentViewHeight * (12 / Convert.ToDouble(scales[i]))) / 0.125;
 
-                                    if (possibleWidth > sheetWidth || possibleHeight > sheetHeight)
+                                    if (possibleWidth > (sheetWidth*0.80) || possibleHeight > (sheetHeight*0.80))
                                     {
                                         if (i == 0)
                                             usedScale = scales[i];
