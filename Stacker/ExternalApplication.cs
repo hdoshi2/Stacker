@@ -18,12 +18,12 @@ namespace Stacker
 
         public Result OnStartup(UIControlledApplication application)
         {
-            application.CreateRibbonTab("Mod Labs");
+            application.CreateRibbonTab("Design Build A.I.");
             string path = Assembly.GetExecutingAssembly().Location;
 
-            PushButtonData button = new PushButtonData("LoadDataFile", "Load Data File", path, "Stacker.CreatePrelimLayout");
+            PushButtonData button = new PushButtonData("LoadDataFile", "Generate Building\r\nOptions", path, "Stacker.CreatePrelimLayout");
             
-            RibbonPanel panel = application.CreateRibbonPanel("Mod Labs", "Build Model");
+            RibbonPanel panel = application.CreateRibbonPanel("Design Build A.I.", "Build Model");
 
             Uri imagePath = new Uri(@"C:\Users\hdosh\Desktop\Modular\Repos\building_Crane32.png");
             BitmapImage image = new BitmapImage(imagePath);
