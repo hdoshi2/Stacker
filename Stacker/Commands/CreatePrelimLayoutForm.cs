@@ -2996,8 +2996,7 @@ namespace Stacker.GeoJsonClasses
                           || elemInView.Category.Name.Equals("Levels")
                           || elemInView.Category.Name.Equals("Scope Boxes")
                           || elemInView.Category.Name.Equals("Property Lines")
-                          || elemInView.Category.Name.Equals("Grids")
-                          || !allElementIdsBuilt.Contains(elemInView.Id))
+                          || elemInView.Category.Name.Equals("Grids"))
                         {
 
                             List<ElementId> ids = new List<ElementId>() { elemInView.Id };
@@ -3006,6 +3005,28 @@ namespace Stacker.GeoJsonClasses
                             {
                                 view.HideElements(ids);
                             }
+                        }
+                        else if (!allElementIdsBuilt.Contains(elemInView.Id))
+                        {
+
+                            Element element = _doc.GetElement(elemInView.Id);
+
+                            //Confirm that selected element is not part of a super family that needs to be displayed
+                            FamilyInstance familyInst = element as FamilyInstance;
+                            if (familyInst != null)
+                            {
+                                Element superComponent = familyInst.SuperComponent;
+                                if (superComponent != null && allElementIdsBuilt.Contains(superComponent.Id))
+                                {
+                                    continue;
+                                }
+                            }
+
+                            if (element.CanBeHidden(view))
+                            {
+                                view.HideElements(new List<ElementId>() { elemInView.Id });
+                            }
+                            
                         }
                     }
                 }
