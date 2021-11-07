@@ -679,7 +679,7 @@ namespace Stacker.Commands
 
         }
 
-        List<string> dataJacksonville = new List<string>() { "max_building_height_ft", "maximum_lot_coverage", "minimum_rear_yard_ft", "minimum_side_yard_ft", "minimum_front_yard_ft" };
+        List<string> dataJacksonville = new List<string>() { "max_building_height_ft", "maximum_lot_coverage", "minimum_yard_requirements_front", "minimum_yard_requirements_rear_ft", "minimum_yard_requirements_side_ft" };
         List<string> dataWashingtonDC = new List<string>() { "max_building_height_ft", "max_lot_coverage", "max_far", "rear_yard_ft", "side_yard_ft"};
         List<string> dataSanAntonio = new List<string>() { "max_building_height_ft", "min_rear_setback", "min_side_setback", "max_front_setback", "max_density_units_acre" };
 
