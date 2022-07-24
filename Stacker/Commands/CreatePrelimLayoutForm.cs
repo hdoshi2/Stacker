@@ -25,6 +25,7 @@ using CoordinateSharp;
 using Stacker.Commands;
 using GRi = GeometRi;
 using System.Diagnostics;
+using System.Net;
 
 namespace Stacker.GeoJsonClasses
 {
@@ -354,7 +355,7 @@ namespace Stacker.GeoJsonClasses
                                 throw new Exception("Create a new level failed.");
 
                             // Change the level name
-                            Level.Name = "Mod Level 1";
+                            Level.Name = "Floor 1";
 
                             //Create a New View
                             VPlan = ViewPlan.Create(_doc, structuralvft.Id, Level.Id);
@@ -380,9 +381,9 @@ namespace Stacker.GeoJsonClasses
 
                                 // Change the level name
                                 if (i < TotalFloors)
-                                    newLevel.Name = $"Mod Level {i + 1}";
+                                    newLevel.Name = $"Floor {i + 1}";
                                 else
-                                    newLevel.Name = $"Mod Level Roof";
+                                    newLevel.Name = $"Floor Roof";
 
 
                                 //Create a New View
@@ -2666,7 +2667,7 @@ namespace Stacker.GeoJsonClasses
                                                     ? View3D.CreateIsometric(_doc, viewFamilyType.Id)
                                                     : null;
 
-                            string view3DName = $"3D Mod View {i + 1}";
+                            string view3DName = $"3D View {i + 1}";
 
                             if (existing3DViewNames.Contains(view3DName))
                             {
@@ -3680,6 +3681,7 @@ namespace Stacker.GeoJsonClasses
                     }
                 }
 
+                saveJsonFile(BuildingResults);
 
                 DataGridView newDGV = new DataGridView();
                 var column1 = new DataGridViewTextBoxColumn();
@@ -3820,6 +3822,92 @@ namespace Stacker.GeoJsonClasses
                 return;
 
             }
+        }
+
+        /// <summary>
+        /// Create a JSON file
+        /// </summary>
+        /// <param name="dgv"></param>
+        private void saveJsonFile(List<BldgResult> BuildingResults)
+        {
+            SaveFileDialog saveResults = new SaveFileDialog();
+
+            saveResults.Filter = "Excel File|*.xlsx";
+            saveResults.Title = "Export json";
+            saveResults.ShowDialog();
+
+            if (saveResults.FileName != "")
+            {
+                var json = JsonConvert.SerializeObject(BuildingResults);
+                File.WriteAllText(saveResults.FileName, JsonConvert.SerializeObject(BuildingResults));
+                //Save
+
+                var responsetoOpen = MessageBox.Show($"Building Data Output '{saveResults.FileName.ToString()}' successfully exported to Excel.\r\n\r\nOpen Excel file?", "Excel Export", MessageBoxButtons.YesNo);
+
+                //Open file
+                if (responsetoOpen == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(saveResults.FileName);
+                }
+
+                return;
+
+            }
+        }
+
+
+        private void btnSupabaseCall_Click(object sender, EventArgs e)
+        {
+            var entryModelNames = new List<string>();
+            var entryIDs = new List<string>();
+
+            string SupabaseKey = "https://jrdbtyikybxihuvmbnof.supabase.co";
+            string SupabaseUrl = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyZGJ0eWlreWJ4aWh1dm1ibm9mIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDcyMDk2MjgsImV4cCI6MTk2Mjc4NTYyOH0.mV0y9rTwk4Lgj3eGog6YIqanN1ZeWnUWUfCkbPyAR2c";
+            var apiAddress = SupabaseUrl + "/rest/v1/" + "coming_soon";
+            var client = new RestClient(apiAddress);
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("apikey", SupabaseKey);
+            request.AddHeader("Authorization", String.Format("Bearer {0}", SupabaseKey));
+            request.AddHeader("Prefer", "return=representation");
+
+            var response = client.Execute(request);
+
+            // Handle response errors
+            HandleResponseErrors(response);
+
+            if (Errors.Length == 0)
+            { }
+            else
+            { }
+
+            var apiAddress = String.Format("https://v1.nocodeapi.com/simplehomes/supabase/xiKWCnHdpVusIUlY?tableName={0}", "bldg_json");
+            var client = new RestClient(apiAddress);
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("content-type", "application/json");
+            var QueryResult = client.Execute<Object>(request).Data;
+
+            var JsonOutput = JsonConvert.SerializeObject(QueryResult, Newtonsoft.Json.Formatting.Indented);
+
+            var deserializeJSONtoString = JsonConvert.DeserializeObject(JsonOutput).ToString();
+
+            //Print(Convert.ToString(deserializeJSONtoString.Substring(0, 500)));
+
+            var eachEntry = Newtonsoft.Json.Linq.JArray.Parse(deserializeJSONtoString);
+            int index = 0;
+            foreach (var entry in eachEntry)
+            {
+                //var values = Newtonsoft.Json.Linq.JObject.Parse(entry.ToString());
+                //var modelName = Convert.ToString(values[supabaseTableColName]);
+                //var modelIDs = Convert.ToString(values["id"]);
+
+                Console.WriteLine(Convert.ToString(entry));
+
+                index++;
+
+                //entryModelNames.Add(modelName);
+                //entryIDs.Add(modelIDs);
+            }
+
         }
 
 
@@ -4416,6 +4504,7 @@ namespace Stacker.GeoJsonClasses
 
             return solids;
         }
+
 
     }
 }

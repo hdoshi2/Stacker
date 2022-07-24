@@ -112,6 +112,7 @@ namespace Stacker.GeoJsonClasses
             this.cbLoadJSONFile = new System.Windows.Forms.CheckBox();
             this.cbExportViewImages = new System.Windows.Forms.CheckBox();
             this.cbExportExcelData = new System.Windows.Forms.CheckBox();
+            this.btnSupabaseCall = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -1035,12 +1036,28 @@ namespace Stacker.GeoJsonClasses
             this.cbExportExcelData.Text = "Export Built Data";
             this.cbExportExcelData.UseVisualStyleBackColor = true;
             // 
+            // btnSupabaseCall
+            // 
+            this.btnSupabaseCall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSupabaseCall.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnSupabaseCall.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSupabaseCall.Location = new System.Drawing.Point(12, 528);
+            this.btnSupabaseCall.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnSupabaseCall.Name = "btnSupabaseCall";
+            this.btnSupabaseCall.Padding = new System.Windows.Forms.Padding(2);
+            this.btnSupabaseCall.Size = new System.Drawing.Size(117, 30);
+            this.btnSupabaseCall.TabIndex = 97;
+            this.btnSupabaseCall.Text = "TEST API";
+            this.btnSupabaseCall.UseVisualStyleBackColor = true;
+            this.btnSupabaseCall.Click += new System.EventHandler(this.btnSupabaseCall_Click);
+            // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(621, 629);
+            this.Controls.Add(this.btnSupabaseCall);
             this.Controls.Add(this.cbExportExcelData);
             this.Controls.Add(this.cbExportViewImages);
             this.Controls.Add(this.cbLoadJSONFile);
@@ -1167,5 +1184,6 @@ namespace Stacker.GeoJsonClasses
         private System.Windows.Forms.CheckBox cbLoadJSONFile;
         private System.Windows.Forms.CheckBox cbExportViewImages;
         private System.Windows.Forms.CheckBox cbExportExcelData;
+        private System.Windows.Forms.Button btnSupabaseCall;
     }
 }
