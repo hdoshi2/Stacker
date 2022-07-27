@@ -112,7 +112,15 @@ namespace Stacker.GeoJsonClasses
             this.cbLoadJSONFile = new System.Windows.Forms.CheckBox();
             this.cbExportViewImages = new System.Windows.Forms.CheckBox();
             this.cbExportExcelData = new System.Windows.Forms.CheckBox();
-            this.btnSupabaseCall = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnSyncIfc = new System.Windows.Forms.Button();
+            this.btnSyncDrawings = new System.Windows.Forms.Button();
+            this.btnSyncTakeoff = new System.Windows.Forms.Button();
+            this.ProjectDetailsComboBox = new System.Windows.Forms.ComboBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.btnFetchProjects = new System.Windows.Forms.Button();
+            this.label24 = new System.Windows.Forms.Label();
+            this.ProjectsComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbFloorDimension.SuspendLayout();
             this.gbUnitConfig.SuspendLayout();
@@ -120,13 +128,14 @@ namespace Stacker.GeoJsonClasses
             this.gbModLimitations.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBuildLayout
             // 
             this.btnBuildLayout.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnBuildLayout.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBuildLayout.Location = new System.Drawing.Point(218, 528);
+            this.btnBuildLayout.Location = new System.Drawing.Point(251, 389);
             this.btnBuildLayout.Margin = new System.Windows.Forms.Padding(6);
             this.btnBuildLayout.Name = "btnBuildLayout";
             this.btnBuildLayout.Size = new System.Drawing.Size(194, 30);
@@ -141,7 +150,7 @@ namespace Stacker.GeoJsonClasses
             this.pictureBox1.ErrorImage = global::Stacker.Properties.Resources.floorStack_128;
             this.pictureBox1.Image = global::Stacker.Properties.Resources.floorStack_32;
             this.pictureBox1.InitialImage = global::Stacker.Properties.Resources.floorStack_128;
-            this.pictureBox1.Location = new System.Drawing.Point(577, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(852, 15);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -201,7 +210,7 @@ namespace Stacker.GeoJsonClasses
             this.gbFloorDimension.Controls.Add(this.tbLength);
             this.gbFloorDimension.Location = new System.Drawing.Point(12, 54);
             this.gbFloorDimension.Name = "gbFloorDimension";
-            this.gbFloorDimension.Size = new System.Drawing.Size(387, 143);
+            this.gbFloorDimension.Size = new System.Drawing.Size(662, 143);
             this.gbFloorDimension.TabIndex = 1;
             this.gbFloorDimension.TabStop = false;
             this.gbFloorDimension.Text = "Floor Geometry";
@@ -269,7 +278,7 @@ namespace Stacker.GeoJsonClasses
             // tbTotalSquareFootage
             // 
             this.tbTotalSquareFootage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTotalSquareFootage.Location = new System.Drawing.Point(275, 107);
+            this.tbTotalSquareFootage.Location = new System.Drawing.Point(550, 107);
             this.tbTotalSquareFootage.Name = "tbTotalSquareFootage";
             this.tbTotalSquareFootage.ReadOnly = true;
             this.tbTotalSquareFootage.Size = new System.Drawing.Size(39, 20);
@@ -279,7 +288,7 @@ namespace Stacker.GeoJsonClasses
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(143, 111);
+            this.label5.Location = new System.Drawing.Point(418, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(130, 13);
             this.label5.TabIndex = 5;
@@ -288,7 +297,7 @@ namespace Stacker.GeoJsonClasses
             // btnApplyFlrDim
             // 
             this.btnApplyFlrDim.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyFlrDim.Location = new System.Drawing.Point(323, 101);
+            this.btnApplyFlrDim.Location = new System.Drawing.Point(598, 101);
             this.btnApplyFlrDim.Margin = new System.Windows.Forms.Padding(6);
             this.btnApplyFlrDim.Name = "btnApplyFlrDim";
             this.btnApplyFlrDim.Padding = new System.Windows.Forms.Padding(3);
@@ -315,7 +324,7 @@ namespace Stacker.GeoJsonClasses
             this.gbUnitConfig.Controls.Add(this.label2);
             this.gbUnitConfig.Location = new System.Drawing.Point(12, 203);
             this.gbUnitConfig.Name = "gbUnitConfig";
-            this.gbUnitConfig.Size = new System.Drawing.Size(387, 149);
+            this.gbUnitConfig.Size = new System.Drawing.Size(259, 157);
             this.gbUnitConfig.TabIndex = 2;
             this.gbUnitConfig.TabStop = false;
             this.gbUnitConfig.Text = "Unit Configuration Priority";
@@ -325,9 +334,9 @@ namespace Stacker.GeoJsonClasses
             this.cbOptions2Bed.FormattingEnabled = true;
             this.cbOptions2Bed.Items.AddRange(new object[] {
             "Any 2-Bed"});
-            this.cbOptions2Bed.Location = new System.Drawing.Point(118, 94);
+            this.cbOptions2Bed.Location = new System.Drawing.Point(118, 112);
             this.cbOptions2Bed.Name = "cbOptions2Bed";
-            this.cbOptions2Bed.Size = new System.Drawing.Size(178, 21);
+            this.cbOptions2Bed.Size = new System.Drawing.Size(129, 21);
             this.cbOptions2Bed.TabIndex = 24;
             this.cbOptions2Bed.Text = "Any 2-Bed";
             // 
@@ -336,9 +345,9 @@ namespace Stacker.GeoJsonClasses
             this.cbOptions1Bed.FormattingEnabled = true;
             this.cbOptions1Bed.Items.AddRange(new object[] {
             "Any 1-Bed"});
-            this.cbOptions1Bed.Location = new System.Drawing.Point(118, 66);
+            this.cbOptions1Bed.Location = new System.Drawing.Point(118, 78);
             this.cbOptions1Bed.Name = "cbOptions1Bed";
-            this.cbOptions1Bed.Size = new System.Drawing.Size(178, 21);
+            this.cbOptions1Bed.Size = new System.Drawing.Size(129, 21);
             this.cbOptions1Bed.TabIndex = 23;
             this.cbOptions1Bed.Text = "Any 1-Bed";
             // 
@@ -347,9 +356,9 @@ namespace Stacker.GeoJsonClasses
             this.cbOptionsStudio.FormattingEnabled = true;
             this.cbOptionsStudio.Items.AddRange(new object[] {
             "Any Studio"});
-            this.cbOptionsStudio.Location = new System.Drawing.Point(118, 39);
+            this.cbOptionsStudio.Location = new System.Drawing.Point(118, 44);
             this.cbOptionsStudio.Name = "cbOptionsStudio";
-            this.cbOptionsStudio.Size = new System.Drawing.Size(178, 21);
+            this.cbOptionsStudio.Size = new System.Drawing.Size(129, 21);
             this.cbOptionsStudio.TabIndex = 22;
             this.cbOptionsStudio.Text = "Any Studio";
             // 
@@ -358,7 +367,7 @@ namespace Stacker.GeoJsonClasses
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(157, 22);
+            this.label15.Location = new System.Drawing.Point(133, 23);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(100, 13);
             this.label15.TabIndex = 21;
@@ -366,7 +375,7 @@ namespace Stacker.GeoJsonClasses
             // 
             // tbPercentage2Bed
             // 
-            this.tbPercentage2Bed.Location = new System.Drawing.Point(56, 94);
+            this.tbPercentage2Bed.Location = new System.Drawing.Point(56, 112);
             this.tbPercentage2Bed.Name = "tbPercentage2Bed";
             this.tbPercentage2Bed.Size = new System.Drawing.Size(45, 20);
             this.tbPercentage2Bed.TabIndex = 20;
@@ -375,7 +384,7 @@ namespace Stacker.GeoJsonClasses
             // 
             // tbPercentage1Bed
             // 
-            this.tbPercentage1Bed.Location = new System.Drawing.Point(56, 66);
+            this.tbPercentage1Bed.Location = new System.Drawing.Point(56, 78);
             this.tbPercentage1Bed.Name = "tbPercentage1Bed";
             this.tbPercentage1Bed.Size = new System.Drawing.Size(45, 20);
             this.tbPercentage1Bed.TabIndex = 19;
@@ -395,7 +404,7 @@ namespace Stacker.GeoJsonClasses
             // 
             // tbPercentageStudio
             // 
-            this.tbPercentageStudio.Location = new System.Drawing.Point(56, 39);
+            this.tbPercentageStudio.Location = new System.Drawing.Point(56, 44);
             this.tbPercentageStudio.Name = "tbPercentageStudio";
             this.tbPercentageStudio.Size = new System.Drawing.Size(45, 20);
             this.tbPercentageStudio.TabIndex = 12;
@@ -407,7 +416,7 @@ namespace Stacker.GeoJsonClasses
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 96);
+            this.label4.Location = new System.Drawing.Point(10, 114);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 5;
@@ -418,7 +427,7 @@ namespace Stacker.GeoJsonClasses
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 70);
+            this.label3.Location = new System.Drawing.Point(10, 82);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(38, 13);
             this.label3.TabIndex = 4;
@@ -429,7 +438,7 @@ namespace Stacker.GeoJsonClasses
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 42);
+            this.label2.Location = new System.Drawing.Point(10, 47);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 13);
             this.label2.TabIndex = 3;
@@ -438,7 +447,7 @@ namespace Stacker.GeoJsonClasses
             // btnLoadDataFile
             // 
             this.btnLoadDataFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnLoadDataFile.Location = new System.Drawing.Point(121, 15);
+            this.btnLoadDataFile.Location = new System.Drawing.Point(259, 15);
             this.btnLoadDataFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnLoadDataFile.Name = "btnLoadDataFile";
             this.btnLoadDataFile.Padding = new System.Windows.Forms.Padding(3);
@@ -469,9 +478,9 @@ namespace Stacker.GeoJsonClasses
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Location = new System.Drawing.Point(12, 358);
+            this.groupBox1.Location = new System.Drawing.Point(280, 203);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(387, 157);
+            this.groupBox1.Size = new System.Drawing.Size(394, 157);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Building Unit Mix Metrics";
@@ -479,7 +488,7 @@ namespace Stacker.GeoJsonClasses
             // btnAddInteriorLayout
             // 
             this.btnAddInteriorLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddInteriorLayout.Location = new System.Drawing.Point(264, 80);
+            this.btnAddInteriorLayout.Location = new System.Drawing.Point(271, 80);
             this.btnAddInteriorLayout.Name = "btnAddInteriorLayout";
             this.btnAddInteriorLayout.Size = new System.Drawing.Size(116, 30);
             this.btnAddInteriorLayout.TabIndex = 20;
@@ -489,7 +498,7 @@ namespace Stacker.GeoJsonClasses
             // btnPrevious
             // 
             this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrevious.Location = new System.Drawing.Point(264, 116);
+            this.btnPrevious.Location = new System.Drawing.Point(271, 116);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(57, 30);
             this.btnPrevious.TabIndex = 19;
@@ -499,7 +508,7 @@ namespace Stacker.GeoJsonClasses
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(324, 116);
+            this.btnNext.Location = new System.Drawing.Point(331, 116);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(57, 30);
             this.btnNext.TabIndex = 18;
@@ -509,7 +518,7 @@ namespace Stacker.GeoJsonClasses
             // btnDeleteGeom
             // 
             this.btnDeleteGeom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteGeom.Location = new System.Drawing.Point(324, 19);
+            this.btnDeleteGeom.Location = new System.Drawing.Point(331, 19);
             this.btnDeleteGeom.Name = "btnDeleteGeom";
             this.btnDeleteGeom.Size = new System.Drawing.Size(57, 30);
             this.btnDeleteGeom.TabIndex = 17;
@@ -644,7 +653,7 @@ namespace Stacker.GeoJsonClasses
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnClose.Location = new System.Drawing.Point(517, 574);
+            this.btnClose.Location = new System.Drawing.Point(577, 435);
             this.btnClose.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(2);
@@ -667,7 +676,7 @@ namespace Stacker.GeoJsonClasses
             this.gbModLimitations.Controls.Add(this.label16);
             this.gbModLimitations.Controls.Add(this.tbModLengthMax);
             this.gbModLimitations.Controls.Add(this.tbModLengthMin);
-            this.gbModLimitations.Location = new System.Drawing.Point(405, 53);
+            this.gbModLimitations.Location = new System.Drawing.Point(680, 53);
             this.gbModLimitations.Name = "gbModLimitations";
             this.gbModLimitations.Size = new System.Drawing.Size(204, 144);
             this.gbModLimitations.TabIndex = 84;
@@ -797,9 +806,9 @@ namespace Stacker.GeoJsonClasses
             this.groupBox2.Controls.Add(this.cbTotalIterations);
             this.groupBox2.Controls.Add(this.tbOptionsGenerated);
             this.groupBox2.Controls.Add(this.tbLimitIterations);
-            this.groupBox2.Location = new System.Drawing.Point(405, 398);
+            this.groupBox2.Location = new System.Drawing.Point(680, 398);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(205, 117);
+            this.groupBox2.Size = new System.Drawing.Size(205, 89);
             this.groupBox2.TabIndex = 85;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Optimization Iteration Setting";
@@ -819,7 +828,7 @@ namespace Stacker.GeoJsonClasses
             this.btnViewJSON.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnViewJSON.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnViewJSON.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnViewJSON.Location = new System.Drawing.Point(153, 574);
+            this.btnViewJSON.Location = new System.Drawing.Point(162, 435);
             this.btnViewJSON.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnViewJSON.Name = "btnViewJSON";
             this.btnViewJSON.Padding = new System.Windows.Forms.Padding(2);
@@ -841,7 +850,7 @@ namespace Stacker.GeoJsonClasses
             this.groupBox3.Controls.Add(this.label22);
             this.groupBox3.Controls.Add(this.tbTotalBuildingHeight);
             this.groupBox3.Controls.Add(this.tbTypStoryHeight);
-            this.groupBox3.Location = new System.Drawing.Point(404, 203);
+            this.groupBox3.Location = new System.Drawing.Point(679, 203);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(205, 186);
             this.groupBox3.TabIndex = 87;
@@ -946,7 +955,7 @@ namespace Stacker.GeoJsonClasses
             this.btnExportImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExportImages.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExportImages.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnExportImages.Location = new System.Drawing.Point(12, 574);
+            this.btnExportImages.Location = new System.Drawing.Point(21, 435);
             this.btnExportImages.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnExportImages.Name = "btnExportImages";
             this.btnExportImages.Padding = new System.Windows.Forms.Padding(2);
@@ -961,7 +970,7 @@ namespace Stacker.GeoJsonClasses
             this.btnExportData.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnExportData.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExportData.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnExportData.Location = new System.Drawing.Point(269, 574);
+            this.btnExportData.Location = new System.Drawing.Point(302, 435);
             this.btnExportData.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnExportData.Name = "btnExportData";
             this.btnExportData.Padding = new System.Windows.Forms.Padding(2);
@@ -974,7 +983,7 @@ namespace Stacker.GeoJsonClasses
             // btnAPIData
             // 
             this.btnAPIData.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnAPIData.Location = new System.Drawing.Point(334, 15);
+            this.btnAPIData.Location = new System.Drawing.Point(472, 15);
             this.btnAPIData.Margin = new System.Windows.Forms.Padding(6);
             this.btnAPIData.Name = "btnAPIData";
             this.btnAPIData.Padding = new System.Windows.Forms.Padding(3);
@@ -989,7 +998,7 @@ namespace Stacker.GeoJsonClasses
             this.btnDrawGeoJSONData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDrawGeoJSONData.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnDrawGeoJSONData.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnDrawGeoJSONData.Location = new System.Drawing.Point(382, 574);
+            this.btnDrawGeoJSONData.Location = new System.Drawing.Point(442, 435);
             this.btnDrawGeoJSONData.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.btnDrawGeoJSONData.Name = "btnDrawGeoJSONData";
             this.btnDrawGeoJSONData.Padding = new System.Windows.Forms.Padding(2);
@@ -1003,7 +1012,7 @@ namespace Stacker.GeoJsonClasses
             // 
             this.cbLoadJSONFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbLoadJSONFile.AutoSize = true;
-            this.cbLoadJSONFile.Location = new System.Drawing.Point(384, 609);
+            this.cbLoadJSONFile.Location = new System.Drawing.Point(444, 470);
             this.cbLoadJSONFile.Name = "cbLoadJSONFile";
             this.cbLoadJSONFile.Size = new System.Drawing.Size(122, 17);
             this.cbLoadJSONFile.TabIndex = 13;
@@ -1016,7 +1025,7 @@ namespace Stacker.GeoJsonClasses
             this.cbExportViewImages.AutoSize = true;
             this.cbExportViewImages.Checked = true;
             this.cbExportViewImages.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbExportViewImages.Location = new System.Drawing.Point(425, 525);
+            this.cbExportViewImages.Location = new System.Drawing.Point(485, 386);
             this.cbExportViewImages.Name = "cbExportViewImages";
             this.cbExportViewImages.Size = new System.Drawing.Size(119, 17);
             this.cbExportViewImages.TabIndex = 95;
@@ -1029,35 +1038,136 @@ namespace Stacker.GeoJsonClasses
             this.cbExportExcelData.AutoSize = true;
             this.cbExportExcelData.Checked = true;
             this.cbExportExcelData.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbExportExcelData.Location = new System.Drawing.Point(424, 548);
+            this.cbExportExcelData.Location = new System.Drawing.Point(484, 409);
             this.cbExportExcelData.Name = "cbExportExcelData";
             this.cbExportExcelData.Size = new System.Drawing.Size(105, 17);
             this.cbExportExcelData.TabIndex = 96;
             this.cbExportExcelData.Text = "Export Built Data";
             this.cbExportExcelData.UseVisualStyleBackColor = true;
             // 
-            // btnSupabaseCall
+            // groupBox4
             // 
-            this.btnSupabaseCall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSupabaseCall.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnSupabaseCall.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnSupabaseCall.Location = new System.Drawing.Point(12, 528);
-            this.btnSupabaseCall.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-            this.btnSupabaseCall.Name = "btnSupabaseCall";
-            this.btnSupabaseCall.Padding = new System.Windows.Forms.Padding(2);
-            this.btnSupabaseCall.Size = new System.Drawing.Size(117, 30);
-            this.btnSupabaseCall.TabIndex = 97;
-            this.btnSupabaseCall.Text = "TEST API";
-            this.btnSupabaseCall.UseVisualStyleBackColor = true;
-            this.btnSupabaseCall.Click += new System.EventHandler(this.btnSupabaseCall_Click);
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.btnSyncIfc);
+            this.groupBox4.Controls.Add(this.btnSyncDrawings);
+            this.groupBox4.Controls.Add(this.btnSyncTakeoff);
+            this.groupBox4.Controls.Add(this.ProjectDetailsComboBox);
+            this.groupBox4.Controls.Add(this.label26);
+            this.groupBox4.Controls.Add(this.btnFetchProjects);
+            this.groupBox4.Controls.Add(this.label24);
+            this.groupBox4.Controls.Add(this.ProjectsComboBox);
+            this.groupBox4.Location = new System.Drawing.Point(22, 493);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(371, 186);
+            this.groupBox4.TabIndex = 98;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Cloud Database Sync";
+            // 
+            // btnSyncIfc
+            // 
+            this.btnSyncIfc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSyncIfc.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnSyncIfc.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSyncIfc.Location = new System.Drawing.Point(231, 137);
+            this.btnSyncIfc.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnSyncIfc.Name = "btnSyncIfc";
+            this.btnSyncIfc.Padding = new System.Windows.Forms.Padding(2);
+            this.btnSyncIfc.Size = new System.Drawing.Size(92, 30);
+            this.btnSyncIfc.TabIndex = 104;
+            this.btnSyncIfc.Text = "Sync IFC";
+            this.btnSyncIfc.UseVisualStyleBackColor = true;
+            // 
+            // btnSyncDrawings
+            // 
+            this.btnSyncDrawings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSyncDrawings.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnSyncDrawings.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSyncDrawings.Location = new System.Drawing.Point(130, 137);
+            this.btnSyncDrawings.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnSyncDrawings.Name = "btnSyncDrawings";
+            this.btnSyncDrawings.Padding = new System.Windows.Forms.Padding(2);
+            this.btnSyncDrawings.Size = new System.Drawing.Size(92, 30);
+            this.btnSyncDrawings.TabIndex = 103;
+            this.btnSyncDrawings.Text = "Sync Drawings";
+            this.btnSyncDrawings.UseVisualStyleBackColor = true;
+            // 
+            // btnSyncTakeoff
+            // 
+            this.btnSyncTakeoff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSyncTakeoff.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnSyncTakeoff.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSyncTakeoff.Location = new System.Drawing.Point(29, 137);
+            this.btnSyncTakeoff.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnSyncTakeoff.Name = "btnSyncTakeoff";
+            this.btnSyncTakeoff.Padding = new System.Windows.Forms.Padding(2);
+            this.btnSyncTakeoff.Size = new System.Drawing.Size(92, 30);
+            this.btnSyncTakeoff.TabIndex = 99;
+            this.btnSyncTakeoff.Text = "Sync Takeoff";
+            this.btnSyncTakeoff.UseVisualStyleBackColor = true;
+            // 
+            // ProjectDetailsComboBox
+            // 
+            this.ProjectDetailsComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ProjectDetailsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ProjectDetailsComboBox.FormattingEnabled = true;
+            this.ProjectDetailsComboBox.Location = new System.Drawing.Point(126, 95);
+            this.ProjectDetailsComboBox.Name = "ProjectDetailsComboBox";
+            this.ProjectDetailsComboBox.Size = new System.Drawing.Size(216, 21);
+            this.ProjectDetailsComboBox.TabIndex = 102;
+            // 
+            // label26
+            // 
+            this.label26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(15, 98);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(75, 13);
+            this.label26.TabIndex = 101;
+            this.label26.Text = "Project Details";
+            // 
+            // btnFetchProjects
+            // 
+            this.btnFetchProjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnFetchProjects.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnFetchProjects.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnFetchProjects.Location = new System.Drawing.Point(127, 22);
+            this.btnFetchProjects.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
+            this.btnFetchProjects.Name = "btnFetchProjects";
+            this.btnFetchProjects.Padding = new System.Windows.Forms.Padding(2);
+            this.btnFetchProjects.Size = new System.Drawing.Size(135, 30);
+            this.btnFetchProjects.TabIndex = 99;
+            this.btnFetchProjects.Text = "Fetch Projects";
+            this.btnFetchProjects.UseVisualStyleBackColor = true;
+            this.btnFetchProjects.Click += new System.EventHandler(this.btnFetchProjects_Click);
+            // 
+            // label24
+            // 
+            this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(15, 67);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(106, 13);
+            this.label24.TabIndex = 25;
+            this.label24.Text = "Select Cloud Project:";
+            // 
+            // ProjectsComboBox
+            // 
+            this.ProjectsComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ProjectsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ProjectsComboBox.FormattingEnabled = true;
+            this.ProjectsComboBox.Location = new System.Drawing.Point(127, 64);
+            this.ProjectsComboBox.Name = "ProjectsComboBox";
+            this.ProjectsComboBox.Size = new System.Drawing.Size(216, 21);
+            this.ProjectsComboBox.TabIndex = 1;
             // 
             // CreatePrelimLayoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(621, 629);
-            this.Controls.Add(this.btnSupabaseCall);
+            this.ClientSize = new System.Drawing.Size(896, 697);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.cbExportExcelData);
             this.Controls.Add(this.cbExportViewImages);
             this.Controls.Add(this.cbLoadJSONFile);
@@ -1082,6 +1192,7 @@ namespace Stacker.GeoJsonClasses
             this.Name = "CreatePrelimLayoutForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Building Layout Generator";
+            this.Load += new System.EventHandler(this.CreatePrelimLayoutForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.gbFloorDimension.ResumeLayout(false);
             this.gbFloorDimension.PerformLayout();
@@ -1095,6 +1206,8 @@ namespace Stacker.GeoJsonClasses
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1184,6 +1297,14 @@ namespace Stacker.GeoJsonClasses
         private System.Windows.Forms.CheckBox cbLoadJSONFile;
         private System.Windows.Forms.CheckBox cbExportViewImages;
         private System.Windows.Forms.CheckBox cbExportExcelData;
-        private System.Windows.Forms.Button btnSupabaseCall;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button btnFetchProjects;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.ComboBox ProjectsComboBox;
+        private System.Windows.Forms.Button btnSyncIfc;
+        private System.Windows.Forms.Button btnSyncDrawings;
+        private System.Windows.Forms.Button btnSyncTakeoff;
+        private System.Windows.Forms.ComboBox ProjectDetailsComboBox;
+        private System.Windows.Forms.Label label26;
     }
 }

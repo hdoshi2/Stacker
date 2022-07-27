@@ -26,6 +26,9 @@ using Stacker.Commands;
 using GRi = GeometRi;
 using System.Diagnostics;
 using System.Net;
+using Stacker.Models;
+using Stacker.Supabase;
+
 
 namespace Stacker.GeoJsonClasses
 {
@@ -36,6 +39,9 @@ namespace Stacker.GeoJsonClasses
 
         private Document _doc;
         private UIDocument _uidoc;
+
+        private Buckets _buckets;
+        private DesignBuildDB _designBuildDB;
 
         public double FloorOverallLength { get; set; }
         public double FloorOverallWidth { get; set; }
@@ -134,6 +140,15 @@ namespace Stacker.GeoJsonClasses
 
             TypFloorHeight = flrHeight;
 
+        }
+
+        private async void CreatePrelimLayoutForm_Load(object sender, EventArgs e)
+        {
+            _designBuildDB = new DesignBuildDB();
+            _buckets = new Buckets();
+
+            await _designBuildDB.InitializeSupabase();
+            await _buckets.InitializeSupabase();
         }
 
         #endregion
@@ -3855,62 +3870,6 @@ namespace Stacker.GeoJsonClasses
             }
         }
 
-
-        private void btnSupabaseCall_Click(object sender, EventArgs e)
-        {
-            var entryModelNames = new List<string>();
-            var entryIDs = new List<string>();
-
-            string SupabaseKey = "https://jrdbtyikybxihuvmbnof.supabase.co";
-            string SupabaseUrl = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyZGJ0eWlreWJ4aWh1dm1ibm9mIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDcyMDk2MjgsImV4cCI6MTk2Mjc4NTYyOH0.mV0y9rTwk4Lgj3eGog6YIqanN1ZeWnUWUfCkbPyAR2c";
-            var apiAddress = SupabaseUrl + "/rest/v1/" + "coming_soon";
-            var client = new RestClient(apiAddress);
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("apikey", SupabaseKey);
-            request.AddHeader("Authorization", String.Format("Bearer {0}", SupabaseKey));
-            request.AddHeader("Prefer", "return=representation");
-
-            var response = client.Execute(request);
-
-            // Handle response errors
-            HandleResponseErrors(response);
-
-            if (Errors.Length == 0)
-            { }
-            else
-            { }
-
-            var apiAddress = String.Format("https://v1.nocodeapi.com/simplehomes/supabase/xiKWCnHdpVusIUlY?tableName={0}", "bldg_json");
-            var client = new RestClient(apiAddress);
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("content-type", "application/json");
-            var QueryResult = client.Execute<Object>(request).Data;
-
-            var JsonOutput = JsonConvert.SerializeObject(QueryResult, Newtonsoft.Json.Formatting.Indented);
-
-            var deserializeJSONtoString = JsonConvert.DeserializeObject(JsonOutput).ToString();
-
-            //Print(Convert.ToString(deserializeJSONtoString.Substring(0, 500)));
-
-            var eachEntry = Newtonsoft.Json.Linq.JArray.Parse(deserializeJSONtoString);
-            int index = 0;
-            foreach (var entry in eachEntry)
-            {
-                //var values = Newtonsoft.Json.Linq.JObject.Parse(entry.ToString());
-                //var modelName = Convert.ToString(values[supabaseTableColName]);
-                //var modelIDs = Convert.ToString(values["id"]);
-
-                Console.WriteLine(Convert.ToString(entry));
-
-                index++;
-
-                //entryModelNames.Add(modelName);
-                //entryIDs.Add(modelIDs);
-            }
-
-        }
-
-
         /// <summary>
         /// Save a Datatable to an Excel Open XML file
         /// </summary>
@@ -4503,6 +4462,15 @@ namespace Stacker.GeoJsonClasses
             }
 
             return solids;
+        }
+
+        private async void btnFetchProjects_Click(object sender, EventArgs e)
+        {
+            var projects = await _designBuildDB.GetProjects();
+
+            ProjectsComboBox.DataSource = projects;
+            ProjectsComboBox.DisplayMember = "Name";
+            ProjectsComboBox.ValueMember = "Id";
         }
 
 
